@@ -54,7 +54,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list[tuple]):
+    def __init__(self, ships: list):
         self.ships = ships
         self.field = {}
         self._fill_field()
