@@ -118,9 +118,18 @@ class Battleship:
                 if start[1] == end[1]:
                     size_ship = end[0] - start[0]
 
+                    check_coord = ((start[1], start[0] - 1), (start[1], end[0] + 1))
+                    for check_column, check_row in check_coord:
+                        if (check_row, check_column) in self.field:
+                            raise ValidateFieldError(
+                                "ships shouldn't be located in the"
+                                " neighboring cells (even if cells"
+                                " are neighbors by diagonal)")
+
                     for check_column in (start[1] - 1, start[1] + 1):
-                        for check_row in range(start[0] - 1, start[0] + 2):
+                        for check_row in range(start[0] - 1, end[0] + 2):
                             check_position = (check_row, check_column)
+
                             if check_position in self.field:
                                 raise ValidateFieldError(
                                     "ships shouldn't be located in the"
@@ -130,8 +139,16 @@ class Battleship:
                 elif start[0] == end[0]:
                     size_ship = end[1] - start[1]
 
+                    check_coord = ((start[0], start[1] - 1), (start[0], end[1] + 1))
+                    for check_row, check_column in check_coord:
+                        if (check_row, check_column) in self.field:
+                            raise ValidateFieldError(
+                                "ships shouldn't be located in the"
+                                " neighboring cells (even if cells"
+                                " are neighbors by diagonal)")
+
                     for check_row in (start[0] - 1, start[0] + 1):
-                        for check_column in range(start[1] - 1, start[1] + 2):
+                        for check_column in range(start[1] - 1, end[1] + 2):
                             check_position = (check_row, check_column)
                             if check_position in self.field:
                                 raise ValidateFieldError(
