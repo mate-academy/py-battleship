@@ -112,13 +112,16 @@ class Battleship:
         if len(self.ships) == 10:
             all_ships = {1: 0, 2: 0, 3: 0, 4: 0}
             size_ship = 0
+
             for ship in self.ships:
                 start, end = ship
 
                 if start[1] == end[1]:
                     size_ship = end[0] - start[0]
 
-                    check_coord = ((start[1], start[0] - 1), (start[1], end[0] + 1))
+                    check_coord = (
+                        (start[1], start[0] - 1), (start[1], end[0] + 1)
+                    )
                     for check_column, check_row in check_coord:
                         if (check_row, check_column) in self.field:
                             raise ValidateFieldError(
@@ -139,7 +142,9 @@ class Battleship:
                 elif start[0] == end[0]:
                     size_ship = end[1] - start[1]
 
-                    check_coord = ((start[0], start[1] - 1), (start[0], end[1] + 1))
+                    check_coord = (
+                        (start[0], start[1] - 1), (start[0], end[1] + 1)
+                    )
                     for check_row, check_column in check_coord:
                         if (check_row, check_column) in self.field:
                             raise ValidateFieldError(
