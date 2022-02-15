@@ -123,9 +123,7 @@ class Battleship:
                         (start[1], start[0] - 1), (start[1], end[0] + 1)
                     )
                     for check_column, check_row in check_coord:
-                        if (check_row, check_column) in self.field and \
-                                self.field[(check_row, check_column)]\
-                                != "Miss!":
+                        if (check_row, check_column) in self.field:
                             raise ValidateFieldError(
                                 "ships shouldn't be located in the"
                                 " neighboring cells (even if cells"
@@ -135,8 +133,7 @@ class Battleship:
                         for check_row in range(start[0] - 1, end[0] + 2):
                             check_position = (check_row, check_column)
 
-                            if check_position in self.field and \
-                                    self.field[check_position] != "Miss!":
+                            if check_position in self.field:
                                 raise ValidateFieldError(
                                     "ships shouldn't be located in the"
                                     " neighboring cells (even if cells"
@@ -149,9 +146,7 @@ class Battleship:
                         (start[0], start[1] - 1), (start[0], end[1] + 1)
                     )
                     for check_row, check_column in check_coord:
-                        if (check_row, check_column) in self.field and \
-                                self.field[(check_row, check_column)]\
-                                != "Miss!":
+                        if (check_row, check_column) in self.field:
                             raise ValidateFieldError(
                                 "ships shouldn't be located in the"
                                 " neighboring cells (even if cells"
@@ -160,8 +155,7 @@ class Battleship:
                     for check_row in (start[0] - 1, start[0] + 1):
                         for check_column in range(start[1] - 1, end[1] + 2):
                             check_position = (check_row, check_column)
-                            if check_position in self.field and \
-                                    self.field[check_position] != "Miss!":
+                            if check_position in self.field:
                                 raise ValidateFieldError(
                                     "ships shouldn't be located in the"
                                     " neighboring cells (even if cells"
