@@ -15,11 +15,11 @@ class Ship:
 
     def create_decks(self):
         if self.start[0] == self.end[0]:
-            for i in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(self.start[0], i))
+            for column in range(self.start[1], self.end[1] + 1):
+                self.decks.append(Deck(self.start[0], column))
         elif self.start[1] == self.end[1]:
-            for i in range(self.start[0], self.end[0] + 1):
-                self.decks.append(Deck(i, self.start[1]))
+            for row in range(self.start[0], self.end[0] + 1):
+                self.decks.append(Deck(row, self.start[1]))
 
     def get_deck(self, row: int, column: int):
         for deck in self.decks:
@@ -44,11 +44,11 @@ class Battleship:
             start, end = ship_coordinates
             temp_ship = Ship(start=start, end=end)
             if start[0] == end[0]:
-                for i in range(start[1], end[1] + 1):
-                    self.field[(start[0], i)] = temp_ship
+                for column in range(start[1], end[1] + 1):
+                    self.field[(start[0], column)] = temp_ship
             if start[1] == end[1]:
-                for i in range(start[0], end[0] + 1):
-                    self.field[(i, start[1])] = temp_ship
+                for row in range(start[0], end[0] + 1):
+                    self.field[(row, start[1])] = temp_ship
 
     def fire(self, location: tuple):
         if location in self.field:
