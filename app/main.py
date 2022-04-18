@@ -163,18 +163,22 @@ class Battleship:
 
                 all_ships[size_ship + 1] += 1
 
-            if all_ships[1] != 4:
-                raise ValidateFieldError("there should be 4 single-deck ships")
-            if all_ships[2] != 3:
-                raise ValidateFieldError("there should be 3 double-deck ships")
-            if all_ships[3] != 2:
-                raise ValidateFieldError("there should be 2 three-deck ships")
-            if all_ships[4] != 1:
-                raise ValidateFieldError("there should be 1 four-deck ship")
+            self._check_all_ships(all_ships)
 
         else:
             raise ValidateFieldError("The total number"
                                      " of the ships should be 10")
+
+    @staticmethod
+    def _check_all_ships(ships):
+        if ships[1] != 4:
+            raise ValidateFieldError("there should be 4 single-deck ships")
+        if ships[2] != 3:
+            raise ValidateFieldError("there should be 3 double-deck ships")
+        if ships[3] != 2:
+            raise ValidateFieldError("there should be 2 three-deck ships")
+        if ships[4] != 1:
+            raise ValidateFieldError("there should be 1 four-deck ship")
 
 
 if __name__ == "__main__":
