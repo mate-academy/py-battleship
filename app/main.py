@@ -62,9 +62,49 @@ class Battleship:
             ship = Ship(start, end)
             for coordinate in ship.all_ship_coordinates:
                 self.field[coordinate] = ship
+        self._validate_field()
 
     def fire(self, location: tuple):
         if location in self.field:
             ship = self.field[location]
             return ship.fire(*location)
         return "Miss!"
+
+    def print_field(self):
+        empty_row = ["~" for _ in range(10)]
+        field = [empty_row[:] for _ in range(10)]
+        for (row, col), ship in self.field.items():
+            if ship.is_drowned:
+                field[row][col] = "x"
+                continue
+            deck = ship.get_deck(row, col)
+            if deck.is_alive:
+                field[row][col] = "□"
+            else:
+                field[row][col] = "*"
+
+        column_header = "   ".join([str(num) for num in range(10)])
+        print(f"    {column_header}")
+        formatted_rows = [
+            (f"{num}".center(4, " ") + "   ".join(row))
+            for num, row in enumerate(field)
+        ]
+        print("\n".join(formatted_rows))
+
+    def _validate_field(self):
+        self._validate_ships_amount()
+
+    def _validate_ships_amount(self):
+        ships_amount = {}
+        for ship in set(self.field.values()):
+            ship_type = len(ship.decks)
+            ships_amount[ship_type] = ships_amount.get(ship_type, 0) + 1
+        assert sum(ships_amount.values()) == 10, "There no 10 ships on field"
+        assert ships_amount[1] == 4,\
+            "On field should be four ships with one deck"
+        assert ships_amount[2] == 3,\
+            "On field should be three ships with two decks"
+        assert ships_amount[3] == 2,\
+            "On field should be two ships with three decks"
+        assert ships_amount[4] == 1,\
+            "On field should be one ship with four decks"
