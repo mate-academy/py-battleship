@@ -72,17 +72,16 @@ class Battleship:
         return "Miss!"
 
     def print_field(self):
-        empty_row = ["~" for _ in range(10)]
-        field = [empty_row[:] for _ in range(10)]
+        field = [
+            ["~" for _ in range(10)]
+            for _ in range(10)
+        ]
         for (row, col), ship in self.field.items():
             if ship.is_drowned:
                 field[row][col] = "x"
                 continue
             deck = ship.get_deck(row, col)
-            if deck.is_alive:
-                field[row][col] = "□"
-            else:
-                field[row][col] = "*"
+            field[row][col] = "□" if deck.is_alive else "*"
 
         column_header = "   ".join([str(num) for num in range(10)])
         print(f"    {column_header}")
@@ -96,10 +95,12 @@ class Battleship:
         for (row, col), ship in self.field.items():
             for row_delta in range(-1, 2):
                 for col_delta in range(-1, 2):
-                    coordinates_for_check = (row + row_delta, col + col_delta)
-                    if coordinates_for_check in self.field:
-                        if coordinates_for_check not in ship.all_ship_coordinates:
-                            raise Exception("Ships shouldn't be located in the neighboring cells")
+                    check_coords = (row + row_delta, col + col_delta)
+                    # check if it is the same ship
+                    if (check_coords in self.field
+                            and check_coords not in ship.all_ship_coordinates):
+                        raise Exception("Ships shouldn't be located"
+                                        "in the neighboring cells")
 
     def _validate_ships_amount(self):
         ships_amount = {}
@@ -107,11 +108,11 @@ class Battleship:
             ship_type = len(ship.decks)
             ships_amount[ship_type] = ships_amount.get(ship_type, 0) + 1
         assert sum(ships_amount.values()) == 10, "There no 10 ships on field"
-        assert ships_amount[1] == 4,\
+        assert ships_amount[1] == 4, \
             "On field should be four ships with one deck"
-        assert ships_amount[2] == 3,\
+        assert ships_amount[2] == 3, \
             "On field should be three ships with two decks"
-        assert ships_amount[3] == 2,\
+        assert ships_amount[3] == 2, \
             "On field should be two ships with three decks"
-        assert ships_amount[4] == 1,\
+        assert ships_amount[4] == 1, \
             "On field should be one ship with four decks"
