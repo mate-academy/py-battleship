@@ -62,7 +62,8 @@ class Battleship:
             ship = Ship(start, end)
             for coordinate in ship.all_ship_coordinates:
                 self.field[coordinate] = ship
-        self._validate_field()
+        self._validate_ships_amount()
+        self._validate_positions()
 
     def fire(self, location: tuple):
         if location in self.field:
@@ -91,8 +92,14 @@ class Battleship:
         ]
         print("\n".join(formatted_rows))
 
-    def _validate_field(self):
-        self._validate_ships_amount()
+    def _validate_positions(self):
+        for (row, col), ship in self.field.items():
+            for row_delta in range(-1, 2):
+                for col_delta in range(-1, 2):
+                    coordinates_for_check = (row + row_delta, col + col_delta)
+                    if coordinates_for_check in self.field:
+                        if coordinates_for_check not in ship.all_ship_coordinates:
+                            raise Exception("Ships shouldn't be located in the neighboring cells")
 
     def _validate_ships_amount(self):
         ships_amount = {}
