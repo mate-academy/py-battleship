@@ -9,28 +9,15 @@ class Ship:
     def __init__(self, start, end, is_drowned=False):
         self.is_drowned = is_drowned
         self.decks = []
-        self.all_ship_coordinates = []
         self._create_ship(start, end)
 
     def _create_ship(self, start, end):
-        coordinates = self._get_all_ship_coordinates(start, end)
-        self.all_ship_coordinates = coordinates
-        self._create_all_decks(coordinates)
-        self.decks = [
-            Deck(row_index, col_index)
-            for row_index, col_index in coordinates
-        ]
-
-    @staticmethod
-    def _get_all_ship_coordinates(start, end):
         if start[0] == end[0]:
-            columns = list(range(start[1], end[1] + 1))
-            rows = [start[0] for _ in range(len(columns))]
+            for column in (range(start[1], end[1] + 1)):
+                self.decks.append(Deck(start[0], column))
         else:
-            rows = list(range(start[0], end[0] + 1))
-            columns = [start[1] for _ in range(len(rows))]
-
-        return list(zip(rows, columns))
+            for row in (range(start[0], end[0] + 1)):
+                self.decks.append(Deck(start[1], row))
 
     def _create_all_decks(self, coordinates):
         self.decks = [
@@ -60,8 +47,8 @@ class Battleship:
         self.field = {}
         for start, end in ships:
             ship = Ship(start, end)
-            for coordinate in ship.all_ship_coordinates:
-                self.field[coordinate] = ship
+            for deck in ship.decks:
+                self.field[deck.row, deck.col] = ship
         self._validate_ships_amount()
         self._validate_positions()
 
@@ -96,9 +83,12 @@ class Battleship:
             for row_delta in range(-1, 2):
                 for col_delta in range(-1, 2):
                     check_coords = (row + row_delta, col + col_delta)
-                    # check if it is the same ship
+                    ship_coords = [
+                        (deck.row, deck.col)
+                        for deck in ship.decks
+                    ]
                     if (check_coords in self.field
-                            and check_coords not in ship.all_ship_coordinates):
+                            and check_coords not in ship_coords):
                         raise Exception("Ships shouldn't be located"
                                         "in the neighboring cells")
 
