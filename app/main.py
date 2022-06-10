@@ -19,12 +19,6 @@ class Ship:
             for row in (range(start[0], end[0] + 1)):
                 self.decks.append(Deck(start[1], row))
 
-    def _create_all_decks(self, coordinates):
-        self.decks = [
-            Deck(row_index, col_index)
-            for row_index, col_index in coordinates
-        ]
-
     def get_deck(self, row, column):
         for deck in self.decks:
             if row == deck.row and column == deck.col:
