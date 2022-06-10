@@ -10,13 +10,13 @@ class Ship:
         self.is_drowned = is_drowned
         self.decks = []
         if start[0] == end[0]:
-            [self.decks.append(Deck(start[0], y)) for y in
-             range(start[1], end[1] + 1)]
+            for y in range(start[1], end[1] + 1):
+                self.decks.append(Deck(start[0], y))
         elif start[1] == end[1]:
-            [self.decks.append(Deck(x, start[1])) for x in
-             range(start[0], end[0] + 1)]
+            for x in range(start[0], end[0] + 1):
+                self.decks.append(Deck(x, start[1]))
 
-    def get_deck(self, row, column):
+    def get_deck(self, row, column) -> Deck:
         return [self.decks[i] for i, deck in enumerate(self.decks) if
                 deck.row == row and deck.column == column][0]
 
@@ -56,15 +56,37 @@ class Battleship:
         row, column = location
         return ship.fire(row, column)
 
-    def print_field(self):
-        pass
-
-    def get_coordinates(self, location: tuple):
+    def get_ship_by_location(self, row, column) -> (Ship, None):
         try:
-            return self.field[location].decks[0]
+            return self.field[(row, column)]
         except KeyError:
             return None
 
+    def print_field(self):
+        line = "        "
+        for column in range(10):
+            line += f"  {column}    "
+        print(line)
+        for row in range(10):
+            line = f"   {row}   "
+            for column in range(10):
+                deck = None
+                ship = self.get_ship_by_location(row, column)
+                if ship is not None:
+                    deck = ship.get_deck(row, column)
+
+                if deck is not None:
+                    if deck.is_alive:
+                        line += "   □   "
+                        continue
+                    else:
+                        line += "   *   "
+                        continue
+                line += "       "
+            print(line + "\n")
+
+
+# It's not for delete, because it's small battleship game. :)
 
 # sea = Battleship([((2, 0), (2, 3)),
 #                   ((4, 5), (4, 6)),
@@ -77,4 +99,19 @@ class Battleship:
 #                   ((9, 3), (9, 3)),
 #                   ((9, 7), (9, 7))])
 #
-# print(sea.get_coordinates((5, 0)))
+# while True:
+#     sea.print_field()
+#     location = input("Input coordinates for fire: ")
+#     if location.lower() in ["exit", "quit", "q", "close"]:
+#         break
+#     try:
+#         if "," in location:
+#             row, columns = location.split(",")
+#         else:
+#             row, columns = location.split()
+#         if 0 < int(row) > 9 or 0 < int(columns) > 9:
+#             raise ValueError
+#     except ValueError:
+#         print("Wrong coordinates. Repeat please.")
+#         continue
+#     print(sea.fire((int(row), int(columns))))
