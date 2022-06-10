@@ -1,34 +1,62 @@
 class Deck:
     def __init__(self, row, column, is_alive=True):
-        pass
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
 
 
 class Ship:
+
     def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+        self.is_downed = is_drowned
+        self.decks = []
+        self.length = 0
+
+        for i in range(start[1], end[1] + 1):
+            self.decks.append(Deck(start[0], i))
+            self.length += 1
 
     def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+        for deck in self.decks:
+            if row == deck.row and column == deck.column and deck.is_alive:
+                return deck
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+            if row == deck.row \
+                    and column == deck.column \
+                    and deck.is_alive is False:
+                if self.is_downed:
+                    return "Sunk!"
+
+    def fire(self, deck):
+        deck.is_alive = False
+        self.length -= 1
+
+        if self.length == 0:
+            self.is_downed = True
+            return "Sunk!"
+
+        return "Hit!"
 
 
 class Battleship:
     def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+        self.field = {}
+
+        for start, end in ships:
+            ship = Ship(start, end)
+            for i in range(start[1], end[1] + 1):
+                self.field[(start[0], i)] = ship
 
     def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+        if location in self.field:
+            ship = self.field[location]
+            row, column = location
+            deck = ship.get_deck(row, column)
+
+            if deck == "Sunk!":
+                return deck
+
+            if deck.is_alive:
+                return ship.fire(deck)
+
+        return "Miss!"
