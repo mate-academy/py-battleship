@@ -34,22 +34,12 @@ class Battleship:
         # in the ship or not.
         for ship in self.fleet.values():
             deck = ship.get_deck(*location)
-            location_hit_deck = []
+
             if deck and not ship.check_sunk():
-
-                location_hit_deck.append(location)
-                for row in self.field:
-                    if location in row:
-                        row[location] = "*"
-
+                self._to_mark_hit_deck(location)
                 return ship.hit_in_deck(deck)
-
             elif deck and ship.check_sunk():
-
-                location_hit_deck.append(location)
-                for row in self.field:
-                    if location in row:
-                        row[location] = "*"
+                self._to_mark_destroy_ship(location)
 
                 return ship.sunk_ship(deck)
 
@@ -73,6 +63,16 @@ class Battleship:
             for cord in list_all_decks_cord:
                 if cord in row:
                     row[cord] = self.icon_deck
+
+    def _to_mark_hit_deck(self, location: tuple):
+        for row in self.field:
+            if location in row:
+                row[location] = "*"
+
+    def _to_mark_destroy_ship(self, location: tuple):
+        for row in self.field:
+            if location in row:
+                row[location] = "X"
 
     def print_field(self):
         for line in self.field:
