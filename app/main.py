@@ -17,7 +17,7 @@ class Ship:
                 self.decks.append(Deck(start[0], column))
         else:
             for row in (range(start[0], end[0] + 1)):
-                self.decks.append(Deck(start[1], row))
+                self.decks.append(Deck(row, start[1]))
 
     def get_deck(self, row, column):
         for deck in self.decks:
