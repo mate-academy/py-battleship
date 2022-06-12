@@ -1,4 +1,5 @@
-from exeptions.ship_exeptions import *
+from exeptions.ship_exeptions import (FieldLocations, ShipLocations,
+                                      ShipsCounts, ShipsByDecks)
 
 
 class Deck:
