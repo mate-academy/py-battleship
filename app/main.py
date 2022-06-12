@@ -72,8 +72,6 @@ class Ship:
 
 
 class Battleship:
-    visual_field = None
-
     def __init__(self, ships):
         self.field = {}
 
