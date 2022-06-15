@@ -1,6 +1,8 @@
 class Deck:
     def __init__(self, row, column, is_alive=True):
-        pass
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
 
 
 class Ship:
@@ -19,16 +21,39 @@ class Ship:
 
 
 class Battleship:
+    dict_ships = {}
+    field = [["~" for _ in range(10)] for _ in range(10)]
+
     def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+        for ship in ships:
+            location_ship = []
+            len_ship = abs(sum(ship[0]) - sum(ship[1])) + 1
+            if ship[0][0] == ship[1][0]:
+                for i in range(len_ship):
+                    location_ship.append((ship[0][0], ship[0][1] + i,))
+                    self.field[ship[0][0]][ship[0][1] + i] = u"\u25A1"
+            else:
+                for i in range(len_ship):
+                    location_ship.append((ship[0][0] + i, ship[0][1],))
+                    self.field[ship[0][0] + i][ship[0][1]] = u"\u25A1"
+
+            self.dict_ships.update({tuple(location_ship): len_ship})
+
+    def print_info(self):
+        for column in self.field:
+            print(column)
 
     def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+        coordinates_of_all_ships = []
+        for ship_coordinates in self.dict_ships.keys():
+            if location in ship_coordinates:
+                self.dict_ships[ship_coordinates] -= 1
+                if self.dict_ships[ship_coordinates] <= 0:
+                    self.field[location[0]][location[1]] = "x"
+                    return "Sunk!"
+
+                self.field[location[0]][location[1]] = "*"
+                return "Hit!"
+            for coordinate in ship_coordinates:
+                coordinates_of_all_ships.append(coordinate)
+        return "Miss!"
