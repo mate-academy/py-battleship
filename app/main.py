@@ -44,7 +44,6 @@ class Battleship:
             print(column)
 
     def fire(self, location: tuple):
-        coordinates_of_all_ships = []
         for ship_coordinates in self.dict_ships.keys():
             if location in ship_coordinates:
                 self.dict_ships[ship_coordinates] -= 1
