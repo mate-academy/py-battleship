@@ -7,10 +7,11 @@ from app.ship import Ship
 class Battleship:
 
     def __init__(self, ships: List[tuple]):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
+        """Create a dict `self.field`.
+        Its keys are tuples - the coordinates of the non-empty cells,
+        A value for each cell is a reference to the ship
+        which is located in it"""
+
         self.ships = ships
         self.fleet = self._create_fleet()
         self.field_size = (9, 9)
@@ -28,10 +29,11 @@ class Battleship:
 
     @history_shoots
     def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
+        """This function should check whether the location
+        is a key in the `self.field`
+        If it is, then it should check if this cell is the last alive
+        in the ship or not."""
+
         for ship in self.fleet.values():
             deck = ship.get_deck(*location)
 

@@ -1,21 +1,24 @@
 class Ship:
     def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
+        """Create decks and save them to a list `self.decks`"""
+
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
         self.decks = self._all_decks_ship()
 
     def get_deck(self, row, column):
-        # Find the corresponding deck in the list
+        """Find the corresponding deck in the list"""
+
         for deck in self.decks:
             if isinstance(deck, Deck) and \
                     deck.row == row and deck.column == column:
                 return deck
 
     def _kill_deck(self, deck):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
+        """Change the `is_alive` status of the deck
+        And update the `is_drowned` value if it's needed"""
+
         index_the_same_cord = self.decks.index(deck)
         self.decks[index_the_same_cord] = None
         deck.is_alive = False
