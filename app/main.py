@@ -54,6 +54,4 @@ class Battleship:
 
                 self.field[location[0]][location[1]] = "*"
                 return "Hit!"
-            for coordinate in ship_coordinates:
-                coordinates_of_all_ships.append(coordinate)
         return "Miss!"
