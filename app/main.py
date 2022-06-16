@@ -11,13 +11,7 @@ class Ship:
         self.end = end
         self.is_drowned = is_drowned
         self.decks = []
-
-        if start[0] == end[0]:
-            for i in range(self.len_ship()):
-                self.decks.append(Deck(start[0], start[1] + i))
-        else:
-            for i in range(self.len_ship()):
-                self.decks.append(Deck(start[0] + i, start[1]))
+        self.create_decks(start, end)
 
     def get_deck(self, row, column):
         for deck in self.decks:
@@ -34,18 +28,19 @@ class Ship:
     def len_ship(self):
         return abs(sum(self.start) - sum(self.end)) + 1
 
+    def create_decks(self, start, end):
+        if start[0] == end[0]:
+            for i in range(self.len_ship()):
+                self.decks.append(Deck(start[0], start[1] + i))
+        else:
+            for i in range(self.len_ship()):
+                self.decks.append(Deck(start[0] + i, start[1]))
+
 
 class Battleship:
     def __init__(self, ships):
         self.field = {}
-        for ship in ships:
-            reference_to_ship = Ship(ship[0], ship[1])
-            if ship[0][0] == ship[1][0]:
-                for i in range(reference_to_ship.len_ship()):
-                    self.field[ship[0][0], ship[0][1] + i] = reference_to_ship
-            else:
-                for i in range(reference_to_ship.len_ship()):
-                    self.field[ship[0][0] + i, ship[0][1]] = reference_to_ship
+        self.fill_self_field(ships)
 
     def fire(self, location: tuple):
         if location not in self.field.keys():
@@ -54,3 +49,16 @@ class Battleship:
         if self.field[location].is_drowned is True:
             return "Sunk!"
         return "Hit!"
+
+    # Created a dict `self.field`.
+    # Its keys are tuples - the coordinates of the non-empty cells,
+    # A value for each cell is a reference to the ship which is located in it
+    def fill_self_field(self, ships):
+        for ship in ships:
+            reference_to_ship = Ship(ship[0], ship[1])
+            if ship[0][0] == ship[1][0]:
+                for i in range(reference_to_ship.len_ship()):
+                    self.field[ship[0][0], ship[0][1] + i] = reference_to_ship
+            else:
+                for i in range(reference_to_ship.len_ship()):
+                    self.field[ship[0][0] + i, ship[0][1]] = reference_to_ship
