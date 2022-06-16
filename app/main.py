@@ -50,3 +50,10 @@ class Battleship:
             return ship.fire(*location)
         return "Miss!"
 
+
+battle_ship = Battleship(
+    ships=[
+        ((2, 0), (2, 3)),
+        ((4, 5), (4, 6)),
+        ((3, 8), (3, 9))]
+)
