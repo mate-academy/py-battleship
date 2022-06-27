@@ -46,27 +46,6 @@ class Ship:
         if decks_hit_count == self.length:
             self.is_drowned = True
 
-    def print_field(self):
-        """
-        ~ - empty cell
-        # o - alive deck
-        # * - hit decks of the alive ship
-        # x - decks of the drowned ship
-        """
-        battlefield = np.zeros((10, 10), str)
-        rows = battlefield.shape[0]
-        columns = battlefield.shape[1]
-        for i in range(0, rows):
-            for j in range(0, columns):
-                if not self.get_deck(i, j):
-                    battlefield[i, j] = "~"
-                if self.get_deck(i, j):
-                    if Deck(i, j).is_alive:
-                        battlefield[i, j] = "o"
-                    else:
-                        battlefield[i, j] = "*"
-        print(battlefield)
-
 
 class Battleship:
     def __init__(self, ships):
@@ -89,5 +68,27 @@ class Battleship:
             if damaged_ship.is_drowned:
                 return "Sunk!"
             return "Hit!"
-        else:
-            return "Miss!"
+        return "Miss!"
+
+    def print_field(self):
+        """
+        ~ - empty cell
+        o - alive deck
+        * - hit decks of the alive ship
+        x - decks of the drowned ship
+        """
+        battlefield = np.zeros((10, 10), str)
+        rows = battlefield.shape[0]
+        columns = battlefield.shape[1]
+        for i in range(0, rows):
+            for j in range(0, columns):
+                if (i, j) not in self.field:
+                    battlefield[i, j] = "~"
+                if (i, j) in self.field:
+                    if self.field[i, j].is_drowned:
+                        battlefield[i, j] = "x"
+                    else:
+                        if Deck(i, j).is_alive:
+                            battlefield[i, j] = "o"
+                        battlefield[i, j] = "*"
+        print(battlefield)
