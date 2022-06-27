@@ -14,17 +14,17 @@ class Ship:
         self.end = end
         self.is_drowned = is_drowned
         self.decks = []
+        self.make_decks()
         self.length = 0
-
         if self.start[0] == self.end[0]:
             self.length = self.end[1] - self.start[1] + 1
         elif self.start[1] == self.end[1]:
             self.length = self.end[0] - self.start[0] + 1
 
+    def make_decks(self):
         if self.start[0] == self.end[0]:
             for point in range(self.start[1], self.end[1] + 1):
                 self.decks.append(Deck(self.start[0], point))
-
         elif self.start[1] == self.end[1]:
             for point in range(self.start[0], self.end[0] + 1):
                 self.decks.append(Deck(point, self.start[1]))
@@ -84,7 +84,7 @@ class Battleship:
             for j in range(0, columns):
                 if (i, j) not in self.field:
                     battlefield[i, j] = "~"
-                if (i, j) in self.field:
+                elif (i, j) in self.field:
                     if self.field[i, j].is_drowned:
                         battlefield[i, j] = "x"
                     else:
