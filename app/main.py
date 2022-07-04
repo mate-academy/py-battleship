@@ -82,3 +82,40 @@ class Battleship:
                 else:
                     print("~", end="\t")
             print("")
+
+    def _validate_field(self):
+        decks_number = [len(deck.__dict__["decks"])
+                        for deck in set(self.field.values())]
+
+        if len(decks_number) != 10:
+            print("the total number of the ships should be 10")
+
+        if decks_number.count(1) != 4:
+            print("there should be 4 single-deck ships")
+
+        if decks_number.count(2) != 3:
+            print("there should be 3 double-deck ships")
+
+        if decks_number.count(3) != 2:
+            print("there should be 2 three-deck ships")
+
+        if decks_number.count(4) != 1:
+            print("there should be 1 four-deck ship")
+
+
+battle_ship = Battleship(
+    ships=[
+        ((0, 5), (0, 6)),
+        ((0, 8), (0, 9)),
+        ((2, 0), (4, 0)),
+        ((2, 4), (2, 6)),
+        ((2, 8), (2, 9)),
+        ((9, 9), (9, 9)),
+        ((7, 7), (7, 7)),
+        ((7, 9), (7, 9)),
+        ((9, 7), (9, 7)),
+        ((0, 0), (0, 3)),
+    ]
+)
+
+battle_ship._validate_field()
