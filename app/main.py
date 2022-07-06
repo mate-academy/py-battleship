@@ -50,6 +50,8 @@ class Battleship:
                 for column in range(ship[0][1], ship[1][1] + 1):
                     self.field[(row, column)] = new_ship
 
+        self._validate_field()
+
     def fire(self, location: tuple):
         """This function should check whether the location
         is a key in the `self.field`
@@ -61,6 +63,7 @@ class Battleship:
 
         ship = self.field[location]
         ship.fire(location[0], location[1])
+
         if ship.is_drowned:
             return "Sunk!"
 
@@ -73,11 +76,11 @@ class Battleship:
                     ship = self.field[(row, column)]
 
                     if ship.is_drowned:
-                        print(u"\u2620", end="\t")
+                        print("\033[91m" + u"\u26F5" + "\033[0m", end="\t")
                     elif ship.get_deck(row, column).is_alive:
-                        print(u"\u26F5", end="\t")
+                        print("\033[92m" + u"\u26F5" + "\033[0m", end="\t")
                     else:
-                        print(u"\u2622", end="\t")
+                        print("\033[93m" + u"\u26F5" + "\033[0m", end="\t")
 
                 else:
                     print("~", end="\t")
@@ -88,34 +91,23 @@ class Battleship:
                         for deck in set(self.field.values())]
 
         if len(decks_number) != 10:
-            print("the total number of the ships should be 10")
+            raise Exception("The total number of the ships should be 10")
 
         if decks_number.count(1) != 4:
-            print("there should be 4 single-deck ships")
+            raise Exception("There should be 4 single-deck ships")
 
         if decks_number.count(2) != 3:
-            print("there should be 3 double-deck ships")
+            raise Exception("There should be 3 double-deck ships")
 
         if decks_number.count(3) != 2:
-            print("there should be 2 three-deck ships")
+            raise Exception("There should be 2 three-deck ships")
 
         if decks_number.count(4) != 1:
-            print("there should be 1 four-deck ship")
+            raise Exception("There should be 1 four-deck ship")
 
-
-battle_ship = Battleship(
-    ships=[
-        ((0, 5), (0, 6)),
-        ((0, 8), (0, 9)),
-        ((2, 0), (4, 0)),
-        ((2, 4), (2, 6)),
-        ((2, 8), (2, 9)),
-        ((9, 9), (9, 9)),
-        ((7, 7), (7, 7)),
-        ((7, 9), (7, 9)),
-        ((9, 7), (9, 7)),
-        ((0, 0), (0, 3)),
-    ]
-)
-
-battle_ship._validate_field()
+        for coords, ship in self.field.items():
+            for row in range(coords[0] - 1, coords[0] + 2):
+                for column in range(coords[1] - 1, coords[1] + 2):
+                    if (row, column) in self.field \
+                            and self.field[(row, column)] != ship:
+                        raise Exception(f"Border overlap {coords}")
