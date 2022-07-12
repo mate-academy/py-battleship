@@ -7,14 +7,20 @@ class Deck:
 
 class Ship:
     def __init__(self, start, end, is_drowned=False):
-        self.decks = []
-        ship_length = end[0] - start[0] + end[1] - start[1]
-        for i in range(0, ship_length + 1):
-            if start[0] == end[0]:
-                self.decks.append(Deck(start[0], start[1] + i))
-            else:
-                self.decks.append(Deck(start[0] + i, start[1]))
+        self.start = start
+        self.end = end
+        self.decks = self.make_decks_for_ship()
         self.is_drowned = is_drowned
+
+    def make_decks_for_ship(self):
+        decks = []
+        ship_length = self.end[0] - self.start[0] + self.end[1] - self.start[1]
+        for i in range(0, ship_length + 1):
+            if self.start[0] == self.end[0]:
+                decks.append(Deck(self.start[0], self.start[1] + i))
+            else:
+                decks.append(Deck(self.start[0] + i, self.start[1]))
+        return decks
 
     def get_deck(self, row, column):
         for deck in self.decks:
@@ -31,11 +37,16 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships):
-        self.field = {}
-        for ship in ships:
+        self.ships = ships
+        self.field = self.making_ships()
+
+    def making_ships(self):
+        field = {}
+        for ship in self.ships:
             ship1 = Ship(ship[0], ship[1])
             for point in ship1.decks:
-                self.field[(point.row, point.column)] = ship1
+                field[(point.row, point.column)] = ship1
+        return field
 
     def fire(self, location: tuple):
         if location not in self.field:
