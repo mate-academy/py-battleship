@@ -15,6 +15,12 @@ class Ship:
 
     def __init__(self, start, end, is_drowned=False):
         self.decks = {start: Deck(start[0], start[1])}
+        self.all_deck_of_ship(start, end)
+        self.is_drowned = is_drowned
+        Ship.total_ships_number += 1
+        Ship.ships_type[len(self.decks)] += 1
+
+    def all_deck_of_ship(self, start, end):
         if start != end:
             if start[0] != end[0] and start[1] == end[1]:
                 for i in range(start[0] + 1, end[0]):
@@ -26,12 +32,7 @@ class Ship:
                 raise ValueError(
                     f"Ship ({start}, {end})can`t be located by diagonal!"
                 )
-
-        self.decks[end] = Deck(end[0], end[1])
-        self.is_drowned = is_drowned
-
-        Ship.total_ships_number += 1
-        Ship.ships_type[len(self.decks)] += 1
+            self.decks[end] = Deck(end[0], end[1])
 
     def get_deck(self, row, column):
         self.fire(row, column)
@@ -60,19 +61,21 @@ class Battleship:
         return "Miss!"
 
     def print_field(self):
-        for i in range(10):
+        for row in range(10):
             str_to_print = ""
-            for j in range(10):
-                if (i, j) in self.field:
-                    if self.field[(i, j)].is_drowned:
-                        str_to_print += "x  "
-                    elif not self.field[(i, j)].decks[(i, j)].is_alive:
-                        str_to_print += "*  "
+            for column in range(10):
+                if (row, column) in self.field:
+                    ship = self.field[(row, column)]
+                    deck = self.field[(row, column)].decks[(row, column)]
+                    if ship.is_drowned:
+                        str_to_print += "x"
+                    elif not deck.is_alive:
+                        str_to_print += "*"
                     else:
-                        str_to_print += "□  "
+                        str_to_print += "□"
                 else:
-                    str_to_print += "~  "
-            print(str_to_print)
+                    str_to_print += "~"
+            print("  ".join(str_to_print))
 
     def _validate_field(self):
         if Ship.total_ships_number != 10:
