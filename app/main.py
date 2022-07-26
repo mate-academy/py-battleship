@@ -1,34 +1,102 @@
+import math
+
+
 class Deck:
     def __init__(self, row, column, is_alive=True):
-        pass
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
 
 
 class Ship:
+
+    total_ships_number = 0
+    ships_type = {1: 0, 2: 0, 3: 0, 4: 0}
+
     def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+        self.decks = {start: Deck(start[0], start[1])}
+        if start != end:
+            if start[0] != end[0] and start[1] == end[1]:
+                for i in range(start[0] + 1, end[0]):
+                    self.decks[(i, start[1])] = Deck(i, start[1])
+            elif start[1] != end[1] and start[0] == end[0]:
+                for i in range(start[1] + 1, end[1]):
+                    self.decks[(start[0], i)] = Deck(start[0], i)
+            else:
+                raise ValueError(
+                    f"Ship ({start}, {end})can`t be located by diagonal!"
+                )
+
+        self.decks[end] = Deck(end[0], end[1])
+        self.is_drowned = is_drowned
+
+        Ship.total_ships_number += 1
+        Ship.ships_type[len(self.decks)] += 1
 
     def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+        self.fire(row, column)
+        if self.is_drowned is True:
+            return "Sunk!"
+        return "Hit!"
 
     def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+        self.decks[(row, column)].is_alive = False
+        if not any([deck.is_alive for deck in self.decks.values()]):
+            self.is_drowned = True
 
 
 class Battleship:
     def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+
+        self.field = {}
+        for ship in ships:
+            current_ship = Ship(ship[0], ship[1])
+            for deck in current_ship.decks.keys():
+                self.field[deck] = current_ship
 
     def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+        if location in self.field:
+            return self.field[location].get_deck(location[0], location[1])
+        return "Miss!"
+
+    def print_field(self):
+        for i in range(10):
+            str_to_print = ""
+            for j in range(10):
+                if (i, j) in self.field:
+                    if self.field[(i, j)].is_drowned:
+                        str_to_print += "x  "
+                    elif not self.field[(i, j)].decks[(i, j)].is_alive:
+                        str_to_print += "*  "
+                    else:
+                        str_to_print += "□  "
+                else:
+                    str_to_print += "~  "
+            print(str_to_print)
+
+    def _validate_field(self):
+        if Ship.total_ships_number != 10:
+            print("The total number of the ships should be 10!")
+        if Ship.ships_type[1] != 4:
+            print("There should be 4 single-deck ships")
+        if Ship.ships_type[2] != 3:
+            print("There should be 3 double-deck ships")
+        if Ship.ships_type[3] != 2:
+            print("There should be 2 tree-deck ships")
+        if Ship.ships_type[4] != 1:
+            print("There should be 2 four-deck ship")
+
+        for deck, ship in self.field.items():
+            for compare_deck, compare_ship in self.field.items():
+                distance_to_deck = self.distance(deck, compare_deck)
+                if ship != compare_ship and distance_to_deck < 2:
+                    print(
+                        "Ships shouldn't be located in the neighboring cells!"
+                    )
+                    return
+
+    @staticmethod
+    def distance(first, second):
+        x_sub = first[0] - second[0]
+        y_sub = first[1] - second[1]
+        return math.sqrt(x_sub ** 2 + y_sub ** 2)
