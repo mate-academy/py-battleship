@@ -7,7 +7,6 @@ class Deck:
 
 class Ship:
     def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
         self.decks = []
         if start == end:
             self.decks.append(Deck(start[0], start[1]))
@@ -26,8 +25,6 @@ class Ship:
                 return deck
 
     def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
         self.get_deck(row, column).is_alive = False
         for deck in self.decks:
             if deck.is_alive:
@@ -38,10 +35,6 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
         self.field = {}
         for ship in ships:
             new_ship = Ship(ship[0], ship[1])
@@ -49,10 +42,6 @@ class Battleship:
                 self.field[(deck.row, deck.column)] = new_ship
 
     def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
         if location in self.field.keys():
             return self.field[location].fire(location[0], location[1])
         else:
