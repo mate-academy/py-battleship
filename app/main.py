@@ -35,14 +35,19 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships):
-        self.field = {}
-        for ship in ships:
-            new_ship = Ship(ship[0], ship[1])
-            for deck in new_ship.decks:
-                self.field[(deck.row, deck.column)] = new_ship
+        self.field = self.create_ships(ships)
 
     def fire(self, location: tuple):
         if location in self.field.keys():
             return self.field[location].fire(location[0], location[1])
         else:
             return "Miss!"
+
+    @staticmethod
+    def create_ships(ships):
+        created_ships = {}
+        for ship in ships:
+            new_ship = Ship(ship[0], ship[1])
+            for deck in new_ship.decks:
+                created_ships[(deck.row, deck.column)] = new_ship
+        return created_ships
