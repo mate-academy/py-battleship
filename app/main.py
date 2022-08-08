@@ -11,10 +11,14 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = []
+        self.decks = self.decks_creation()
+
+    def decks_creation(self):
+        decks = []
         for i in range(self.start[0], self.end[0] + 1):
             for j in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(row=i, column=j))
+                decks.append(Deck(row=i, column=j))
+        return decks
 
     def get_deck(self, row, column):
         # Find the corresponding deck in the list
@@ -37,12 +41,16 @@ class Battleship:
         # A value for each cell is a reference to the ship
         # which is located in it
         self.ships = ships
-        self.field = {}
+        self.field = self.field_creation()
+
+    def field_creation(self):
+        field = {}
         for ship in self.ships:
             ship_obj = Ship(start=ship[0], end=ship[1])
             decks = ship_obj.decks
             for deck in decks:
-                self.field[(deck.row, deck.column)] = ship_obj
+                field[(deck.row, deck.column)] = ship_obj
+        return field
 
     def fire(self, location: tuple):
         # This function should check whether the location
