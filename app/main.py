@@ -61,7 +61,7 @@ class Battleship:
             return "Sunk!" if self.field[location].is_drowned else "Hit!"
         return "Miss!"
 
-    def data_for_printing(self):
+    def print_field(self):
         cells = {}
         for i in range(10):
             for j in range(10):
@@ -89,9 +89,5 @@ class Battleship:
                 if cell[0] == i:
                     battle_field_list[i] += f"{battle_field[cell]}  "
 
-        return battle_field_list
-
-    def print_field(self):
-        signs = self.data_for_printing()
-        for row in signs:
+        for row in battle_field_list:
             print(row)
