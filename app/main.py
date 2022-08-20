@@ -1,12 +1,19 @@
+class Cell:
+    def __init__(self, row, column, sign="~"):
+        self.row = row
+        self.column = column
+        self.sign = sign
+
+
 class Deck:
-    def __init__(self, row, column, is_alive=True):
+    def __init__(self, row, column, is_alive=True, sign=u"\u25A1"):
         self.row = row
         self.column = column
         self.is_alive = is_alive
+        self.sign = sign
 
 
 class Ship:
-
     ships = {}
 
     def __init__(self, start, end, is_drowned=False):
@@ -32,8 +39,11 @@ class Ship:
         for deck in self.decks:
             if self.get_deck(row, column) == deck:
                 deck.is_alive = False
+                deck.sign = "*"
             if not any([deck.is_alive for deck in self.decks]):
                 self.is_drowned = True
+                for deck in self.decks:
+                    deck.sign = "x"
 
 
 class Battleship:
@@ -50,3 +60,38 @@ class Battleship:
             self.field[location].fire(location[0], location[1])
             return "Sunk!" if self.field[location].is_drowned else "Hit!"
         return "Miss!"
+
+    def data_for_printing(self):
+        cells = {}
+        for i in range(10):
+            for j in range(10):
+                Cell(i, j)
+                cells[(i, j)] = Cell(i, j).sign
+
+        decks = {}
+        for ship in list(Ship.ships.values()):
+            for deck in ship.decks:
+                decks[(deck.row, deck.column)] = deck.sign
+
+        battle_field = {}
+        for cell in cells:
+            try:
+                if cells[cell] == decks[cell]:
+                    battle_field[cell] = cells[cell]
+                else:
+                    battle_field[cell] = decks[cell]
+            except KeyError:
+                battle_field[cell] = cells[cell]
+
+        battle_field_list = ["" for _ in range(10)]
+        for cell in battle_field.keys():
+            for i in range(10):
+                if cell[0] == i:
+                    battle_field_list[i] += f"{battle_field[cell]}  "
+
+        return battle_field_list
+
+    def print_field(self):
+        signs = self.data_for_printing()
+        for row in signs:
+            print(row)
