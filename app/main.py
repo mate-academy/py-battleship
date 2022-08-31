@@ -13,19 +13,17 @@ class Ship:
         self.decks = []
 
     def decks_create(self):
-        list_start = list(self.start)
-        list_end = list(self.end)
 
-        if list_start == list_end:
-            self.decks.append(Deck(list_start[0], list_start[1]))
+        if self.start == self.end:
+            self.decks.append(Deck(self.start[0], self.start[1]))
 
-        if list_start[0] != list_end[0]:
-            for points in range(list_start[0], list_end[0] + 1):
-                self.decks.append(Deck(points, list_start[1]))
+        if self.start[0] != self.end[0]:
+            for points in range(self.start[0], self.end[0] + 1):
+                self.decks.append(Deck(points, self.start[1]))
 
-        if list_start[1] != list_end[1]:
-            for points in range(list_start[1], list_end[1] + 1):
-                self.decks.append(Deck(list_start[0], points))
+        if self.start[1] != self.end[1]:
+            for points in range(self.start[1], self.end[1] + 1):
+                self.decks.append(Deck(self.start[0], points))
 
         self.decks.append(self.is_drowned)
         return self.decks
@@ -52,19 +50,18 @@ class Battleship:
     def __init__(self, ships, field={}):
         self.ships = ships
         self.field = field
-        self.field = Battleship.create(self)
+        self.field = Battleship.create_field(self)
 
-    def create(self):
+    def create_field(self):
         list_ships = []
         for ships in self.ships:
-            battle_ships = list(ships)
-            list_ships.append(Ship(battle_ships[0], battle_ships[1]))
-        for create_decks in list_ships:
-            create_decks.decks_create()
-        for crate_field in list_ships:
-            for j in range(len(crate_field.decks) - 1):
-                self.field.update({(crate_field.decks[j].row,
-                                    crate_field.decks[j].column): crate_field})
+            list_ships.append(Ship(ships[0], ships[1]))
+        for ship in list_ships:
+            ship.decks_create()
+        for ship in list_ships:
+            for j in range(len(ship.decks) - 1):
+                self.field.update({(ship.decks[j].row,
+                                    ship.decks[j].column): ship})
         return self.field
 
     def fire(self, location: tuple):
