@@ -46,9 +46,6 @@ class Ship:
             return True
         return False
 
-
-
-
 class Battleship:
     def __init__(self, ships):
         self.ships = ships
