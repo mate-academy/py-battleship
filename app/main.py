@@ -27,9 +27,9 @@ class Ship:
         return self.decks
 
     def get_deck(self, row, column):
-        for object_ in self.decks:
-            if object_.row == row and object_.column == column:
-                return object_
+        for object_d in self.decks:
+            if object_d.row == row and object_d.column == column:
+                return object_d
 
     def fire(self, row, column):
         obj_deck = self.get_deck(row, column)
