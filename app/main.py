@@ -12,18 +12,18 @@ class Ship:
     def __init__(self, start, end, is_drowned=False):
         self.is_drowned = is_drowned
         self.decks = []
-        r0, c0 = start
-        r1, c1 = end
-        if c0 == c1:
-            a, b = r0, r1
+        start_row, start_column = start
+        end_row, end_column = end
+        if start_column == end_column:
+            min_value, max_value = start_row, end_row
         else:
-            a, b = c0, c1
-        while a <= b:
-            if c0 == c1:
-                self.decks.append(Deck(a, c0))
+            min_value, max_value = start_column, end_column
+        while min_value <= max_value:
+            if start_column == end_column:
+                self.decks.append(Deck(min_value, start_column))
             else:
-                self.decks.append(Deck(r0, a))
-            a += 1
+                self.decks.append(Deck(start_row, min_value))
+            min_value += 1
 
     def get_deck(self, row, column) -> Deck:
         return self.decks[self.decks.index(Deck(row, column))]
@@ -62,22 +62,22 @@ class Battleship:
         return "Miss!"
 
     def print_field(self):
-        for r in range(10):
-            raw = ""
-            for c in range(10):
+        for row in range(10):
+            print_str = ""
+            for column in range(10):
                 status = "~"
-                if (r, c) in self.field:
-                    ship = self.field[(r, c)]
+                if (row, column) in self.field:
+                    ship = self.field[(row, column)]
                     if ship.is_drowned:
                         status = "x"
-                    elif not ship.get_deck(r, c).is_alive:
+                    elif not ship.get_deck(row, column).is_alive:
                         status = "*"
                     else:
                         status = "□"
-                elif (r, c) in self.miss_shots:
+                elif (row, column) in self.miss_shots:
                     status = "."
-                raw += status + " "
-            print(raw)
+                print_str += status + " "
+            print(print_str)
 
     def _validate_field(self):
         if not len(self.ships) == 10:
