@@ -14,16 +14,16 @@ class Battleship:
     def printer(temp_list: list):
         for i in temp_list:
             pass
-        #     print(i)
-        # print("")
+            print(i)
+        print("")
 
     """Wrecked ship optimization function"""
 
     def ship_attacked(self, point: set):
         self.field_with_ships[point[0]][point[1]] = "*"
         self.printer(self.field_with_ships)
-        # return print("Hit!\n")
-        return "Hit!"
+        return print("Hit!\n")
+        # return "Hit!"
 
     """Ship sink optimization function"""
 
@@ -34,8 +34,8 @@ class Battleship:
                 if self.field_with_ships[i][k] == "*":
                     self.field_with_ships[i][k] = "X"
         self.printer(self.field_with_ships)
-        # return print("Sunk!\n")
-        return "Sunk!"
+        return print("Sunk!\n")
+        # return "Sunk!"
 
     """Create an empty field"""
 
@@ -80,8 +80,8 @@ class Battleship:
         """Check for misses"""
         if self.field_with_ships[point[0]][point[1]] == "~":
             self.printer(self.field_with_ships)
-            # return print("Miss!\n")
-            return "Miss!"
+            return print("Miss!\n")
+            # return "Miss!"
 
         """Checking the central cells"""
         if not point[0] in (0, 9) and not point[1] in (0, 9):
@@ -215,17 +215,17 @@ ships = [
     ((9, 7), (9, 7)),
 ]
 
-# battleship = Battleship(ships)
+battleship = Battleship(ships)
 # battleship.create_empty_field()
 # battleship.filling_the_field_with_ship()
 
 
-# battleship.fire((2, 0))  # Hit!
-# battleship.fire((2, 1))  # Hit!
-# battleship.fire((2, 2))  # Hit!
-# battleship.fire((2, 3))  # Sunk!
+battleship.fire((2, 0))  # Hit!
+battleship.fire((2, 1))  # Hit!
+battleship.fire((2, 2))  # Hit!
+battleship.fire((2, 3))  # Sunk!
 
-# battleship.fire((8, 0))  # Hit!
-# battleship.fire((7, 0))  # Hit!
-# battleship.fire((9, 0))  # Miss!
-# battleship.fire((6, 0))  # Sunk!
+battleship.fire((8, 0))  # Hit!
+battleship.fire((7, 0))  # Hit!
+battleship.fire((9, 0))  # Miss!
+battleship.fire((6, 0))  # Sunk!
