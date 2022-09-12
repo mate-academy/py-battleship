@@ -200,32 +200,3 @@ class Battleship:
                 self.ship_attacked(point)
             else:
                 self.ship_sunk(point)
-
-
-ships = [
-    ((2, 0), (2, 3)),
-    ((4, 5), (4, 6)),
-    ((3, 8), (3, 9)),
-    ((6, 0), (8, 0)),
-    ((6, 4), (6, 6)),
-    ((6, 8), (6, 9)),
-    ((9, 9), (9, 9)),
-    ((9, 5), (9, 5)),
-    ((9, 3), (9, 3)),
-    ((9, 7), (9, 7)),
-]
-
-# battleship = Battleship(ships)
-# battleship.create_empty_field()
-# battleship.filling_the_field_with_ship()
-
-
-# battleship.fire((2, 0))  # Hit!
-# battleship.fire((2, 1))  # Hit!
-# battleship.fire((2, 2))  # Hit!
-# battleship.fire((2, 3))  # Sunk!
-
-# battleship.fire((8, 0))  # Hit!
-# battleship.fire((7, 0))  # Hit!
-# battleship.fire((9, 0))  # Miss!
-# battleship.fire((6, 0))  # Sunk!
