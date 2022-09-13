@@ -1,202 +1,111 @@
-class Battleship:
-    empty_field = []
-    field_with_ships = []
+class Deck:
+    def __init__(self, row: int, column: int, is_alive=True):
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
 
-    def __init__(self, ships: list):
-        self.ships = ships
 
-        self.create_empty_field()
-        self.filling_the_field_with_ship()
+class Ship:
 
-    """Line matrix printing"""
+    total_number_of_ships = 0
+    type_of_ships = {"1_decks": 0,
+                     "2_decks": 0,
+                     "3_decks": 0,
+                     "4_decks": 0}
 
-    @staticmethod
-    def printer(temp_list: list):
-        for i in temp_list:
-            pass
-        #     print(i)
-        # print("")
+    def __init__(self, start, end, is_drowned=False):
+        self.start = start
+        self.end = end
+        self.is_drowned = is_drowned
+        self.decks = []
+        self.create_ship()
 
-    """Wrecked ship optimization function"""
+    # Create decks and save them to a list `self.decks`
+    def create_ship(self):
+        if self.start == self.end:
+            self.decks.append(Deck(self.start[0], self.start[1]))
+        if self.start[0] != self.end[0]:
+            for row in range(self.start[0], self.end[0] + 1):
+                self.decks.append(Deck(row, self.start[1]))
+        if self.start[1] != self.end[1]:
+            for column in range(self.start[1], self.end[1] + 1):
+                self.decks.append(Deck(self.start[0], column))
 
-    def ship_attacked(self, point: set):
-        self.field_with_ships[point[0]][point[1]] = "*"
-        self.printer(self.field_with_ships)
-        # return print("Hit!\n")
-        return "Hit!"
+        Ship.total_number_of_ships += 1
+        Ship.type_of_ships[f"{len(self.decks)}_decks"] += 1
 
-    """Ship sink optimization function"""
+    # Find the corresponding deck in the list
+    def get_deck(self, row, column):
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
 
-    def ship_sunk(self, point: set):
-        self.field_with_ships[point[0]][point[1]] = "X"
-        for i in range(len(self.field_with_ships)):
-            for k in range(len(self.field_with_ships[i])):
-                if self.field_with_ships[i][k] == "*":
-                    self.field_with_ships[i][k] = "X"
-        self.printer(self.field_with_ships)
-        # return print("Sunk!\n")
+    # Change the `is_alive` status of the deck
+    # And update the `is_drowned` value if it's needed
+    def fire(self, row, column):
+        deck = self.get_deck(row, column)
+        deck.is_alive = False
+        for deck in self.decks:
+            if deck.is_alive:
+                return "Hit!"
+        self.is_drowned = True
         return "Sunk!"
 
-    """Create an empty field"""
 
-    def create_empty_field(self):
+class Battleship:
+    def __init__(self, ships):
+        self.ships = ships
+        # Create a dict `self.field`.
+        self.field = {}
 
-        """Printing an empty field 10x10"""
-        self.empty_field = ["~"] * 10
-        for i in range(10):
-            self.empty_field[i] = ["~"] * 10
-        self.printer(self.empty_field)
+        # Its keys are tuples - the coordinates of the non-empty cells,
+        # A value for each cell is a reference to the ship
+        # which is located in it
+        for ship in ships:
+            new_ship = Ship(ship[0], ship[1])
+            for deck in new_ship.decks:
+                self.field[(deck.row, deck.column)] = new_ship
 
-    """Filling the field with ships"""
+        # Check the following conditions after creating a field
+        self._validate_field()
 
-    def filling_the_field_with_ship(self):
+    # This function should check whether the location
+    # is a key in the `self.field`
+    # If it is, then it should check if this cell is the last alive
+    # in the ship or not.
+    def fire(self, location: tuple):
+        if location in self.field.keys():
+            value = self.field[location]
+            return value.fire(location[0], location[1])
+        return "Miss!"
 
-        for i in range(len(self.ships)):
-            x = self.ships[i][1][0] - self.ships[i][0][0]
-            y = self.ships[i][1][1] - self.ships[i][0][1]
-            if x == 0 and y == 0:
-                r = self.ships[i][0][0]
-                c = self.ships[i][1][1]
-                self.empty_field[r][c] = "\u25A1"
-            if x != 0 and y == 0:
-                count = 0
-                while count != x + 1:
-                    r = self.ships[i][0][0] + count
-                    c = self.ships[i][0][1]
-                    self.empty_field[r][c] = "\u25A1"
-                    count += 1
-            if x == 0 and y != 0:
-                count = 0
-                while count != y + 1:
-                    r = self.ships[i][0][0]
-                    c = self.ships[i][0][1] + count
-                    self.empty_field[r][c] = "\u25A1"
-                    count += 1
-        self.field_with_ships = self.empty_field
-        self.printer(self.field_with_ships)
+    def print_field(self):
+        field = []
+        for _ in range(10):
+            field.append(["~"] * 10)
 
-    def fire(self, point: set):
-
-        """Check for misses"""
-        if self.field_with_ships[point[0]][point[1]] == "~":
-            self.printer(self.field_with_ships)
-            # return print("Miss!\n")
-            return "Miss!"
-
-        """Checking the central cells"""
-        if not point[0] in (0, 9) and not point[1] in (0, 9):
-            if self.field_with_ships[point[0]][point[1]] == "\u25A1" \
-                    and any((self.field_with_ships[point[0] - 1][point[1]]
-                             == "\u25A1",
-                             self.field_with_ships[point[0]][point[1] + 1]
-                             == "\u25A1",
-                             self.field_with_ships[point[0] + 1][point[1]]
-                             == "\u25A1",
-                             self.field_with_ships[point[0]][point[1] - 1]
-                             == "\u25A1")):
-                self.ship_attacked(point)
+        for point_of_ship in self.field.keys():
+            ship = self.field[point_of_ship]
+            deck_status = ship.get_deck(point_of_ship[0], point_of_ship[1])
+            if ship.is_drowned is True:
+                field[point_of_ship[0]][point_of_ship[1]] = "X"
+            if deck_status.is_alive is False:
+                field[point_of_ship[0]][point_of_ship[1]] = "*"
             else:
-                self.ship_sunk(point)
+                field[point_of_ship[0]][point_of_ship[1]] = "\u25A1"
 
-        """Checking corner cells"""
-        if point[0] in (0, 9) and point[1] in (0, 9):
+        for line in field:
+            print(line)
 
-            """Top left corner"""
-            if point[0] == 0 and point[1] == 0:
-                if self.field_with_ships[point[0]][point[1]] == "\u25A1" \
-                        and any((self.field_with_ships[point[0]][point[1] + 1]
-                                 == "\u25A1",
-                                 self.field_with_ships[point[0] + 1][point[1]]
-                                 == "\u25A1")):
-                    self.ship_attacked(point)
-                else:
-                    self.ship_sunk(point)
-
-            """Top right corner"""
-            if point[0] == 0 and point[1] == 9:
-                if self.field_with_ships[point[0]][point[1]] == "\u25A1" \
-                        and any((self.field_with_ships[point[0] + 1][point[1]]
-                                 == "\u25A1",
-                                 self.field_with_ships[point[0]][point[1] - 1]
-                                 == "\u25A1")):
-                    self.ship_attacked(point)
-                else:
-                    self.ship_sunk(point)
-
-            """Lower left corner"""
-            if point[0] == 9 and point[1] == 0:
-                if self.field_with_ships[point[0]][point[1]] == "\u25A1" \
-                        and any((self.field_with_ships[point[0] - 1][point[1]]
-                                 == "\u25A1",
-                                 self.field_with_ships[point[0]][point[1] + 1]
-                                 == "\u25A1")):
-                    self.ship_attacked(point)
-                else:
-                    self.ship_sunk(point)
-
-            """Lower right corner"""
-            if point[0] == 9 and point[1] == 9:
-                if self.field_with_ships[point[0]][point[1]] == "\u25A1" \
-                        and any((self.field_with_ships[point[0]][point[1] - 1]
-                                 == "\u25A1",
-                                 self.field_with_ships[point[0] - 1][point[1]]
-                                 == "\u25A1")):
-                    self.ship_attacked(point)
-                else:
-                    self.ship_sunk(point)
-
-        self.checking_side_faces_without_corners(point)
-
-        """Checking side faces without corners"""
-    def checking_side_faces_without_corners(self, point: set):
-        """Upper side"""
-        if point[0] == 0 and point[1] in (range(1, 9)):
-            if self.field_with_ships[point[0]][point[1]] == "\u25A1" \
-                    and any((self.field_with_ships[point[0]][point[1] + 1]
-                             == "\u25A1",
-                             self.field_with_ships[point[0] + 1][point[1]]
-                             == "\u25A1",
-                             self.field_with_ships[point[0]][point[1] - 1]
-                             == "\u25A1")):
-                self.ship_attacked(point)
-            else:
-                self.ship_sunk(point)
-
-        """Down side"""
-        if point[0] == 9 and point[1] in (range(1, 9)):
-            if self.field_with_ships[point[0]][point[1]] == "\u25A1" \
-                    and any((self.field_with_ships[point[0]][point[1] + 1]
-                             == "\u25A1",
-                             self.field_with_ships[point[0] - 1][point[1]]
-                             == "\u25A1",
-                             self.field_with_ships[point[0]][point[1] - 1]
-                             == "\u25A1")):
-                self.ship_attacked(point)
-            else:
-                self.ship_sunk(point)
-
-        """Left side"""
-        if point[0] in range(1, 9) and point[1] == 0:
-            if self.field_with_ships[point[0]][point[1]] == "\u25A1" \
-                    and any((self.field_with_ships[point[0] + 1][point[1]]
-                             == "\u25A1",
-                             self.field_with_ships[point[0] - 1][point[1]]
-                             == "\u25A1",
-                             self.field_with_ships[point[0]][point[1] + 1]
-                             == "\u25A1")):
-                self.ship_attacked(point)
-            else:
-                self.ship_sunk(point)
-
-        """Right side"""
-        if point[0] in range(1, 9) and point[1] == 9:
-            if self.field_with_ships[point[0]][point[1]] == "\u25A1" \
-                    and any((self.field_with_ships[point[0] + 1][point[1]]
-                             == "\u25A1",
-                             self.field_with_ships[point[0] - 1][point[1]]
-                             == "\u25A1",
-                             self.field_with_ships[point[0]][point[1] - 1]
-                             == "\u25A1")):
-                self.ship_attacked(point)
-            else:
-                self.ship_sunk(point)
+    @staticmethod
+    def _validate_field():
+        if Ship.total_number_of_ships != 10:
+            raise ValueError("Ships should be 10")
+        if Ship.type_of_ships["1_decks"] != 4:
+            raise ValueError("Single-deck ships should be 4")
+        if Ship.type_of_ships["2_decks"] != 3:
+            raise ValueError("Double-deck ships should be 3")
+        if Ship.type_of_ships["3_decks"] != 2:
+            raise ValueError("Three-deck ships ships should be 2")
+        if Ship.type_of_ships["4_decks"] != 1:
+            raise ValueError("Four-deck ship ships should be 1")
