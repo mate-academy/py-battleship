@@ -57,11 +57,15 @@ class Battleship:
         self.ships = ships
         # Create a dict `self.field`.
         self.field = {}
+        self.field_creation()
 
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
         # which is located in it
-        for ship in ships:
+
+    # Create a dict `self.field`.
+    def field_creation(self):
+        for ship in self.ships:
             new_ship = Ship(ship[0], ship[1])
             for deck in new_ship.decks:
                 self.field[(deck.row, deck.column)] = new_ship
