@@ -28,7 +28,7 @@ class Ship:
         return self.decks
 
     def get_deck(self, row, column):
-        #Find the corresponding deck in the list
+        # Find the corresponding deck in the list
 
         for deck in self.decks:
             if deck.row == row and deck.column == column:
@@ -86,7 +86,7 @@ class Battleship:
             if key[0] == location[0] and key[1] == location[1]:
 
                 self.field[key].fire(location[0], location[1])
-                #print(key, self.field[key].is_drowned, location)
+
                 if self.field[key].is_drowned is True:
                     return "Sunk!"
 
@@ -115,10 +115,3 @@ if __name__ == '__main__':
     battle_ship.fire((2, 1))
     battle_ship.fire((2, 2))
     battle_ship.fire((2, 3))
-    #battle_ship.fire((4, 3))
-    #battle_ship.fire((4, 5))
-    #battle_ship.fire((5, 5))
-    #battle_ship.fire((4, 6))
-    #battle_ship.fire((9, 5))
-    #battle_ship.fire((9, 6))
-    #battle_ship.fire((9, 5))
