@@ -26,8 +26,8 @@ class Ship:
 
         if self.is_drowned:
             return "Sunk!"
-        else:
-            return "Hit!"
+
+        return "Hit!"
 
 
 class Battleship:
