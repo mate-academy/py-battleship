@@ -27,31 +27,25 @@ class Ship:
 
     def fire(self, row, column):
         deck = self.get_deck(row, column)
-        try:
-            deck.is_alive = False
-            if any([j.is_alive for j in self.decks]) is True:
-                return self.decks
-            self.is_drowned = True
-            return self.is_drowned
-        except AttributeError:
+        if deck is None:
             return
+        deck.is_alive = False
+        if any([j.is_alive for j in self.decks]) is True:
+            return self.decks
+        self.is_drowned = True
+        return self.is_drowned
 
 
 class Battleship:
     def __init__(self, ships):
         self.field = {ship: Ship(ship[0], ship[1]) for ship in ships}
         self.empty_field = [["~" for _ in range(10)] for _ in range(10)]
-        # is_field_empty was created because realization was made
-        # using print_field method which is called in fire method.
-        self.is_field_empty = None
         self.drowned_decks = []
         # Created to check the amount of ships and their decks
         self.total_ships = {4: 0, 3: 0, 2: 0, 1: 0}
+        self.print_field()
 
     def fire(self, location: tuple):
-        if self.is_field_empty is None:
-            self.print_field()
-            self.is_field_empty = "Not Empty"
         x, y = location[0], location[1]
         if self.empty_field[x][y] == "\u25A1":
             self.empty_field[x][y] = "*"
@@ -96,7 +90,6 @@ class Battleship:
 
     def set_ships(self, ship_length: int):
         self.total_ships[ship_length + 1] += 1
-        return
 
     def checking_ship_distance(self):
         for ships in self.field.values():
