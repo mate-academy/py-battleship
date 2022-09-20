@@ -51,7 +51,7 @@ class Battleship:
         self._validate_field()
 
     def save_field(self):
-        """This method assign a ship to every cell(e.g. deck)"""
+        """Assign a ship to every cell(e.g. deck)"""
 
         for ship in self.ships:
             ship_cell = Ship(ship[0], ship[1])
@@ -76,7 +76,7 @@ class Battleship:
             return "Miss!"
 
     def ships_on_field(self):
-        """This method create a matrix 10x10 aka field with ships
+        """Creates a matrix 10x10 aka field with ships
         that corresponds to specific symbols. ~ - empty cell, □ - deck alive,
         * - damaged ship, x - killed ship"""
         new_field = [["~" for i in range(10)] for i in range(10)]
@@ -113,8 +113,8 @@ class Battleship:
         elif [1.0, 1.0, 1.0, 1.0] != input_ships[6:]:
             raise Exception("There should be 4 single-deck ship!")
 
-        """For each ship we book cells around and raise exception
-         if next ship trying to locate in booked cells."""
+        # For each ship we book cells around and raise exception
+        # if next ship trying to locate in booked cells.
         booked_cells_field = []
         ship_check = None
         for deck in self.field.keys():
@@ -133,7 +133,7 @@ class Battleship:
 
     @staticmethod
     def used_cells_deck(deck):
-        """For each deck we book all cells
+        """For each deck book all cells
          around and discard repeated values."""
         used_cells = [[[deck[0] + j, deck[1] + i]
                        for i in range(-1, 2)] for j in range(-1, 2)]
