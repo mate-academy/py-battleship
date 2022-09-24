@@ -88,9 +88,11 @@ class Battleship:
                 cell_list = self._list_cell(ship.decks[i].row,
                                             ship.decks[i].column)
                 for cell in cell_list:
-                    if cell in self.field:
-                        if ship != self.field[cell]:
-                            return False
+                    if cell in self.field and ship != self.field[cell]:
+                        return False
+                if (ship.decks[i].row, ship.decks[i].column) ==\
+                        (ship.decks[i - 1].row, ship.decks[i - 1].column):
+                    continue
         return True
 
     @staticmethod
