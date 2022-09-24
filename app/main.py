@@ -90,8 +90,8 @@ class Battleship:
                 for cell in cell_list:
                     if cell in self.field and ship != self.field[cell]:
                         return False
-                if (ship.decks[i].row, ship.decks[i].column) ==\
-                        (ship.decks[i - 1].row, ship.decks[i - 1].column):
+                if (ship.decks[0].row, ship.decks[0].column) ==\
+                        (ship.decks[- 1].row, ship.decks[- 1].column):
                     continue
         return True
 
