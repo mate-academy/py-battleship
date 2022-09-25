@@ -85,7 +85,8 @@ class Battleship:
         all_ship = set(self.field.values())
         for ship in all_ship:
             for i in range(0, -2, -1):
-                cell_list = self._list_cell(ship.decks[i].row, ship.decks[i].column)
+                cell_list = self._list_cell(ship.decks[i].row,
+                                            ship.decks[i].column)
                 for cell in cell_list:
                     if cell in self.field and ship != self.field[cell]:
                         return False
