@@ -69,7 +69,7 @@ class Battleship:
                 if (i, j) in self.field:
                     deck = self.field[i, j].get_deck(i, j)
                     if deck.is_alive:
-                        print(u"\u25A1", end="\t")
+                        print("\u25A1", end="\t")
                     else:
                         print("x", end="\t")
                 else:
@@ -85,24 +85,27 @@ class Battleship:
         all_ship = set(self.field.values())
         for ship in all_ship:
             for i in range(0, -2, -1):
-                cell_list = self._list_cell(ship.decks[i].row,
-                                            ship.decks[i].column)
+                cell_list = self._list_cell(ship.decks[i].row, ship.decks[i].column)
                 for cell in cell_list:
                     if cell in self.field and ship != self.field[cell]:
                         return False
-                if (ship.decks[0].row, ship.decks[0].column) ==\
-                        (ship.decks[- 1].row, ship.decks[- 1].column):
-                    continue
+                if (ship.decks[0].row, ship.decks[0].column) == (
+                    ship.decks[-1].row,
+                    ship.decks[-1].column,
+                ):
+                    break
         return True
 
     @staticmethod
     def _list_cell(row, column):
-        is_empty = [(row + 1, column),
-                    (row + 1, column + 1),
-                    (row + 1, column - 1),
-                    (row, column + 1),
-                    (row, column - 1),
-                    (row - 1, column),
-                    (row - 1, column + 1),
-                    (row - 1, column - 1)]
+        is_empty = [
+            (row + 1, column),
+            (row + 1, column + 1),
+            (row + 1, column - 1),
+            (row, column + 1),
+            (row, column - 1),
+            (row - 1, column),
+            (row - 1, column + 1),
+            (row - 1, column - 1),
+        ]
         return is_empty
