@@ -8,24 +8,13 @@ class Deck:
 class Ship:
     def __init__(self, start, end, is_drowned=False):
 
-        self.decks = [Deck(*start)]
+        self.decks = []
         self.is_drowned = is_drowned
 
         # adding all ship decks to list:
-        # horizontal ship location
-        if start[0] == end[0]:
-
-            # few-decked ships
-            if start[1] != end[1]:
-                n_decks_after_start = end[1] - start[1]
-                for n in range(1, n_decks_after_start + 1):
-                    self.decks.append(Deck(start[0], start[1] + n))
-
-        # vertical ship location
-        else:
-            n_decks_after_start = end[0] - start[0]
-            for n in range(1, n_decks_after_start + 1):
-                self.decks.append(Deck(start[0] + n, start[1]))
+        for i in range(start[0], end[0] + 1):
+            for j in range(start[1], end[1] + 1):
+                self.decks.append((Deck(i, j)))
 
     def get_deck(self, row, column):
         """
