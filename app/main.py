@@ -24,12 +24,12 @@ class Ship:
             for coords in range(self.start[0], self.end[0] + 1):
                 self.decks.append(Deck(coords, self.start[1]))
 
-    def get_deck(self, row, column) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
-    def fire(self, row, column) -> None:
+    def fire(self, row: int, column: int) -> None:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
         self.get_deck(row, column).is_alive = False
