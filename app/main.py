@@ -20,7 +20,7 @@ class Ship:
         self.decks = []
         self.create_ship()
 
-    def create_ship(self):
+    def create_ship(self) -> None:
         if self.start[0] == self.end[0] and self.start[1] == self.end[1]:
             self.decks.append(Deck(self.start[0], self.end[1]))
 
@@ -32,16 +32,16 @@ class Ship:
             for i in range(self.start[0], self.end[0] + 1):
                 self.decks.append(Deck(i, self.start[1]))
 
-    def get_deck(self, row, column):
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if row == deck.row and column == deck.column:
                 return deck
 
-    def fire(self, row, column):
+    def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
         self.kill_deck()
 
-    def kill_deck(self):
+    def kill_deck(self) -> None:
         for dec in self.decks:
             if dec.is_alive:
                 self.is_drowned = False
