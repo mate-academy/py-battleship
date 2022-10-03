@@ -40,8 +40,8 @@ class Ship:
         self.get_deck(row, column).is_alive = False
         for deck in self.decks:
             if deck.is_alive:
-                break
-        else:
+                self.is_drowned = False
+                return
             self.is_drowned = True
 
 
