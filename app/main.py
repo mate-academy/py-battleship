@@ -22,6 +22,13 @@ class Ship:
         end: tuple[int, int],
         is_drowned: bool = False,
     ) -> None:
+        if start[0] > end[0] or start[1] > end[1]:
+            raise ValueError(
+                f"Invalid ship coordinates: start: {start}, end: {end}. "
+                "Neither x nor y coordinate of the end can be less than "
+                "the corresponding coordinate of the start."
+            )
+
         self.is_drowned = is_drowned
         self.decks = [
             Deck(row, column)
