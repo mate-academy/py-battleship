@@ -28,4 +28,3 @@ def test_battleship():
     assert battle_ship.fire((4, 6)) == "Sunk!"
     assert battle_ship.fire((9, 5)) == "Sunk!"
     assert battle_ship.fire((9, 6)) == "Miss!"
-    assert battle_ship.fire((9, 6)) == "Miss!"

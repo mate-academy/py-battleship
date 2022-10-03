@@ -12,9 +12,9 @@ class Ship:
         self.end = end
         self.is_drowned = is_drowned
         self.decks = []
-        self.create_fleet()
+        self.create_ship()
 
-    def create_fleet(self) -> None:
+    def create_ship(self) -> None:
         if self.start[0] == self.end[0] and self.start[1] == self.end[1]:
             self.decks.append(Deck(self.end[0], self.end[1]))
         elif self.start[0] == self.end[0]:
