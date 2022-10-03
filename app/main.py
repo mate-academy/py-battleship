@@ -109,7 +109,7 @@ class Battleship:
         if self._count_ships() != self.ship_sizes:
             raise ValueError("Incorrect ship sizes.")
 
-        # Definitely refactorable.
+        # This algorithm can definitely be improved.
         # Unfortunately, I'm not in the mood right now...
         coords = list(self.field.keys())
         for i, coord in enumerate(coords[:-1], 1):
