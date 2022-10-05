@@ -5,7 +5,7 @@ class Deck:
     def __init__(self,
                  row: int,
                  column: int,
-                 is_alive=True) -> None:
+                 is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -15,7 +15,7 @@ class Ship:
     def __init__(self,
                  start: tuple,
                  end: tuple,
-                 is_drowned=False) -> None:
+                 is_drowned: bool = False) -> None:
         self.len_ship = round(((start[0] - end[0]
                                 )**2 + (start[1] - end[1])**2)**0.5) + 1
         self.ship = [Deck(end[0], end[1] - i)
@@ -66,37 +66,4 @@ class Battleship(Ship):
             return super().fire(location[0], location[1])
 
         return "Miss!"
-
-
-if __name__ == "__main__":
-    battle_ship = Battleship(
-        ships=[
-            ((0, 0), (0, 3)),
-            ((0, 5), (0, 6)),
-            ((0, 8), (0, 9)),
-            ((2, 0), (4, 0)),
-            ((2, 4), (2, 6)),
-            ((2, 8), (2, 9)),
-            ((9, 9), (9, 9)),
-            ((7, 7), (7, 7)),
-            ((7, 9), (7, 9)),
-            ((9, 7), (9, 7)),
-        ]
-    )
-
-    print(
-        battle_ship.fire((0, 4)),  # Miss!
-        battle_ship.fire((0, 3)),  # Hit!
-        battle_ship.fire((0, 2)),  # Hit!
-        battle_ship.fire((0, 1)),  # Hit!
-        battle_ship.fire((0, 0)),  # Sunk!
-    )
-    print(
-        battle_ship.fire((9, 7)),
-        battle_ship.fire((7, 9)),
-        battle_ship.fire((9, 9)),
-        battle_ship.fire((2, 8)),
-        # battle_ship.fire((2, 9)),
-    )
-
-    battle_ship.print_field()
+    
