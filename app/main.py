@@ -66,4 +66,3 @@ class Battleship(Ship):
             return super().fire(location[0], location[1])
 
         return "Miss!"
-    
