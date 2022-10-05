@@ -62,8 +62,7 @@ class Battleship(Ship):
 
     def fire(self, location: tuple) -> str:
         if self.field[location[0]][location[1]] == "□":
-            self.field[location[0]][location[1]] = "*" \
-                if self.field[location[0]][location[1]] != "x" else "x"
+            self.field[location[0]][location[1]] = "*"
             return super().fire(location[0], location[1])
 
         return "Miss!"
