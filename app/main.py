@@ -1,12 +1,12 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True) -> None:
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple, is_drowned=False) -> None:
+    def __init__(self, start: tuple, end: tuple, is_drowned: bool = False) -> None:
         # Create decks and save them to a list `self.decks`
         self.start = start
         self.end = end
