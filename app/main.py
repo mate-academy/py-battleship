@@ -21,12 +21,15 @@ class Ship:
             if row == deck.row and column == deck.column:
                 return deck
 
-    def fire(self, row: int, column: int) -> None:
+    def fire(self, row: int, column: int) -> bool:
         self.get_deck(row, column).is_alive = False
-        for deck in self.decks:
+        return self.check_is_drowned()
+
+    def check_is_drowned(self) -> bool:
+        if not any(deck.is_alive for deck in self.decks):
             self.is_drowned = True
-            if deck.is_alive:
-                self.is_drowned = False
+
+        return self.is_drowned
 
 
 class Battleship:
