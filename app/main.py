@@ -40,16 +40,14 @@ class Ship:
         self.get_deck(row, column).is_alive = False
         for deck in self.decks:
             if deck.is_alive:
-                self.is_drowned = False
-                break
-            self.is_drowned = True
+                return
+        self.is_drowned = True
 
 
 class Battleship:
     def __init__(self, ships: list) -> None:
-        self.ships = ships
         self.field = {}
-        for ship in self.ships:
+        for ship in ships:
             battle_ship = Ship(ship[0], ship[1])
             for deck in battle_ship.decks:
                 self.field[(deck.row, deck.column)] = battle_ship
