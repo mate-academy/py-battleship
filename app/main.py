@@ -2,7 +2,7 @@ class Deck:
     def __init__(self,
                  row: int,
                  column: int,
-                 is_alive: bool = True):
+                 is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -12,7 +12,7 @@ class Ship:
     def __init__(self,
                  start: tuple,
                  end: tuple,
-                 is_drowned: bool = False):
+                 is_drowned: bool = False) -> None:
 
         self.start = start
         self.end = end
@@ -49,7 +49,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list):
+    def __init__(self, ships: list) -> None:
         self.ships = ships
         self.field = {}
         for ship in self.ships:
