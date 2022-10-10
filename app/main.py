@@ -42,10 +42,9 @@ class Ship:
         self.kill_deck()
 
     def kill_deck(self) -> None:
-        for dec in self.decks:
-            if dec.is_alive:
-                self.is_drowned = False
-                break
+        if any([dec.is_alive for dec in self.decks]):
+            self.is_drowned = False
+        else:
             self.is_drowned = True
 
 
