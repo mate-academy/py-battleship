@@ -35,12 +35,10 @@ class Ship:
         self.get_deck(row, column).is_alive = False
         self.check_if_drowned()
 
-    def check_if_drowned(self) -> None:
-        for deck in self.decks:
-            if deck.is_alive:
-                self.is_drowned = False
-                return
+    def check_if_drowned(self) -> bool:
+        if not any(deck.is_alive for deck in self.decks):
             self.is_drowned = True
+        return self.is_drowned
 
 
 class Battleship:
