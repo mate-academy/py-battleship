@@ -22,7 +22,9 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
+        self.check_if_drowned()
 
+    def check_if_drowned(self) -> None:
         for deck in self.decks:
             self.is_drowned = True
             if deck.is_alive:
@@ -35,7 +37,7 @@ class Battleship:
         self.field = {}
 
         for ship in ships:
-            battle_ship = Ship(ship[0], ship[1])
+            battle_ship = Ship(*ship)
             for deck in battle_ship.decks:
                 self.field[(deck.row, deck.column)] = battle_ship
 
@@ -43,7 +45,7 @@ class Battleship:
         if location not in self.field:
             return "Miss!"
 
-        self.field[location].fire(location[0], location[1])
+        self.field[location].fire(*location)
 
         if self.field[location].is_drowned:
             return "Sunk!"
