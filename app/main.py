@@ -42,11 +42,11 @@ class Battleship:
         return self.field[location].fire(*location)
 
     def draw_field(self) -> None:
-        for i in range(10):
-            for j in range(10):
-                cell = (i, j)
+        for row in range(10):
+            for column in range(10):
+                cell = (row, column)
                 if cell in self.field:
-                    if self.field[cell].deck_alive(i, j):
+                    if self.field[cell].deck_alive(row, column):
                         print("□", end="")
                     else:
                         print("*", end="")
