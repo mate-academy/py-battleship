@@ -11,15 +11,12 @@ class Ship:
 
         self._fired_decks.add(cell)
         self._count_alive_decks -= 1
-        return {0: "Sunk!"}.get(self._count_alive_decks, "Hit!")
+        return "Hit!" if self._count_alive_decks else "Sunk!"
 
     def deck_alive(self, row: int, column: int) -> bool:
         cell = (row, column)
 
-        if cell in self._fired_decks:
-            return False
-
-        return True
+        return cell not in self._fired_decks
 
 
 class Battleship:
