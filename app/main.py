@@ -1,34 +1,55 @@
-class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
-
-
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    def __init__(self, start: tuple[int], end: tuple[int]) -> None:
+        self._count_alive_decks = (end[0] - start[0]) + (end[1] - start[1]) + 1
+        self._fired_decks = set()
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    def fire(self, row: int, column: int) -> str:
+        cell = (row, column)
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+        if cell in self._fired_decks:
+            return "Miss!"
+
+        self._fired_decks.add(cell)
+        self._count_alive_decks -= 1
+        return {0: "Sunk!"}.get(self._count_alive_decks, "Hit!")
+
+    def deck_alive(self, row: int, column: int) -> bool:
+        cell = (row, column)
+
+        if cell in self._fired_decks:
+            return False
+
+        return True
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: list[tuple]) -> None:
+        self.field = {}
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+        for start, end in ships:
+            ship = Ship(start, end)
+
+            for x in range(start[1], end[1] + 1):
+                self.field[(start[0], x)] = ship
+
+            for y in range(start[0], end[0] + 1):
+                self.field[(y, start[1])] = ship
+
+    def fire(self, location: tuple) -> str:
+        if location not in self.field:
+            return "Miss!"
+
+        return self.field[location].fire(*location)
+
+    def draw_field(self) -> None:
+        for i in range(10):
+            for j in range(10):
+                cell = (i, j)
+                if cell in self.field:
+                    if self.field[cell].deck_alive(i, j):
+                        print("□", end='')
+                    else:
+                        print("*", end='')
+                else:
+                    print("~", end='')
+            print()
