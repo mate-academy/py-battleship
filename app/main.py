@@ -29,11 +29,11 @@ class Battleship:
         for start, end in ships:
             ship = Ship(start, end)
 
-            for x in range(start[1], end[1] + 1):
-                self.field[(start[0], x)] = ship
+            for coord_x in range(start[1], end[1] + 1):
+                self.field[(start[0], coord_x)] = ship
 
-            for y in range(start[0], end[0] + 1):
-                self.field[(y, start[1])] = ship
+            for coord_y in range(start[0], end[0] + 1):
+                self.field[(coord_y, start[1])] = ship
 
     def fire(self, location: tuple) -> str:
         if location not in self.field:
@@ -47,9 +47,9 @@ class Battleship:
                 cell = (i, j)
                 if cell in self.field:
                     if self.field[cell].deck_alive(i, j):
-                        print("□", end='')
+                        print("□", end="")
                     else:
-                        print("*", end='')
+                        print("*", end="")
                 else:
-                    print("~", end='')
+                    print("~", end="")
             print()
