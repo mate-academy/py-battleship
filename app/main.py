@@ -29,7 +29,6 @@ class Ship:
             self.is_drowned = True
             if deck.is_alive:
                 self.is_drowned = False
-                return
 
 
 class Battleship:
