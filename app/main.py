@@ -20,11 +20,11 @@ class Ship:
         if self.start[0] == self.end[0] and self.start[1] == self.end[1]:
             self.decks = [Deck(self.start[0], self.start[1])]
         elif self.start[0] == self.end[0]:
-            for y in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(self.start[0], y))
+            for y_axis in range(self.start[1], self.end[1] + 1):
+                self.decks.append(Deck(self.start[0], y_axis))
         elif self.start[1] == self.end[1]:
-            for x in range(self.start[0], self.end[0] + 1):
-                self.decks.append(Deck(x, self.start[1]))
+            for x_axis in range(self.start[0], self.end[0] + 1):
+                self.decks.append(Deck(x_axis, self.start[1]))
 
     def get_deck(self,
                  row: int,
