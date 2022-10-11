@@ -19,11 +19,10 @@ class Ship:
         self.decks = []
         if self.start[0] == self.end[0] and self.start[1] == self.end[1]:
             self.decks = [Deck(self.start[0], self.start[1])]
-            return
-        if self.start[0] == self.end[0]:
+        elif self.start[0] == self.end[0]:
             for y in range(self.start[1], self.end[1] + 1):
                 self.decks.append(Deck(self.start[0], y))
-        if self.start[1] == self.end[1]:
+        elif self.start[1] == self.end[1]:
             for x in range(self.start[0], self.end[0] + 1):
                 self.decks.append(Deck(x, self.start[1]))
 
@@ -38,10 +37,7 @@ class Ship:
              row: int,
              column: int) -> None:
         self.get_deck(row, column).is_alive = False
-        for deck in self.decks:
-            if deck.is_alive:
-                self.is_drowned = False
-                return
+        if not any([deck.is_alive for deck in self.decks]):
             self.is_drowned = True
 
 
