@@ -32,9 +32,11 @@ class Ship:
             row: int,
             column: int
     ) -> Deck:
-        for deck in self.decks:
-            if deck.row == row and deck.column == column:
-                return deck
+        return next(
+            deck
+            for deck in self.decks
+            if deck.row == row and deck.column == column
+        )
 
     def fire(
             self,
