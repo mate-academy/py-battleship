@@ -14,10 +14,8 @@ class Ship:
                  end: tuple[int],
                  is_drowned: bool = False) -> None:
         if not (start[0] == end[0] or start[1] == end[1]):
-            raise ValueError("Ships shouldn't be located "
-                             "in the neighboring cells "
-                             "(even if cells are neighbors "
-                             "by diagonal) and has length 1 to 4")
+            raise ValueError("Decks shouldn't be located "
+                             "by diagonal)")
 
         self.decks = {(i, j): Deck(i, j)
                       for i in range(start[0], end[0] + 1)
@@ -45,7 +43,7 @@ class Battleship:
 
     def fire(self, location: tuple) -> str:
 
-        if not self.field.get(location):
+        if location not in self.field:
             return "Miss!"
 
         self.field[location].fire(*location)
@@ -71,13 +69,16 @@ class Battleship:
                     print(u"\u25A1" + "\t", end="")
             print("\n")
 
-    def _validate_field(self) -> None:
+    def _validate_ship_count(self) -> None:
         # validate data is dict{decks: count of ship}
-        validate = {4: 1, 3: 2, 2: 3, 1: 4}
+        correct = {4: 1, 3: 2, 2: 3, 1: 4}
         current = {4: 0, 3: 0, 2: 0, 1: 0}
 
         for ship in self.ships.values():
             current[len(ship.decks)] += 1
 
-        if current != validate:
+        if current != correct:
             raise ValueError("Wrong count of ships")
+
+    def _validate_field(self) -> None:
+        self._validate_ship_count()
