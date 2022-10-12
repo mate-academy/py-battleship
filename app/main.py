@@ -22,15 +22,11 @@ class Ship:
     def get_deck(self, row: int, column: int) -> Deck:
         return self.decks[(row, column)]
 
-    def fire(self, row: int, column: int) -> str:
+    def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
 
-        if not any(deck.is_alive
-                   for deck in self.decks.values()):
+        if not any(deck.is_alive for deck in self.decks.values()):
             self.is_drowned = True
-            return "Sunk!"
-
-        return "Hit!"
 
 
 class Battleship:
@@ -40,17 +36,15 @@ class Battleship:
         self.field.update({deck: ship
                            for ship in self.ships
                            for deck in ship.decks.keys()})
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
 
     def fire(self, location: tuple[int]) -> str:
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
+
         if not self.field.get(location):
             return "Miss!"
 
-        return self.field[location].fire(*location)
+        self.field[location].fire(*location)
+
+        if self.field[location].is_drowned:
+            return "Sunk!"
+
+        return "Hit!"
