@@ -1,11 +1,16 @@
 class Deck:
-    def __init__(self, row: int, column: int, is_alive=True) -> None:
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.deck = [row, column]
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple, is_drowned=False) -> None:
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
         self.decks = []
         self.is_drowned = is_drowned
         for row in range(start[0], end[0] + 1):
@@ -27,11 +32,14 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships) -> None:
-        self.field = {(ship[0], ship[1]): Ship(ship[0], ship[1]) for ship in ships}
+    def __init__(self, ships: tuple) -> None:
+        self.field = {(ship[0], ship[1]): Ship(ship[0], ship[1])
+                      for ship in ships}
 
     def fire(self, location: tuple) -> str:
-        for k, v in self.field.items():
-            if k[0][0] <= location[0] <= k[1][0] and k[0][1] <= location[1] <= k[1][1]:
-                return self.field[k].fire(*location)
+        for key in self.field.keys():
+            if (
+                    key[0][0] <= location[0] <= key[1][0]
+                    and key[0][1] <= location[1] <= key[1][1]):
+                return self.field[key].fire(*location)
         return "Miss!"
