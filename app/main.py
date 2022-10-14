@@ -1,34 +1,37 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
+    def __init__(self, row: int, column: int, is_alive=True) -> None:
+        self.deck = [row, column]
+        self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    def __init__(self, start: tuple, end: tuple, is_drowned=False) -> None:
+        self.decks = []
+        self.is_drowned = is_drowned
+        for row in range(start[0], end[0] + 1):
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(row, column))
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    def get_deck(self, row: int, column: int) -> (None, Deck):
+        for deck in self.decks:
+            if deck.deck == [row, column]:
+                return deck
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    def fire(self, row: int, column: int) -> str:
+        self.get_deck(row, column).is_alive = False
+        print([deck.is_alive for deck in self.decks])
+        if any(deck.is_alive for deck in self.decks) is True:
+            return "Hit!"
+        self.is_drowned = False
+        return "Sunk!"
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships) -> None:
+        self.field = {(ship[0], ship[1]): Ship(ship[0], ship[1]) for ship in ships}
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def fire(self, location: tuple) -> str:
+        for k, v in self.field.items():
+            if k[0][0] <= location[0] <= k[1][0] and k[0][1] <= location[1] <= k[1][1]:
+                return self.field[k].fire(*location)
+        return "Miss!"
