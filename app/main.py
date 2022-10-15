@@ -17,6 +17,8 @@ class Ship:
             raise ValueError("Decks shouldn't be located "
                              "by diagonal)")
 
+        self.start = start
+        self.end = end
         self.decks = {(i, j): Deck(i, j)
                       for i in range(start[0], end[0] + 1)
                       for j in range(start[1], end[1] + 1)}
@@ -69,7 +71,7 @@ class Battleship:
                     print(u"\u25A1" + "\t", end="")
             print("\n")
 
-    def _validate_ship_count(self) -> None:
+    def _validate_ships_count(self) -> None:
         # validate data is dict{decks: count of ship}
         correct = {4: 1, 3: 2, 2: 3, 1: 4}
         current = {4: 0, 3: 0, 2: 0, 1: 0}
@@ -80,5 +82,23 @@ class Battleship:
         if current != correct:
             raise ValueError("Wrong count of ships")
 
+    def _validate_ships_location(self) -> None:
+        blocked_points = set()
+        for ship in self.ships.values():
+
+            for point in ship.decks.keys():
+                if point in blocked_points:
+                    raise ValueError("ships shouldn't be "
+                                     "located in the neighboring cells")
+
+            for point_x in range(min(ship.start[0], ship.end[0]) - 1,
+                                 max(ship.start[0], ship.end[0]) + 2):
+
+                for point_y in range(min(ship.start[1], ship.end[1]) - 1,
+                                     max(ship.start[1], ship.end[1]) + 2):
+
+                    blocked_points.add((point_x, point_y))
+
     def _validate_field(self) -> None:
-        self._validate_ship_count()
+        self._validate_ships_count()
+        self._validate_ships_location()
