@@ -54,10 +54,8 @@ class Battleship:
             self.field[location].fire(location[0], location[1])
             if self.field[location].is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
 
     def print_field(self) -> None:
         field = [["~" for _ in range(10)] for _ in range(10)]
