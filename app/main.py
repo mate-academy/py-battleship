@@ -24,10 +24,9 @@ class Ship:
 
     def fire(self, row: int, column: int) -> str:
         self.get_deck(row, column).is_alive = False
-        print([deck.is_alive for deck in self.decks])
         if any(deck.is_alive for deck in self.decks) is True:
             return "Hit!"
-        self.is_drowned = False
+        self.is_drowned = True
         return "Sunk!"
 
 
