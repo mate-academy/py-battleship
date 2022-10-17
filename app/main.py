@@ -1,3 +1,15 @@
+class CustomError(Exception):
+    pass
+
+
+class ShipCountError(CustomError):
+    pass
+
+
+class CollisionError(CustomError):
+    pass
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -63,7 +75,7 @@ class Battleship:
             ship = Ship(start, end)
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
-        print(self._validate_field())
+        self._validate_field()
 
     def fire(self, location: tuple) -> str:
         # This function should check whether the location
@@ -76,21 +88,8 @@ class Battleship:
         return "Miss!"
 
     def print_field(self) -> str:
-        field = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6),
-                 (0, 7), (0, 8), (0, 9), (1, 0), (1, 1), (1, 2), (1, 3),
-                 (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (2, 0),
-                 (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7),
-                 (2, 8), (2, 9), (3, 0), (3, 1), (3, 2), (3, 3), (3, 4),
-                 (3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (4, 0), (4, 1),
-                 (4, 2), (4, 3), (4, 4), (4, 5), (4, 6), (4, 7), (4, 8),
-                 (4, 9), (5, 0), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5),
-                 (5, 6), (5, 7), (5, 8), (5, 9), (6, 0), (6, 1), (6, 2),
-                 (6, 3), (6, 4), (6, 5), (6, 6), (6, 7), (6, 8), (6, 9),
-                 (7, 0), (7, 1), (7, 2), (7, 3), (7, 4), (7, 5), (7, 6),
-                 (7, 7), (7, 8), (7, 9), (8, 0), (8, 1), (8, 2), (8, 3),
-                 (8, 4), (8, 5), (8, 6), (8, 7), (8, 8), (8, 9), (9, 0),
-                 (9, 1), (9, 2), (9, 3), (9, 4), (9, 5), (9, 6), (9, 7),
-                 (9, 8), (9, 9)]
+        field = [(row, column) for row in range(0, 10)
+                 for column in range(0, 10)]
         output = ""
         num = 0
         for cell in field:
@@ -115,14 +114,9 @@ class Battleship:
             ship_decks = []
             for deck in ship.decks:
                 ship_decks.append((deck.row, deck.column))
-                next_cells.append((deck.row - 1, deck.column - 1))
-                next_cells.append((deck.row - 1, deck.column))
-                next_cells.append((deck.row - 1, deck.column + 1))
-                next_cells.append((deck.row, deck.column - 1))
-                next_cells.append((deck.row, deck.column + 1))
-                next_cells.append((deck.row + 1, deck.column - 1))
-                next_cells.append((deck.row + 1, deck.column))
-                next_cells.append((deck.row + 1, deck.column + 1))
+                next_cells = [(deck.row + row, deck.column + column)
+                              for row in range(-1, 2)
+                              for column in range(-1, 2)]
             only_next_cells = []
             for cell in next_cells:
                 if cell not in ship_decks:
@@ -131,26 +125,26 @@ class Battleship:
                 if cell in all_decks_coord_list:
                     return "Stop"
 
-    def _validate_field(self) -> str:
+    def _validate_field(self) -> None:
         list_of_ships = set(self.field.values())
 
+        # Check total number of the ships
         if len(list_of_ships) != 10:
-            return "The total number of the ships should be 10"
+            raise ShipCountError("The total number of the ships should be 10")
 
+        # Check count of each type of ships
         check_dict = {1: 0, 2: 0, 3: 0, 4: 0}
         for ship in list_of_ships:
             check_dict[len(ship.decks)] += 1
-        if check_dict[1] != 4:
-            return "There should be 4 single-deck ships"
-        if check_dict[2] != 3:
-            return "There should be 3 double-deck ships"
-        if check_dict[3] != 2:
-            return "There should be 2 three-deck ships"
-        if check_dict[4] != 1:
-            return "There should be 1 four-deck ship"
+        num = 4
+        for i in range(1, len(check_dict) + 1):
+            if check_dict[i] != num:
+                raise ShipCountError(f"There should be {num}"
+                                     f" ship(s) with {i} deck ")
+            num -= 1
 
+        # Collision check
         if self._collision_check(list_of_ships) == "Stop":
-            return "Ships shouldn't be located in the neighboring" \
-                   " cells (even if cells are neighbors by diagonal)"
-
-        return "Everything is OK!"
+            raise CollisionError("Ships shouldn't be located in the"
+                                 " neighboring cells (even if cells"
+                                 " are neighbors by diagonal)")
