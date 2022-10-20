@@ -24,7 +24,7 @@ class Ship:
 
     def fire(self, row: int, column: int) -> str:
         self.get_deck(row, column).is_alive = False
-        if any(deck.is_alive for deck in self.decks) is True:
+        if any(deck.is_alive for deck in self.decks):
             return "Hit!"
         self.is_drowned = True
         return "Sunk!"
@@ -38,7 +38,8 @@ class Battleship:
     def fire(self, location: tuple) -> str:
         for key in self.field.keys():
             if (
-                    key[0][0] <= location[0] <= key[1][0]
-                    and key[0][1] <= location[1] <= key[1][1]):
+                key[0][0] <= location[0] <= key[1][0]
+                and key[0][1] <= location[1] <= key[1][1]
+            ):
                 return self.field[key].fire(*location)
         return "Miss!"
