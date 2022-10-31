@@ -18,7 +18,8 @@ class Ship:
         self.decks = self.decks_method()
 
     def decks_method(self) -> list:
-        return [(self.start[0], self.start[1] + i) if self.start[1] != self.end[1]
+        return [(self.start[0], self.start[1] + i)
+                if self.start[1] != self.end[1]
                 else (self.start[0] + i, self.start[1])
                 for i in range((self.end[1] - self.start[1] + 1)
                                + (self.end[0] - self.start[0]))]
@@ -44,7 +45,7 @@ class Battleship:
         self.field = {}
         self.field_method()
 
-    def field_method(self):
+    def field_method(self) -> None:
         for ship in self.ships:
             new_ship = Ship(ship[0], ship[1])
             for deck in new_ship.decks:
