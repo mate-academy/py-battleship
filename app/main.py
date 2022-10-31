@@ -15,10 +15,13 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = [(start[0], start[1] + i) if start[1] != end[1]
-                      else (start[0] + i, start[1])
-                      for i in range((end[1] - start[1] + 1)
-                                     + (end[0] - start[0]))]
+        self.decks = self.decks_method()
+
+    def decks_method(self) -> list:
+        return [(self.start[0], self.start[1] + i) if self.start[1] != self.end[1]
+                else (self.start[0] + i, self.start[1])
+                for i in range((self.end[1] - self.start[1] + 1)
+                               + (self.end[0] - self.start[0]))]
 
     def get_deck(self, row: int, column: int) -> None:
         for deck in self.decks:
@@ -37,8 +40,12 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: tuple) -> None:
+        self.ships = ships
         self.field = {}
-        for ship in ships:
+        self.field_method()
+
+    def field_method(self):
+        for ship in self.ships:
             new_ship = Ship(ship[0], ship[1])
             for deck in new_ship.decks:
                 self.field[deck] = new_ship
