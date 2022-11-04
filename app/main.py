@@ -15,24 +15,20 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        # Create decks and save them to a list `self.decks`
         self.decks: list = []
         for row in range(start[0], end[0] + 1):
             for column in range(start[1], end[1] + 1):
                 self.decks.append(Deck(row, column))
 
     def get_deck(self, row: int, column: int) -> Deck:
-        # Find the corresponding deck in the list
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        # Change the `is_alive` status of the deck
         deck_fire = self.get_deck(row, column)
         deck_fire.is_alive = False
 
-        # And update the `is_drowned` value if it's needed
         is_alive: bool = False
         for deck in self.decks:
             if deck.is_alive:
@@ -44,10 +40,6 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
         self.ships: list = []
         self.field: dict = {}
         for ship_coord in ships:
@@ -62,10 +54,6 @@ class Battleship:
             exit()
 
     def fire(self, location: tuple) -> str:
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
         if location in self.field.keys():
             ship = self.field[location]
             ship.fire(*location)
@@ -79,20 +67,15 @@ class Battleship:
         end_value: str = "     "
         for row in range(10):
             for col in range(10):
-                if (row, col) not in self.field.keys():
-                    print("~", end=end_value)
+                if (row, col) in self.field.keys():
+                    if self.field[(row, col)].is_drowned:
+                        print("x", end=end_value)
+                    elif self.field[row, col].get_deck(row, col).is_alive:
+                        print(u"\u25A1", end=end_value)
+                    else:
+                        print("*", end=end_value)
                 else:
-                    for coord, ship in self.field.items():
-                        if (row, col) == coord:
-                            if ship.is_drowned:
-                                print("x", end=end_value)
-                            else:
-                                for deck in ship.decks:
-                                    if (row, col) == (deck.row, deck.column):
-                                        if deck.is_alive:
-                                            print(u"\u25A1", end=end_value)
-                                        else:
-                                            print("*", end=end_value)
+                    print("~", end=end_value)
             print("\n")
 
     def _validate_field(self) -> None:
