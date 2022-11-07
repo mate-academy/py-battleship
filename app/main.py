@@ -1,19 +1,19 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True) -> None:
+    def __init__(self, row: int, column: int, is_alive=True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False) -> None:
+    def __init__(self, start: tuple, end: tuple, is_drowned=False) -> None:
         self.is_drowned = is_drowned
         self.decks = []
         for row in range(start[0], end[0] + 1):
             for column in range(start[1], end[1] + 1):
                 self.decks.append(Deck(row, column))
 
-    def get_deck(self, row, column) -> object:
+    def get_deck(self, row: int, column: int) -> object:
         for deck in self.decks:
             if (deck.row, deck.column) == (row, column):
                 return deck
@@ -28,7 +28,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships) -> None:
+    def __init__(self, ships: list) -> None:
         self.field = {}
         for ship in ships:
             battleship = Ship(ship[0], ship[1])
