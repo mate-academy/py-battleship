@@ -15,9 +15,9 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = self.decks_method()
+        self.decks = self.checking_decks()
 
-    def decks_method(self) -> list:
+    def checking_decks(self) -> list:
         return [(self.start[0], self.start[1] + i)
                 if self.start[1] != self.end[1]
                 else (self.start[0] + i, self.start[1])
@@ -43,9 +43,9 @@ class Battleship:
     def __init__(self, ships: tuple) -> None:
         self.ships = ships
         self.field = {}
-        self.field_method()
+        self.create_field()
 
-    def field_method(self) -> None:
+    def create_field(self) -> None:
         for ship in self.ships:
             new_ship = Ship(ship[0], ship[1])
             for deck in new_ship.decks:
