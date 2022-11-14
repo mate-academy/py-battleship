@@ -15,6 +15,10 @@ class Ship:
                  end: tuple,
                  is_drowned: bool = False) -> None:
         self.decks = []
+        self.is_drowned = is_drowned
+        self.deck_add(start, end)
+
+    def deck_add(self, start: tuple, end: tuple) -> None:
         if start[0] == end[0]:
             for column in range(start[1], end[1] + 1):
                 self.decks.append(Deck(start[0], column))
@@ -23,7 +27,6 @@ class Ship:
                 self.decks.append(Deck(row, end[1]))
         elif start[0] == end[0] and start[1] == end[1]:
             self.decks.append(Deck(start[0], end[1]))
-        self.is_drowned = is_drowned
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
@@ -37,9 +40,18 @@ class Ship:
 
 
 class Battleship:
-    def _add_cell_ship(self, row: tuple, column: tuple, ship: Ship) -> None:
-        self.field[(row, column)] = ship
-        self.desk[(row, column)] = "\u25A0"
+    def __init__(self, ships: list) -> None:
+        self.ships = ships
+        self.desk = {}
+        self.field_filling()
+        self.field = {}
+        self.ship_add(ships)
+        self._validate_field()
+
+    def field_filling(self) -> None:
+        for row in range(10):
+            for column in range(10):
+                self.desk[(row, column)] = "\u25A1"
 
     def _validate_field(self) -> None:
         len_ships = {1: 0, 2: 0, 3: 0, 4: 0}
@@ -66,13 +78,7 @@ class Battleship:
         elif len_ships[4] != 1:
             raise ShipError("There should be 1 four-deck ships")
 
-    def __init__(self, ships: dict) -> None:
-        self.ships = ships
-        self.desk = {}
-        for row in range(10):
-            for column in range(10):
-                self.desk[(row, column)] = "\u25A1"
-        self.field = {}
+    def ship_add(self, ships: list) -> None:
         for ship in ships:
             new_ship = Ship(ship[0], ship[1])
             if ship[0][0] == ship[1][0]:
@@ -83,7 +89,10 @@ class Battleship:
                     self._add_cell_ship(row, ship[1][1], new_ship)
             elif ship[0][0] == ship[1][0] and ship[0][1] == ship[1][1]:
                 self._add_cell_ship(ship[0][0], ship[0][1], new_ship)
-        self._validate_field()
+
+    def _add_cell_ship(self, row: int, column: int, ship: Ship) -> None:
+        self.field[(row, column)] = ship
+        self.desk[(row, column)] = "\u25A0"
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
@@ -102,7 +111,6 @@ class Battleship:
 
     def print_field(self) -> None:
         for row in range(10):
-            print()
             for column in range(10):
-                print(self.desk[(row, column)], "   ", end="")
+                print(self.desk[(row, column)], " ", end="")
             print()
