@@ -17,13 +17,14 @@ class Ship:
                       ]
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> any:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        self.get_deck(row, column).is_alive = False
+        deck = self.get_deck(row, column)
+        deck.is_alive = False
         for deck in self.decks:
             self.is_drowned = True
             if deck.is_alive:
