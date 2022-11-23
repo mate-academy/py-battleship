@@ -1,8 +1,8 @@
-class NumberShips(Exception):
+class NumberOfShipsDeck(Exception):
     pass
 
 
-class FleetSize(Exception):
+class TotalNumberOfTheShips(Exception):
     pass
 
 
@@ -64,7 +64,7 @@ class Battleship:
 
     def _validate_field(self) -> None:
         if not len(self.ships) == 10:
-            raise FleetSize("Total number ships should be 10")
+            raise TotalNumberOfTheShips("Total number ships should be 10")
 
         ships_ok = {"single_deck_ship": 4,
                     "double_deck_ship": 3,
@@ -88,11 +88,11 @@ class Battleship:
                 ships["single_deck_ship"] += 1
 
         if ships_ok != ships:
-            raise NumberShips("In game you should have "
-                              "4 single_deck_ship, "
-                              "3 double_deck_ship, "
-                              "2 three_deck_ship, "
-                              "1 four_deck_ship")
+            raise NumberOfShipsDeck("In game you should have "
+                                    "4 single_deck_ship, "
+                                    "3 double_deck_ship, "
+                                    "2 three_deck_ship, "
+                                    "1 four_deck_ship")
 
     def calculate_ships(self) -> None:
         for ship in self.ships:
@@ -128,6 +128,5 @@ class Battleship:
             ship.fire(location[0], location[1])
             if ship.is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
+            return "Hit!"
         return "Miss!"
