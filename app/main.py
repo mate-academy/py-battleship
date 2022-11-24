@@ -1,8 +1,8 @@
-class NumberOfShipsDeckErrors(Exception):
+class NumberOfShipsDeckError(Exception):
     pass
 
 
-class TotalNumberOfTheShipsErrors(Exception):
+class TotalNumberOfTheShipsError(Exception):
     pass
 
 
