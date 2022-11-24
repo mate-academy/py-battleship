@@ -64,7 +64,7 @@ class Battleship:
 
     def _validate_field(self) -> None:
         if not len(self.ships) == 10:
-            raise TotalNumberOfTheShipsErrors(
+            raise TotalNumberOfTheShipsError(
                 "Total number ships should be 10"
             )
 
@@ -90,11 +90,11 @@ class Battleship:
                 ships["single_deck_ship"] += 1
 
         if ships_ok != ships:
-            raise NumberOfShipsDeckErrors("In game you should have "
-                                          "4 single_deck_ship, "
-                                          "3 double_deck_ship, "
-                                          "2 three_deck_ship, "
-                                          "1 four_deck_ship")
+            raise NumberOfShipsDeckError("In game you should have "
+                                         "4 single_deck_ship, "
+                                         "3 double_deck_ship, "
+                                         "2 three_deck_ship, "
+                                         "1 four_deck_ship")
 
     def calculate_ships(self) -> None:
         for ship in self.ships:
