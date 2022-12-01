@@ -11,11 +11,12 @@ class Deck:
 
 
 class Ship:
-    def __init__(self,
-                 start: tuple,
-                 end: tuple,
-                 is_drowned: bool = False
-                 ) -> None:
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
         self.decks = []
         self.start = start
         self.end = end
@@ -35,7 +36,7 @@ class Ship:
         for deck in self.decks:
             if not deck.is_alive:
                 self.is_drowned = True
-            if deck.is_alive:
+            else:
                 self.is_drowned = False
                 break
 
