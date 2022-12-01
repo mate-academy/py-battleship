@@ -30,13 +30,14 @@ class Ship:
             self,
             start: tuple,
             end: tuple,
-            is_drowned: bool = False) -> None:
+            is_drowned: bool = False
+    ) -> None:
         """Create decks and save them to a list `self.decks`"""
         self.is_drowned = is_drowned
         self.decks = []
         for row in range(start[0], end[0] + 1):
-            for col in range(start[1], end[1] + 1):
-                self.decks.append(Deck(row, col))
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(row, column))
 
     def get_deck(self, row: int, column: int) -> Union[Deck, None]:
         for deck in self.decks:
