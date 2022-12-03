@@ -9,7 +9,9 @@ class Ship:
     def __init__(self,
                  start: tuple,
                  end: tuple,
-                 is_drowned: bool = False) -> None:
+                 is_drowned: bool = False
+                 ) -> None:
+
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
@@ -20,12 +22,14 @@ class Ship:
             return
         if self.start[0] == self.end[0]:
             for num in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(row=self.start[0],
-                                       column=num))
+                self.decks.append(
+                    Deck(row=self.start[0],
+                         column=num))
         else:
             for num in range(self.start[0], self.end[0] + 1):
-                self.decks.append(Deck(row=num,
-                                       column=self.start[1]))
+                self.decks.append(
+                    Deck(row=num,
+                         column=self.start[1]))
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
@@ -56,5 +60,4 @@ class Battleship:
         ship.fire(location[0], location[1])
         if not ship.is_drowned:
             return "Hit!"
-        else:
-            return "Sunk!"
+        return "Sunk!"
