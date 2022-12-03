@@ -48,6 +48,7 @@ class Ship:
 class Battleship:
     def __init__(self, ships: list) -> None:
         self.field = {}
+        self._validate_input()
         for ship in ships:
             ship = Ship(start=ship[0], end=ship[1])
             for deck in ship.decks:
@@ -61,3 +62,34 @@ class Battleship:
         if not ship.is_drowned:
             return "Hit!"
         return "Sunk!"
+
+    def _validate_input(self) -> None:
+        ships = set(self.field.values())
+        if len(ships) > 10:
+            raise Exception("The total number of the ships should be 10")
+        if len(ships) == 10:
+            dec_count = {1: 0, 2: 0, 3: 0, 4: 0}
+            for ship in ships:
+                dec_count[len(ship.decks)] += 1
+            limit = 4
+            for key, value in dec_count.items():
+                if key != limit:
+                    raise Exception("Check number of ships "
+                                    "or decks of the ships")
+                limit -= 1
+
+    def print_field(self) -> list:
+        battle_field = [["~" for _ in range(10)] for _ in range(10)]
+        for deck in self.field.keys():
+            battle_field[deck[0]][deck[1]] = "□"
+        for ship in set(self.field.values()):
+            for deck_ in ship.decks:
+                if not deck_.is_alive and ship.is_drowned is False:
+                    battle_field[deck_.row][deck_.column] = "*"
+                if not deck_.is_alive and ship.is_drowned is True:
+                    battle_field[deck_.row][deck_.column] = "x"
+        for row in battle_field:
+            for element in row:
+                print(element, "   ", end=" ")
+            print("\n")
+        return battle_field
