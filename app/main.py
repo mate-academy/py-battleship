@@ -21,11 +21,13 @@ class Ship:
     def create_decks(self) -> list:
         diff_row = self.end.row - self.start.row
         diff_column = self.end.column - self.start.column
-        return [Deck(self.start.row + i, self.start.column)
-                if diff_row != 0
-                else Deck(self.start.row, self.start.column + j)
-                for j in range(diff_column + 1)
-                for i in range(diff_row + 1)]
+        return [
+            Deck(self.start.row + i, self.start.column)
+            if diff_row != 0
+            else Deck(self.start.row, self.start.column + j)
+            for j in range(diff_column + 1)
+            for i in range(diff_row + 1)
+        ]
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
