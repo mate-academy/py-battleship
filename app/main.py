@@ -8,11 +8,15 @@ class Deck:
 class Ship:
     def __init__(self, start: tuple, end: tuple,
                  is_drowned: bool = False) -> None:
-        self.decks = []
         self.is_drowned = is_drowned
-        for row in range(start[0], end[0] + 1):
-            for column in range(start[1], end[1] + 1):
-                self.decks.append(Deck(row, column))
+        self.decks = self.create_decks(start, end)
+
+    @staticmethod
+    def create_decks(start: tuple, end: tuple) -> list:
+        return [
+            Deck(row, column) for column in range(start[1], end[1] + 1)
+            for row in range(start[0], end[0] + 1)
+        ]
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
@@ -30,11 +34,16 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list) -> None:
-        self.field = {}
+        self.field = self.create_ships(ships)
+
+    @staticmethod
+    def create_ships(ships: list) -> dict:
+        field = {}
         for ship in ships:
             battleship = Ship(ship[0], ship[1])
             for deck in battleship.decks:
-                self.field[(deck.row, deck.column)] = battleship
+                field[(deck.row, deck.column)] = battleship
+        return field
 
     def fire(self, location: tuple) -> str:
         if location not in self.field:
