@@ -9,9 +9,6 @@ class Deck:
         self.column = column
         self.is_alive = is_alive
 
-    def __repr__(self) -> str:
-        return u"\u25A1"
-
 
 class Ship:
     def __init__(
@@ -20,7 +17,6 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
-
         self.decks = []
         self.is_drowned = is_drowned
         for row in range(start[0], end[0] + 1):
