@@ -16,12 +16,10 @@ class Ship:
                 self.decks.append(Deck(row, col))
 
     def get_deck(self, row: int, column: int) -> Deck:
-        return list(
-            filter(
-                lambda deck: (deck.row, deck.column) == (row, column),
-                self.decks,
-            )
-        )[0]
+        return [
+            deck for deck in self.decks
+            if deck.row == row and deck.column == column
+        ][0]
 
     def fire(self, row: int, column: int) -> None:
         for deck in self.decks:
