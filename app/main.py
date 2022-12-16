@@ -1,77 +1,66 @@
+from __future__ import annotations
+
+
 class Deck:
-    def __init__(self, row, column, is_alive=True):
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = [Deck(deck[0], deck[1]) for deck in self.create_middle_decks()]
-        # Create decks and save them to a list `self.decks`
+        self.decks = []
+        self.create_decks()
 
-    def create_middle_decks(self):
-        deck_start_x, deck_start_y = self.start
-        deck_end_x, deck_end_y = self.end
-        decks_list = []
+    def create_decks(self) -> None:
         if self.start == self.end:
-            decks_list = [self.start]
-        if deck_start_x == deck_end_x:
-            if deck_start_y > deck_end_y:
-                while deck_start_y >= deck_end_y:
-                    decks_list.append((deck_end_x, deck_end_y))
-                    deck_end_y += 1
-            if deck_start_y < deck_end_y:
-                while deck_start_y <= deck_end_y:
-                    decks_list.append((deck_start_x, deck_start_y))
-                    deck_start_y += 1
-        return decks_list
+            self.decks.append(Deck(self.start[0], self.end[1]))
 
+        elif self.start[0] == self.end[0]:
+            for i in range(self.start[1], self.end[1] + 1):
+                self.decks.append(Deck(self.start[0], i))
 
+        elif self.start[1] == self.end[1]:
+            for i in range(self.start[0], self.end[0] + 1):
+                self.decks.append(Deck(i, self.start[1]))
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    def get_deck(self, row: int, column: int) -> Deck:
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    def fire(self, row: int, column: int) -> None:
+        self.get_deck(row, column).is_alive = False
+        if all([deck.is_alive is False for deck in self.decks]):
+            self.is_drowned = True
 
 
 class Battleship:
-    def __init__(self, ships):
+    def __init__(self, ships: list[tuple]) -> None:
         self.ships = ships
-        self.field = {key: Ship(key[0], key[1]) for key in ships}
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+        self.field = {}
+        self.create_ship()
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def create_ship(self) -> None:
+        for ship in self.ships:
+            new_ship = Ship(ship[0], ship[1])
+            for deck in new_ship.decks:
+                self.field[(deck.row, deck.column)] = new_ship
 
-battle_ship = Battleship(
-        ships=[
-            ((2, 0), (2, 3)),
-            ((4, 5), (4, 6)),
-            ((3, 8), (3, 9)),
-            ((6, 0), (8, 0)),
-            ((6, 4), (6, 6)),
-            ((6, 8), (6, 9)),
-            ((9, 9), (9, 9)),
-            ((9, 5), (9, 5)),
-            ((9, 3), (9, 3)),
-            ((9, 7), (9, 7)),
-        ]
-    )
-
-print(battle_ship.field[((9, 3), (9, 3))].decks[0].is_alive)
+    def fire(self, location: tuple) -> str:
+        if location in self.field:
+            self.field[location].fire(location[0], location[1])
+            if self.field[location].is_drowned:
+                return "Sunk!"
+            if not self.field[location].is_drowned:
+                return "Hit!"
+        return "Miss!"
