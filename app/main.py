@@ -31,8 +31,8 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
+        self.is_drowned = True
         for deck in self.decks:
-            self.is_drowned = True
             if deck.is_alive:
                 self.is_drowned = False
                 break
@@ -45,8 +45,7 @@ class Battleship:
         for ship in ships:
             current_ship = Ship(ship[0], ship[1])
             for deck in current_ship.decks:
-                current_tuple = (deck.row, deck.column)
-                self.field[current_tuple] = current_ship
+                self.field[(deck.row, deck.column)] = current_ship
         self._validate_field()
 
     def fire(self, location: tuple) -> str:
@@ -59,46 +58,42 @@ class Battleship:
         return "Miss!"
 
     def print_field(self) -> None:
+        empty_cell = "~"
+        alive_deck = u"\u25A1"
+        hit_deck = "*"
+        drowned_ship = "x"
+
         for row in range(0, 10):
             for column in range(0, 10):
                 if (row, column) in self.field:
                     ship = self.field[(row, column)]
                     if ship.is_drowned:
-                        print("x", end="")
+                        print(drowned_ship, end="")
                     elif not ship.get_deck(row, column).is_alive:
-                        print("*", end="")
+                        print(hit_deck, end="")
                     else:
-                        print(u"\u25A1", end="")
+                        print(alive_deck, end="")
                 else:
-                    print("~", end="")
+                    print(empty_cell, end="")
                 print(" ", end="")
             print("")
 
     def _validate_field(self) -> None:
         ships = {
-            "single-deck": 0,
-            "double-deck": 0,
-            "three-deck": 0,
-            "four-deck": 0
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0
         }
         for ship in self.field.values():
-            if len(ship.decks) == 1:
-                ships["single-deck"] += 1
-            elif len(ship.decks) == 2:
-                ships["double-deck"] += 1
-            elif len(ship.decks) == 3:
-                ships["three-deck"] += 1
-            elif len(ship.decks) == 4:
-                ships["four-deck"] += 1
-            else:
-                raise ValueError("Ships can be only 1, 2, 3, 4-decks")
+            ships[len(ship.decks)] += 1
         assert len(self.ships) == 10,\
             "The total number of the ships should be 10"
-        assert ships["single-deck"] == 4,\
+        assert ships[1] == 4,\
             "There should be 4 single-deck ships"
-        assert ships["double-deck"] / 2 == 3,\
+        assert ships[2] / 2 == 3,\
             "There should be 3 double-deck ships"
-        assert ships["three-deck"] / 3 == 2,\
+        assert ships[3] / 3 == 2,\
             "There should be 2 three-deck ships"
-        assert ships["four-deck"] / 4 == 1,\
+        assert ships[4] / 4 == 1,\
             "There should be 1 four-deck ships"
