@@ -69,8 +69,7 @@ class Battleship:
             self.field[coordinates].fire(*coordinates)
             if self.field[coordinates].is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
+            return "Hit!"
 
         return "Miss!"
 
@@ -84,8 +83,7 @@ class Battleship:
                 elif self.field[(row, column)]\
                         .get_deck(row, column).is_alive:
                     print("#", end="")
-                else:
-                    print("*", end="")
+                print("*", end="")
 
                 print(" ", end="")
             print("")
