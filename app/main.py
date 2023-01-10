@@ -50,8 +50,8 @@ class Battleship:
 
     def not_empty_cells(self) -> dict:
         field = {}
-        for elem in self.ships:
-            ship = Ship(elem[0], elem[1])
+        for start, end in self.ships:
+            ship = Ship(start, end)
             for deck in ship.decks:
                 field[(deck.row, deck.column)] = ship
         return field
