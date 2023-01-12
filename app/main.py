@@ -64,16 +64,10 @@ class Battleship:
                 return "Hit!"
         return "Miss!"
 
-    def update_board_with_ships(self) -> list:
+    def update_board(self) -> list:
         for ship in self.field.values():
             for deck in ship.decks:
                 self.board[deck.row][deck.column] = u"\u25A1"
-        return self.board
-
-    def update_board_with_shoots(self) -> list:
-        self.update_board_with_ships()
-        for ship in self.field.values():
-            for deck in ship.decks:
                 if not deck.is_alive:
                     self.board[deck.row][deck.column] = u"\u2612"
             if ship.is_drowned:
@@ -99,14 +93,14 @@ class Battleship:
                 )
             elif ship[0] == ship[1]:
                 len_of_ships[1] += 1
-            elif ship[0][0] - ship[1][0] == -1 \
-                    or ship[0][1] - ship[1][1] == -1:
+            elif (ship[0][0] - ship[1][0] == -1
+                    or ship[0][1] - ship[1][1] == -1):
                 len_of_ships[2] += 1
-            elif ship[0][0] - ship[1][0] == -2 \
-                    or ship[0][1] - ship[1][1] == -2:
+            elif (ship[0][0] - ship[1][0] == -2
+                    or ship[0][1] - ship[1][1] == -2):
                 len_of_ships[3] += 1
-            elif ship[0][0] - ship[1][0] == -3 \
-                    or ship[0][1] - ship[1][1] == -3:
+            elif (ship[0][0] - ship[1][0] == -3
+                    or ship[0][1] - ship[1][1] == -3):
                 len_of_ships[4] += 1
         types_of_ship = ["single", "double", "three", "four"]
         for index, actual_deck_count in enumerate(len_of_ships.values()):
