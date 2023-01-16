@@ -1,3 +1,6 @@
+from typing import Tuple, List
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -8,8 +11,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: Tuple[int],
+            end: Tuple[int],
             is_drowned: bool = False
     ) -> None:
         self.is_drowned = is_drowned
@@ -33,17 +36,14 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(self, ships: List[Tuple[tuple]]) -> None:
         self.field = {}
         for ship in ships:
             battle_ship = Ship(ship[0], ship[1])
             for deck in battle_ship.decks:
                 self.field[(deck.row, deck.column)] = battle_ship
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: Tuple[int]) -> str:
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
@@ -54,3 +54,23 @@ class Battleship:
         if self.field[location].is_drowned:
             return "Sunk!"
         return "Hit!"
+
+    def _validate_field(self) -> None:
+        single, double, three, four = 0, 0, 0, 0
+        ship_set = set(ship for ship in self.field.values())
+        if len(ship_set) != 10:
+            return "Total number of the ships must be 10"
+        for ship in ship_set:
+            if len(ship.decks) == 4:
+                four += 1
+            elif len(ship.decks) == 3:
+                three += 1
+            elif len(ship.decks) == 2:
+                double += 1
+            elif len(ship.decks) == 1:
+                single += 1
+            else:
+                print("Abnormal length of the ship")
+        if (single, double, three, four) != (4, 3, 2, 1):
+            print("Please chose 4 single-deck ships, 3 double-deck ships, "
+                  "2 three-deck ships and 1 four-deck ship")
