@@ -6,11 +6,12 @@ class Deck:
 
 
 class Ship:
-    def __init__(self,
-                 start: tuple,
-                 end: tuple,
-                 is_drowned: bool = False
-                 ) -> None:
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
 
         self.start = start
         self.end = end
@@ -30,8 +31,9 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
-        for deck in self.decks:
-            self.is_drowned = not deck.is_alive
+
+        if not any([deck.is_alive for deck in self.decks]):
+            self.is_drowned = True
 
 
 class Battleship:
