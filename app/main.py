@@ -42,11 +42,13 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(self, ships: list[tuple]) -> None:
         self.ships = ships
         self.field = {}
+        self.create_fields()
 
-        for ship in ships:
+    def create_fields(self) -> None:
+        for ship in self.ships:
             current_ship = Ship(ship[0], ship[1])
             for ceil in current_ship.decks:
                 self.field[(ceil.row, ceil.column)] = current_ship
