@@ -1,5 +1,4 @@
 class Deck:
-
     def __init__(
             self,
             row: int,
@@ -13,45 +12,39 @@ class Deck:
 
 
 class Ship:
-    decks = []
-
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int, int],
+            end: tuple[int, int],
             is_drowned: bool = False
     ) -> None:
 
+        self.decks = []
+        self.length = None
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.length = None
-        self.length_of_ship()
-        self.create_decker()
 
-    def length_of_ship(self) -> None:
+    @property
+    def get_length(self) -> int:
         self.length = max(
             self.end[1] - self.start[1], self.end[0] - self.start[0]
         ) + 1
+        return self.length
 
-    def create_decker(self) -> None:
+    @property
+    def get_decks(self) -> list[Deck]:
         if self.start[0] == self.end[0]:
-            column = self.start[1]
-            while True:
-                if column > self.end[1]:
-                    break
+            for column in range(self.start[1], self.end[1] + 1):
                 self.decks.append(Deck(self.start[0], column))
-                column += 1
+
         elif self.start[1] == self.end[1]:
-            row = self.start[0]
-            while True:
-                if row > self.end[0]:
-                    break
+            for row in range(self.start[0], self.end[0] + 1):
                 self.decks.append(Deck(row, self.start[1]))
-                row += 1
+        return self.decks
 
     def get_deck(self, row: int, column: int) -> str:
-        for deck in self.decks:
+        for deck in self.get_decks:
             if deck.row == row and deck.column == column:
                 return self.fire(deck)
 
@@ -67,17 +60,20 @@ class Ship:
 
 
 class Battleship:
-    field = {}
+    def __init__(
+            self,
+            ships: list[tuple[tuple[tuple[int, int]]]]
+    ) -> None:
 
-    def __init__(self, ships: tuple) -> None:
+        self.field = {}
         self.ships = ships
-        self.field.update({ship: Ship(ship[0], ship[1]) for ship in ships})
+        self.field.update({coord: Ship(coord[0], coord[1]) for coord in ships})
         self._validate_field()
 
     def _validate_field(self) -> None:
         if len(self.ships) != 10:
             raise Exception("the total number of the ships should be 10")
-        length_ships = [self.field[ship].length for ship in self.field]
+        length_ships = [self.field[ship].get_length for ship in self.field]
         if length_ships.count(4) != 1:
             raise Exception("there should be 1 four-deck ship")
         if length_ships.count(3) != 2:
@@ -86,35 +82,35 @@ class Battleship:
             raise Exception("there should be 3 double-deck ships")
         if length_ships.count(1) != 4:
             raise Exception("there should be 4 single-deck ships")
-        neighboring_cells = [ship for ship in self.field]
+        neighboring_cells = list(self.field.keys())
         for cell in neighboring_cells:
-            for check in neighboring_cells:
-                if cell == check:
+            for other_cell in neighboring_cells:
+                if cell == other_cell:
                     continue
                 if cell[0][0] == cell[1][0] \
-                        and cell[0][0] == check[0][0] == check[1][0]:
-                    if cell[0][1] == check[0][1] \
-                            or cell[0][1] == check[0][1] + 1:
+                        and cell[0][0] == other_cell[0][0] == other_cell[1][0]:
+                    if cell[0][1] == other_cell[0][1] \
+                            or cell[0][1] == other_cell[0][1] + 1:
                         raise Exception(
                             "ships shouldn't be located"
                             " in the neighboring cells"
                         )
-                    if cell[1][1] == check[0][1] \
-                            or cell[1][1] == check[0][1] - 1:
+                    if cell[1][1] == other_cell[0][1] \
+                            or cell[1][1] == other_cell[0][1] - 1:
                         raise Exception(
                             "ships shouldn't be located"
                             " in the neighboring cells"
                         )
                 if cell[0][1] == cell[1][0] \
-                        and cell[0][1] == check[0][1] == check[1][1]:
-                    if cell[0][0] == check[0][0] \
-                            or cell[0][0] == check[0][0] + 1:
+                        and cell[0][1] == other_cell[0][1] == other_cell[1][1]:
+                    if cell[0][0] == other_cell[0][0] \
+                            or cell[0][0] == other_cell[0][0] + 1:
                         raise Exception(
                             "ships shouldn't be located"
                             " in the neighboring cells"
                         )
-                    if cell[0][0] == check[0][0] \
-                            or cell[0][0] == check[0][0] - 1:
+                    if cell[0][0] == other_cell[0][0] \
+                            or cell[0][0] == other_cell[0][0] - 1:
                         raise Exception(
                             "ships shouldn't be located"
                             " in the neighboring cells"
@@ -122,30 +118,30 @@ class Battleship:
 
     def fire(self, location: tuple) -> str:
         for ship in self.field:
-            row, column = location[0], location[1]
-            if row == ship[0][0] and row == ship[1][0]:
-                if ship[1][1] >= column >= ship[0][1]:
-                    return self.field[ship].get_deck(row, column)
-            if column == ship[0][1] and column == ship[1][1]:
-                if ship[1][0] >= row >= ship[0][0]:
-                    return self.field[ship].get_deck(row, column)
+            cell_row, cell_column = location[0], location[1]
+
+            if cell_row == ship[0][0] and cell_row == ship[1][0]:
+                if ship[1][1] >= cell_column >= ship[0][1]:
+                    return self.field[ship].get_deck(cell_row, cell_column)
+
+            if cell_column == ship[0][1] and cell_column == ship[1][1]:
+                if ship[1][0] >= cell_row >= ship[0][0]:
+                    return self.field[ship].get_deck(cell_row, cell_column)
         return "Miss!"
 
     def print_field(self) -> None:
         battle_field = ["~"] * 10
-        for cell in range(len(battle_field)):
-            for deck in Ship.decks:
-                if deck.row == cell and deck.is_alive:
-                    battle_field[deck.column] = "\u25A1"
-                if deck.row == cell and deck.is_alive is False:
-                    battle_field[deck.column] = "*"
-            for ship in self.field.values():
-                if ship.start[0] == cell and ship.is_drowned:
-                    number = ship.end[1]
-                    while True:
-                        if number < ship.start[1]:
-                            break
-                        battle_field[number] = "X"
-                        number -= 1
+        for row in range(len(battle_field)):
+            for cell in self.field.values():
+                if cell.start[0] == row:
+                    for deck in cell.get_decks:
+                        if deck.row == row:
+                            if deck.is_alive:
+                                battle_field[deck.column] = "\u25A1"
+                            battle_field[deck.column] = "*"
+            for cell in self.field.values():
+                if cell.start[0] == row and cell.is_drowned:
+                    for column in range(cell.start[1], cell.end[1] + 1):
+                        battle_field[column] = "X"
             print(" ".join(battle_field))
             battle_field = ["~"] * 10
