@@ -11,8 +11,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int, int],
+            end: tuple[int, int],
             is_drowned: bool = False
     ) -> None:
         self.start = start
