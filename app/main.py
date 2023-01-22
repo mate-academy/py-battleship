@@ -27,18 +27,37 @@ class Ship:
             end: tuple[int, int],
             is_drowned: bool = False
     ) -> None:
-        if start == end:
-            self.decks = [Deck(*start)]
-        elif start[0] == end[0]:
-            self.decks = [
+        self.decks = self._create_deck(start, end)
+        self.is_drowned = is_drowned
+
+    def _create_deck(
+            self,
+            start: tuple[int, int],
+            end: tuple[int, int]
+    ) -> list[Deck]:
+        type_of_ship = self._check_type_of_ship(start, end)
+        if type_of_ship == "1-deck-ship":
+            return [Deck(*start)]
+        if type_of_ship == "horizontal ship":
+            return [
                 Deck(start[0], column)
                 for column in range(start[1], end[1] + 1)
             ]
-        else:
-            self.decks = [
-                Deck(row, start[1])
-                for row in range(start[0], end[0] + 1)]
-        self.is_drowned = is_drowned
+        return [
+            Deck(row, start[1])
+            for row in range(start[0], end[0] + 1)
+        ]
+
+    @staticmethod
+    def _check_type_of_ship(
+            start: tuple[int, int],
+            end: tuple[int, int]
+    ) -> str:
+        if start == end:
+            return "1-deck-ship"
+        if start[0] == end[0]:
+            return "horizontal ship"
+        return "vertical ship"
 
     def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
@@ -60,7 +79,7 @@ class Ship:
 class Battleship:
     def __init__(
             self,
-            ships: list[tuple[tuple[int, int], tuple[int, int]]]
+            ships: list[tuple]
     ) -> None:
         ships_list = [Ship(*ship) for ship in ships]
         self.field = {}
