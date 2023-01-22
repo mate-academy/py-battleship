@@ -1,3 +1,9 @@
+from typing import Optional
+
+ROWS = 10
+COLUMNS = 10
+
+
 class Deck:
     def __init__(
             self,
@@ -17,8 +23,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int, int],
+            end: tuple[int, int],
             is_drowned: bool = False
     ) -> None:
         if start == end:
@@ -26,17 +32,15 @@ class Ship:
         elif start[0] == end[0]:
             self.decks = [
                 Deck(start[0], column)
-                for column
-                in range(start[1], end[1] + 1)
+                for column in range(start[1], end[1] + 1)
             ]
         else:
             self.decks = [
                 Deck(row, start[1])
-                for row
-                in range(start[0], end[0] + 1)]
+                for row in range(start[0], end[0] + 1)]
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -54,14 +58,17 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(
+            self,
+            ships: list[tuple[tuple[int, int], tuple[int, int]]]
+    ) -> None:
         ships_list = [Ship(*ship) for ship in ships]
         self.field = {}
         for ship in ships_list:
             for deck in ship.decks:
                 self.field[deck.coordinates] = ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
             return "Miss!"
         self.field[location].fire(*location)
@@ -70,8 +77,8 @@ class Battleship:
         return "Hit!"
 
     def print_field(self) -> None:
-        for row in range(10):
-            for column in range(10):
+        for row in range(ROWS):
+            for column in range(COLUMNS):
                 if not (row, column) in self.field:
                     print(" ~ ", end="")
                 elif self.field[(row, column)].get_deck(row, column).is_alive:
