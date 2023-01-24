@@ -47,6 +47,8 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
+        if deck is None:
+            return None
         deck.is_alive = False
         if not list(filter(lambda deck: deck.is_alive, self.decks)):
             self.is_drowned = True
