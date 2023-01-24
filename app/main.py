@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(
             self,
@@ -18,26 +21,31 @@ class Ship:
             self,
             start: tuple[int, int],
             end: tuple[int, int],
-            is_drowned: bool = False) -> None:
+            is_drowned: bool = False
+    ) -> None:
 
         self.is_drowned = is_drowned
         if start == end:
-            self.decks = [Deck(start[0], end[1])]
+            self.decks = [
+                Deck(start[0], end[1])
+            ]
         elif start[0] == end[0]:
-            self.decks = [Deck(start[0], i)
-                          for i in range(start[1], end[1] + 1)]
+            self.decks = [
+                Deck(start[0], i)
+                for i in range(start[1], end[1] + 1)
+            ]
         elif start[1] == end[1]:
-            self.decks = [Deck(i, start[1])
-                          for i in range(start[0], end[0] + 1)]
+            self.decks = [
+                Deck(i, start[1])
+                for i in range(start[0], end[0] + 1)
+            ]
 
-    def get_deck(self, row: int, column: int) -> Deck:
-
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-
         deck = self.get_deck(row, column)
         deck.is_alive = False
         if not list(filter(lambda deck: deck.is_alive, self.decks)):
@@ -54,7 +62,6 @@ class Battleship:
             self,
             ships: list[tuple[tuple[int, int], tuple[int, int]]]
     ) -> None:
-
         self.ships = [Ship(*coordinates) for coordinates in ships]
         self._validate_field()
         self.field: dict = {}
@@ -63,11 +70,9 @@ class Battleship:
             self.field.update(ship_field)
 
     def _validate_ships_count(self) -> None:
-
         assert len(self.ships) == 10
 
     def _validate_ship_sizes(self) -> None:
-
         ship_sizes = {}
         for ship in self.ships:
             ship_sizes[len(ship.decks)] = ship_sizes.get(
@@ -76,12 +81,10 @@ class Battleship:
         assert ship_sizes == {4: 1, 2: 3, 3: 2, 1: 4}
 
     def _validate_field(self) -> None:
-
         self._validate_ships_count()
         self._validate_ship_sizes()
 
     def fire(self, location: tuple[int, int]) -> str:
-
         if location in self.field:
             ship = self.field[location]
             ship.fire(location[0], location[1])
@@ -93,9 +96,9 @@ class Battleship:
             return "Miss!"
 
     def print_field(self) -> None:
-
-        for row in range(10):
-            for column in range(10):
+        field_size = 10
+        for row in range(field_size):
+            for column in range(field_size):
                 if (row, column) in self.field:
                     if self.field[(row, column)].get_deck(
                             row, column).is_alive:
