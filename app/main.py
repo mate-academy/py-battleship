@@ -36,10 +36,11 @@ class Ship:
     def fire(self, row: int, column: int) -> None:
         dead_deck = self.get_deck(row, column)
         dead_deck.is_alive = False
-        is_at_least_one_deck_alive: bool = False
+        is_at_least_one_deck_alive = False
         for deck in self.decks:
             if deck.is_alive:
                 is_at_least_one_deck_alive = True
+                break
         if not is_at_least_one_deck_alive:
             self.is_drowned = True
 
