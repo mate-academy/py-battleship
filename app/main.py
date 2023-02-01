@@ -22,10 +22,6 @@ class Ship:
             Deck(row, column) for row in range(start[0], end[0] + 1)
             for column in range(start[1], end[1] + 1)
         ]
-        # self.decks = []
-        # for row in range(start[0], end[0] + 1):
-        #     for column in range(start[1], end[1] + 1):
-        #         self.decks.append(Deck(row, column))
 
     def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
@@ -34,13 +30,8 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         target = self.get_deck(row, column)
-        target.is_alive = False
-        # floating = []
-        # for deck in self.decks:
-        #     check = deck.is_alive
-        #     floating.append(check)
-        # if not any(floating):
-        #     self.is_drowned = True
+        if target is not None:
+            target.is_alive = False
         if not any(deck.is_alive for deck in self.decks):
             self.is_drowned = True
 
@@ -56,8 +47,7 @@ class Battleship:
     def fire(self, location: tuple) -> str:
         if location in self.field.keys():
             ship = self.field[location]
-            target = ship.get_deck(location[0], location[1])
-            ship.fire(target.row, target.column)
+            ship.fire(location[0], location[1])
             if ship.is_drowned:
                 return "Sunk!"
             return "Hit!"
