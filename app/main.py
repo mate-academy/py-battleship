@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -12,15 +15,19 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
-        self.decks = []
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        for row in range(start[0], end[0] + 1):
-            for column in range(start[1], end[1] + 1):
-                self.decks.append(Deck(row, column))
+        self.decks = [
+            Deck(row, column) for row in range(start[0], end[0] + 1)
+            for column in range(start[1], end[1] + 1)
+        ]
+        # self.decks = []
+        # for row in range(start[0], end[0] + 1):
+        #     for column in range(start[1], end[1] + 1):
+        #         self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if row == deck.row and column == deck.column:
                 return deck
@@ -28,11 +35,13 @@ class Ship:
     def fire(self, row: int, column: int) -> None:
         target = self.get_deck(row, column)
         target.is_alive = False
-        floating = []
-        for deck in self.decks:
-            check = deck.is_alive
-            floating.append(check)
-        if not any(floating):
+        # floating = []
+        # for deck in self.decks:
+        #     check = deck.is_alive
+        #     floating.append(check)
+        # if not any(floating):
+        #     self.is_drowned = True
+        if not any(deck.is_alive for deck in self.decks):
             self.is_drowned = True
 
 
