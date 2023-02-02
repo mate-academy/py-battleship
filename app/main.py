@@ -2,19 +2,17 @@ from __future__ import annotations
 
 
 class Deck:
-    def __init__(self, row: int, column: int,
-                 is_alive: bool = True) -> None:
+    def __init__(self, row: int, column: int) -> None:
         self.row = row
         self.column = column
-        self.is_alive = is_alive
+        self.is_alive = True
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple,
-                 is_drowned: bool = False) -> None:
+    def __init__(self, start: tuple, end: tuple) -> None:
         self.start = start
         self.end = end
-        self.is_drowned = is_drowned
+        self.is_drowned = False
         self.decks = []
 
     def create_deck(self) -> None:
@@ -40,13 +38,13 @@ class Ship:
 class Battleship:
     def __init__(self, ships: list) -> None:
         self.field = {ship: Ship(ship[0], ship[1]) for ship in ships}
-        for key, value in self.field.items():
+        for value in self.field.values():
             value.create_deck()
 
     def fire(self, location: tuple) -> str:
         for key, value in self.field.items():
-            if location[0] in range(key[0][0], key[1][0] + 1)\
-                    and location[1] in range(key[0][1], key[1][1] + 1):
+            if (location[0] in range(key[0][0], key[1][0] + 1)
+                    and location[1] in range(key[0][1], key[1][1] + 1)):
                 value.fire(location[0], location[1])
                 if value.is_drowned is True:
                     return "Sunk!"
