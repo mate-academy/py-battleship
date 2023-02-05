@@ -3,10 +3,10 @@ class Battleship:
         self.ships = ships
         self.field = [["~"] * 10 for _ in range(10)]
         for ship in ships:
-            start_r, start_c = ship[0]
-            end_r, end_c = ship[1]
-            for i in range(start_r, end_r + 1):
-                for j in range(start_c, end_c + 1):
+            start_row, start_column = ship[0]
+            end_row, end_column = ship[1]
+            for i in range(start_row, end_row + 1):
+                for j in range(start_column, end_column + 1):
                     self.field[i][j] = "□"
         self.shots = []
 
