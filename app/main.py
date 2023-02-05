@@ -17,17 +17,24 @@ class Ship:
             is_drowned: bool = False
     ) -> None:
         self.decks = []
+        self.create_decks(start, end)
+        self.is_drowned = is_drowned
+
+    def create_decks(
+            self, start:
+            Tuple[int, int],
+            end: Tuple[int, int]
+    ) -> None:
         if start[0] == end[0]:
             self.decks = [
-                Deck(start[0], i)
-                for i in range(start[1], end[1] + 1)
+                Deck(start[0], y_coord)
+                for y_coord in range(start[1], end[1] + 1)
             ]
         else:
             self.decks = [
-                Deck(i, start[1])
-                for i in range(start[0], end[0] + 1)
+                Deck(x_coord, start[1])
+                for x_coord in range(start[0], end[0] + 1)
             ]
-        self.is_drowned = is_drowned
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
@@ -45,17 +52,20 @@ class Ship:
 class Battleship:
     def __init__(self, ships: List[Tuple]) -> None:
         self.field = {}
+        self.create_ships(ships)
+
+    def create_ships(self, ships: List[Tuple]) -> None:
         for start, end in ships:
             ship = Ship(start, end)
             if start[0] == end[0]:
                 self.field.update({
-                    (start[0], i): ship
-                    for i in range(start[1], end[1] + 1)
+                    (start[0], y_coord): ship
+                    for y_coord in range(start[1], end[1] + 1)
                 })
             else:
                 self.field.update({
-                    (i, start[1]): ship
-                    for i in range(start[0], end[0] + 1)
+                    (x_coord, start[1]): ship
+                    for x_coord in range(start[0], end[0] + 1)
                 })
 
     def fire(self, location: tuple) -> str:
