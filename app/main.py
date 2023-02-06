@@ -5,9 +5,9 @@ class Battleship:
         for ship in ships:
             start_row, start_column = ship[0]
             end_row, end_column = ship[1]
-            for i in range(start_row, end_row + 1):
-                for j in range(start_column, end_column + 1):
-                    self.field[i][j] = "□"
+            for row in range(start_row, end_row + 1):
+                for column in range(start_column, end_column + 1):
+                    self.field[row][column] = "□"
         self.shots = []
 
     def fire(self, location: tuple) -> str:
@@ -29,11 +29,11 @@ class Battleship:
                     else:
                         return "Hit!"
 
-    def is_sunk(self, ship) -> bool:
+    def is_sunk(self, ship: tuple) -> bool:
         start_row, start_column = ship[0]
         end_row, end_column = ship[1]
-        for i in range(start_row, end_row + 1):
-            for j in range(start_column, end_column + 1):
-                if self.field[i][j] == "□":
+        for row in range(start_row, end_row + 1):
+            for column in range(start_column, end_column + 1):
+                if self.field[row][column] == "□":
                     return False
         return True
