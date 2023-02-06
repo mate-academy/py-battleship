@@ -21,13 +21,16 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.ship_len = end[0] - start[0] + end[1] - start[1] + 1
-        dx = 1 if end[0] - start[0] else 0
-        dy = 1 if end[1] - start[1] else 0
         self.deck = {}
-        for i in range(self.ship_len):
-            x_ = start[0] + dx * i
-            y_ = start[1] + dy * i
+        self.__place_ship_on_field(end, start)
+
+    def __place_ship_on_field(self, end: tuple, start: tuple) -> None:
+        ship_len = end[0] - start[0] + end[1] - start[1] + 1
+        delta_x = 1 if end[0] - start[0] else 0
+        delta_y = 1 if end[1] - start[1] else 0
+        for i in range(ship_len):
+            x_ = start[0] + delta_x * i
+            y_ = start[1] + delta_y * i
             self.deck[(x_, y_)] = Deck(x_, y_)
 
     def get_deck(self, row: int, column: int) -> Deck:
@@ -43,10 +46,13 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: List[tuple]) -> None:
+        self.__init_field(ships)
+
+    def __init_field(self, ships: List[tuple]) -> None:
         self.field = [[EmptyField for _ in range(10)] for _ in range(10)]
         for ship in ships:
             ship = Ship(ship[0], ship[1])
-            for coordinate in ship.deck.keys():
+            for coordinate in ship.deck:
                 self.field[coordinate[0]][coordinate[1]] = ship
 
     def fire(self, location: tuple) -> str:
