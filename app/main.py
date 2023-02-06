@@ -39,6 +39,9 @@ class Ship:
 class Battleship:
     def __init__(self, ships: list) -> None:
         self.field = {}
+        self.create_ship(ships)
+
+    def create_ship(self, ships: list) -> None:
         for ship in ships:
             new_ship = Ship(ship[0], ship[1])
             for deck in new_ship.decks:
