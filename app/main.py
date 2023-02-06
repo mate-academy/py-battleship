@@ -50,10 +50,7 @@ class Battleship:
     def fire(self, location: tuple) -> str:
         if location in self.field:
             self.field[location].fire(location[0], location[1])
-
             if self.field[location].is_drowned:
                 return "Sunk!"
-
             return "Hit!"
-
         return "Miss!"
