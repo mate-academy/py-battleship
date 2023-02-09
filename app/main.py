@@ -26,8 +26,7 @@ class Battleship:
                     self.field[row][column] = "X"
                     if self.is_sunk(ship):
                         return "Sunk!"
-                    else:
-                        return "Hit!"
+                    return "Hit!"
 
     def is_sunk(self, ship: tuple) -> bool:
         start_row, start_column = ship[0]
