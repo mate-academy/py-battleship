@@ -1,28 +1,23 @@
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(self, row: int, column: int) -> None:
         self.row = row
         self.column = column
-        self.is_alive = is_alive
+        self.is_alive = True
 
 
 class Ship:
     def __init__(
             self,
             start: tuple,
-            end: tuple,
-            is_drowned: bool = False
+            end: tuple
     ) -> None:
         self.decks = []
-        self.is_drowned = is_drowned
-        if start[0] != end[0]:
-            index = 0
-        else:
-            index = 1
+        self.is_drowned = False
+        index = 0 if start[0] != end[0] else 1
+        begin_range = min(start[index], end[index])
+        and_range = max(start[index], end[index]) + 1
 
-        for part_deck in range(
-                min(start[index], end[index]),
-                max(start[index], end[index]) + 1
-        ):
+        for part_deck in range(begin_range, and_range):
             row = start[0] if index == 1 else part_deck
             column = start[1] if index == 0 else part_deck
             self.decks.append(Deck(row, column))
