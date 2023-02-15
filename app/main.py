@@ -10,12 +10,13 @@ from app.ship import Ship
 
 class Battleship:
     def __init__(self, ships: List[tuple]) -> None:
+        self.ships_sides = ships
         self.ocean = [[Cell((x, y)) for y in range(10)] for x in range(10)]
-        self.field = self.set_ship_coordinates(ships)
+        self.field = self.set_ship_coordinates()
         self._validate_field()
 
-    def set_ship_coordinates(self, ships: List[Tuple[tuple]]) -> dict:
-        ships = (Ship(ship[0], ship[1]) for ship in ships)
+    def set_ship_coordinates(self) -> dict:
+        ships = (Ship(ship[0], ship[1]) for ship in self.ships_sides)
         ship_coordinates = {}
         for ship in ships:
             for cord in ship.decks_cord:
