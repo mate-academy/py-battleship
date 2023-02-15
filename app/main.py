@@ -1,4 +1,5 @@
 from typing import Tuple, List
+from pprint import pprint
 
 from app.carbon import Carbon
 from app.cell import Cell
@@ -75,3 +76,6 @@ class Battleship:
                         raise ValueError(
                             "Ships are not allowed to touch each other"
                         )
+
+    def print_field(self) -> None:
+        pprint(self.ocean)
