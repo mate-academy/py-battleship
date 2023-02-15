@@ -14,7 +14,7 @@ class Battleship:
         self.field = self.set_ship_coordinates(ships)
         self._validate_field()
 
-    def set_ship_coordinates(self, ships: Tuple[tuple]) -> dict:
+    def set_ship_coordinates(self, ships: List[Tuple[tuple]]) -> dict:
         ships = (Ship(ship[0], ship[1]) for ship in ships)
         ship_coordinates = {}
         for ship in ships:
@@ -24,7 +24,7 @@ class Battleship:
         return ship_coordinates
 
     def fire(self, location: tuple) -> str:
-        if location in self.field.keys():
+        if location in self.field:
             ship = self.field[location]
             ship.kicks.add(location)
             self.ocean[location[0]][location[1]] = Carbon(location)
@@ -36,29 +36,30 @@ class Battleship:
         return "Miss!"
 
     def _validate_field(self) -> None:
-        count4 = 0
-        count3 = 0
-        count2 = 0
-        count1 = 0
-        expected = {"4-decks": 1, "3-decks": 2, "2-decks": 3, "1-decks": 4}
-
+        expected = {
+            "4-decks": 1,
+            "3-decks": 2,
+            "2-decks": 3,
+            "1-decks": 4
+        }
+        available = {
+            "4-decks": 0,
+            "3-decks": 0,
+            "2-decks": 0,
+            "1-decks": 0,
+        }
         for ship in set(self.field.values()):
             if len(ship.decks_cord) == 4:
-                count4 += 1
+                available["4-decks"] += 1
             if len(ship.decks_cord) == 3:
-                count3 += 1
+                available["3-decks"] += 1
             if len(ship.decks_cord) == 2:
-                count2 += 1
+                available["2-decks"] += 1
             if len(ship.decks_cord) == 1:
-                count1 += 1
-        available = {
-            "4-decks": count4,
-            "3-decks": count3,
-            "2-decks": count2,
-            "1-decks": count1,
-        }
+                available["1-decks"] += 1
+
         if expected != available:
-            raise ValueError(f"Must be {expected}")
+            raise ValueError(f"The navy must contain such ships: {expected}")
         for cord_x, cord_y in self.field:
             neighborhood = (
                 (cord_y - 1, cord_x + 1),
@@ -72,7 +73,7 @@ class Battleship:
             )
             neighborhood = (
                 cord for cord in neighborhood
-                if 0 <= cord[0] <= 9 and 0 <= cord[1] <= 9
+                if -1 < cord[0] < 10 and -1 < cord[1] < 10
             )
             for x_n, y_n in neighborhood:
                 if (x_n, y_n) in self.field:
