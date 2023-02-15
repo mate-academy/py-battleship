@@ -1,4 +1,3 @@
-from pprint import pprint
 from typing import Tuple, List
 
 from app.carbon import Carbon
@@ -76,22 +75,3 @@ class Battleship:
                         raise ValueError(
                             "Ships are not allowed to touch each other"
                         )
-
-
-ships = [
-    ((2, 0), (2, 3)),
-    ((4, 5), (4, 6)),
-    ((3, 8), (3, 9)),
-    ((6, 0), (8, 0)),
-    ((6, 4), (6, 6)),
-    ((6, 8), (6, 9)),
-    ((9, 9), (9, 9)),
-    ((9, 5), (9, 5)),
-    ((9, 3), (9, 3)),
-    ((9, 7), (9, 7)),
-]
-
-battle_ship = Battleship(ships)
-battle_ship.fire((2, 0))
-battle_ship.fire((9, 9))
-pprint(battle_ship.ocean)
