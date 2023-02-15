@@ -1,5 +1,5 @@
 from pprint import pprint
-from typing import Tuple, List
+from typing import List
 
 from app.carbon import Carbon
 from app.cell import Cell
