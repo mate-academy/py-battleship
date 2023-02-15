@@ -36,12 +36,7 @@ class Battleship:
         return "Miss!"
 
     def _validate_field(self) -> None:
-        expected = {
-            "4-decks": 1,
-            "3-decks": 2,
-            "2-decks": 3,
-            "1-decks": 4
-        }
+        expected = {"4-decks": 1, "3-decks": 2, "2-decks": 3, "1-decks": 4}
         available = {
             "4-decks": 0,
             "3-decks": 0,
