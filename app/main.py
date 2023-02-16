@@ -58,7 +58,7 @@ class Battleship:
         return list(
             cord
             for cord in (
-                (cord_y - 1, cord_x + 1),
+                (cord_x - 1, cord_y + 1),
                 (cord_x, cord_y + 1),
                 (cord_x + 1, cord_y + 1),
                 (cord_x - 1, cord_y),
