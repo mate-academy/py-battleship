@@ -1,5 +1,4 @@
 from pprint import pprint
-from typing import List
 
 from app.carbon import Carbon
 from app.cell import Cell
@@ -9,7 +8,10 @@ from app.ship import Ship
 
 
 class Battleship:
-    def __init__(self, ships: List[tuple]) -> None:
+    def __init__(
+            self,
+            ships: list[tuple[tuple[int, int], tuple[int, int]]]
+    ) -> None:
         self.ships_sides = ships
         self.ocean = [[Cell((x, y)) for y in range(10)] for x in range(10)]
         self.field = self.set_ship_coordinates()
@@ -24,7 +26,7 @@ class Battleship:
                 ship_coordinates[cord] = ship
         return ship_coordinates
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         if location in self.field:
             ship = self.field[location]
             ship.kicks.add(location)
@@ -48,7 +50,8 @@ class Battleship:
             "2-decks": 0,
             "1-decks": 0,
         }
-        for ship in set(self.field.values()):
+        proposed_navy = set(self.field.values())
+        for ship in proposed_navy:
             if len(ship.decks_cord) == 4:
                 available["4-decks"] += 1
             if len(ship.decks_cord) == 3:
@@ -58,8 +61,10 @@ class Battleship:
             if len(ship.decks_cord) == 1:
                 available["1-decks"] += 1
 
-        if expected != available:
-            raise ValueError(f"The navy must contain such ships: {expected}")
+        if expected != available or len(proposed_navy) != 10:
+            raise ValueError(
+                f"The navy must contain such 10 ships: {expected}"
+            )
         for cord_x, cord_y in self.field:
             neighborhood = (
                 (cord_y - 1, cord_x + 1),
