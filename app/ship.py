@@ -9,23 +9,10 @@ class Ship:
         self.kicks = set()
 
     def ship_building(self) -> tuple:
-        if self.start[0] == self.end[0]:
-            if self.start[1] < self.end[1]:
-                return tuple(
-                    (self.start[0], i)
-                    for i in range(self.start[1], self.end[1] + 1)
-                )
-            return tuple(
-                (self.start[0], i)
-                for i in range(self.end[1], self.start[1] + 1)
-            )
-        if self.start[1] == self.end[1]:
-            if self.start[0] < self.end[0]:
-                return tuple(
-                    (i, self.start[1])
-                    for i in range(self.start[0], self.end[0] + 1)
-                )
-            return tuple(
-                (i, self.start[1])
-                for i in range(self.end[0], self.start[0] + 1)
-            )
+        if self.start[0] > self.end[0] or self.start[1] > self.end[1]:
+            self.start, self.end = self.end, self.start
+        cords = []
+        for cord_1 in range(self.start[0], self.end[0] + 1):
+            for cord_2 in range(self.start[1], self.end[1] + 1):
+                cords.append((cord_1, cord_2))
+        return tuple(cords)
