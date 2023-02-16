@@ -2,7 +2,11 @@ from __future__ import annotations
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple) -> None:
+    def __init__(
+            self,
+            start: tuple[int, int],
+            end: tuple[int, int]
+    ) -> None:
         self.start = start
         self.end = end
         self.decks_cord = self.ship_building()

@@ -14,10 +14,10 @@ class Battleship:
     ) -> None:
         self.ships_sides = ships
         self.ocean = [[Cell((x, y)) for y in range(10)] for x in range(10)]
-        self.field = self.set_ship_coordinates()
+        self.field = self._set_ship_coordinates()
         self._validate_field()
 
-    def set_ship_coordinates(self) -> dict:
+    def _set_ship_coordinates(self) -> dict:
         ships = (Ship(ship[0], ship[1]) for ship in self.ships_sides)
         ship_coordinates = {}
         for ship in ships:
@@ -39,34 +39,25 @@ class Battleship:
         return "Miss!"
 
     def _validate_field(self) -> None:
-        expected = {
-            "4-decks": 1,
-            "3-decks": 2,
-            "2-decks": 3,
-            "1-decks": 4}
-        available = {
-            "4-decks": 0,
-            "3-decks": 0,
-            "2-decks": 0,
-            "1-decks": 0,
-        }
-        proposed_navy = set(self.field.values())
-        for ship in proposed_navy:
-            if len(ship.decks_cord) == 4:
-                available["4-decks"] += 1
-            if len(ship.decks_cord) == 3:
-                available["3-decks"] += 1
-            if len(ship.decks_cord) == 2:
-                available["2-decks"] += 1
-            if len(ship.decks_cord) == 1:
-                available["1-decks"] += 1
+        self._check_the_amount()
+        self._check_the_location()
 
-        if expected != available or len(proposed_navy) != 10:
-            raise ValueError(
-                f"The navy must contain such 10 ships: {expected}"
-            )
+    def _check_the_location(self) -> None:
         for cord_x, cord_y in self.field:
-            neighborhood = (
+            neighborhood = self._identify_neighbors(cord_x, cord_y)
+            for x_n, y_n in neighborhood:
+                if (x_n, y_n) in self.field:
+                    if self.field[(x_n, y_n)] != self.field[(cord_x, cord_y)]:
+                        raise ValueError("Ships can not touch each other")
+
+    @staticmethod
+    def _identify_neighbors(
+            cord_x: int,
+            cord_y: int
+    ) -> list[tuple[int, int], tuple[int, int]]:
+        return list(
+            cord
+            for cord in (
                 (cord_y - 1, cord_x + 1),
                 (cord_x, cord_y + 1),
                 (cord_x + 1, cord_y + 1),
@@ -76,16 +67,24 @@ class Battleship:
                 (cord_x, cord_y - 1),
                 (cord_x - 1, cord_y + 1),
             )
-            neighborhood = (
-                cord for cord in neighborhood
-                if -1 < cord[0] < 10 and -1 < cord[1] < 10
-            )
-            for x_n, y_n in neighborhood:
-                if (x_n, y_n) in self.field:
-                    if self.field[(x_n, y_n)] != self.field[(cord_x, cord_y)]:
-                        raise ValueError(
-                            "Ships are not allowed to touch each other"
-                        )
+            if -1 < cord[0] < 10 and -1 < cord[1] < 10
+        )
+
+    def _check_the_amount(self) -> None:
+        expected = {"4deck": 1, "3deck": 2, "2deck": 3, "1deck": 4}
+        available = {"4deck": 0, "3deck": 0, "2deck": 0, "1deck": 0}
+        proposed_navy = set(self.field.values())
+        for ship in proposed_navy:
+            if len(ship.decks_cord) == 4:
+                available["4deck"] += 1
+            if len(ship.decks_cord) == 3:
+                available["3deck"] += 1
+            if len(ship.decks_cord) == 2:
+                available["2deck"] += 1
+            if len(ship.decks_cord) == 1:
+                available["1deck"] += 1
+        if expected != available or len(proposed_navy) != 10:
+            raise ValueError(f"The navy must contain such 10 ships:{expected}")
 
     def print_field(self) -> None:
         pprint(self.ocean)
