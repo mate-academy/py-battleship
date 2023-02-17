@@ -16,6 +16,9 @@ class Ship:
         is_drowned: bool = False
     ) -> None:
         self.is_drowned = is_drowned
+        self.__deck_constructor(start, end)
+
+    def __deck_constructor(self, start: tuple, end: tuple) -> None:
         if start[0] == end[0]:
             self.decks = {
                 (start[0], index): Deck(start[0], index)
