@@ -12,7 +12,7 @@ class Ship:
         self.decks_cord = self.ship_building()
         self.kicks = set()
 
-    def ship_building(self) -> tuple:
+    def ship_building(self) -> tuple[tuple[int, int]]:
         if self.start[0] > self.end[0] or self.start[1] > self.end[1]:
             self.start, self.end = self.end, self.start
         cords = []
