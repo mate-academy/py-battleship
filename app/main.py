@@ -1,6 +1,3 @@
-from typing import Any
-
-
 class Deck:
     def __init__(self, row: int,
                  column: int,
@@ -20,14 +17,10 @@ class Ship:
         self.decks = []
 
     def create_deck(self) -> None:
-        if self.start[0] == self.end[0]:
-            for i in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(self.start[0], i))
-        else:
-            for i in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(i, self.start[1]))
+        for i in range(self.start[1], self.end[1] + 1):
+            self.decks.append(Deck(self.start[0], i))
 
-    def get_deck(self, row: int, column: int) -> Any:
+    def get_deck(self, row: int, column: int) -> object:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
