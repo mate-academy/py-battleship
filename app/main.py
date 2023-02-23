@@ -1,10 +1,6 @@
 from __future__ import annotations
 
 
-class DeckNotInShip(Exception):
-    pass
-
-
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -16,15 +12,6 @@ class Deck:
 
     def __repr__(self) -> str:
         return f"deck({self.row}, {self.column})"
-
-    @staticmethod
-    def draw_matrix(rows: int, columns: int) -> list:
-        result = []
-        for column in range(columns):
-            for row in range(rows):
-                deck = Deck(column, row)
-                result.append(deck)
-        return result
 
 
 class Ship:
@@ -47,13 +34,17 @@ class Ship:
     def __repr__(self) -> str:
         return f"ship(start: {self.start}, finish: {self.end})"
 
-    def get_deck(self, row: int, column: int) -> str | Exception:
+    def get_deck(self, row: int, column: int) -> bool:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
-                return f"{deck} in this ship"
-        else:
-            raise DeckNotInShip(
-                f"deck({row}, {column}) doesn't belong this ship")
+                return True
+        return False
+
+    def get_status(self, row: int, column: int) -> bool:
+        for deck in self.decks:
+            if deck.row == row and deck.column == column and deck.is_alive:
+                return True
+        return False
 
     def _add_to_decks(self) -> None:
         start_x, start_y = self.start[0], self.start[1]
@@ -89,6 +80,7 @@ class Battleship:
                     deck.is_alive = False
                     ship.live_decks -= 1
                     if ship.live_decks == 0:
+                        ship.is_drowned = True
                         return "Sunk!"
                     return "Hit!"
         else:
@@ -100,3 +92,29 @@ class Battleship:
     ) -> None:
         for ship in ships:
             self.ships[ship] = Ship(ship[0], ship[1])
+
+    def draw_matrix(self, rows: int, columns: int) -> str:
+        result = ""
+
+        for column in range(columns):
+            for row in range(rows):
+                if self.check_deck_status(row, column) == "ship_sunk":
+                    result += "x\t"
+                elif self.check_deck_status(row, column) == "is_alive":
+                    result += u"\u25A1\t"
+                elif self.check_deck_status(row, column) == "dead_deck":
+                    result += "*\t"
+                else:
+                    result += "~\t"
+            result += "\n"
+        return result
+
+    def check_deck_status(self, row, column):
+        for ship in self.ships.values():
+            if ship.get_deck(row, column):
+                if ship.live_decks == 0:
+                    return "ship_sunk"
+                if ship.get_status(row, column):
+                    return "is_alive"
+                return "dead_deck"
+        return False
