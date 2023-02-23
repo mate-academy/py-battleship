@@ -55,15 +55,6 @@ class Ship:
             raise DeckNotInShip(
                 f"deck({row}, {column}) doesn't belong this ship")
 
-    def fire(self, row: int, column: int) -> bool:
-        for deck in self.decks:
-            if deck.row == row and deck.column == column:
-                deck.is_alive = False
-                self.live_decks -= 1
-        if self.live_decks == 0:
-            self.is_drowned = True
-        return self.is_drowned
-
     def _add_to_decks(self) -> None:
         start_x, start_y = self.start[0], self.start[1]
         end_x, end_y = self.end[0], self.end[1]
