@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -8,8 +11,8 @@ class Deck:
 class Ship:
     def __init__(
         self,
-        start: tuple,
-        end: tuple,
+        start: tuple[int, int],
+        end: tuple[int, int],
         is_drowned: bool = False
     ) -> None:
         """
@@ -20,19 +23,11 @@ class Ship:
         self.end = end
         self.decks = []
 
-        if start[0] == end[0]:
-            for i in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], i))
+        for row in range(start[0], end[0] + 1):
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(row, column))
 
-        if start[1] == end[1]:
-            for i in range(start[0], end[0] + 1):
-                self.decks.append(Deck(i, start[1]))
-
-        for index in range(len(self.decks) - 1):
-            if self.decks[index].__dict__ == self.decks[index + 1].__dict__:
-                del self.decks[index]
-
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         """
         # Find the corresponding deck in the list
         """
@@ -45,21 +40,22 @@ class Ship:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
         """
-        ruin_deck = self.get_deck(row, column)
-        ruin_deck.is_alive = False
+        if self.decks is not None:
+            ruin_deck = self.get_deck(row, column)
+            ruin_deck.is_alive = False
 
-        if ruin_deck in self.decks:
-            count_hit = 0
-            for deck in self.decks:
-                if not deck.is_alive:
-                    count_hit += 1
+            if ruin_deck in self.decks:
+                count_hit = 0
+                for deck in self.decks:
+                    if not deck.is_alive:
+                        count_hit += 1
 
-            if count_hit == len(self.decks):
-                self.is_drowned = True
+                if count_hit == len(self.decks):
+                    self.is_drowned = True
 
 
 class Battleship:
-    def __init__(self, ships: list[tuple]) -> None:
+    def __init__(self, ships: list[tuple[tuple]]) -> None:
         """
         # Create a dict `self.field`.
         # Its keys are tuples - the coordinates of the non-empty cells,
@@ -72,14 +68,13 @@ class Battleship:
             for deck in self.ship.decks:
                 self.fields[deck.row, deck.column] = self.ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         """
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
         """
-        print(location)
         if location not in self.fields:
             return "Miss!"
         else:
