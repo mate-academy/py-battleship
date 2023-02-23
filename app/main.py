@@ -46,10 +46,9 @@ class Battleship:
         self.ships = {ship: Ship(*ship) for ship in ships}
 
     def fire(self, location: tuple) -> str:
-        x, y = location
         for ship in self.ships.values():
             for deck in ship.decks:
-                if (deck.row, deck.column) == (x, y):
+                if (deck.row, deck.column) == location:
                     deck.is_alive = False
                     ship.live_decks -= 1
                     if ship.live_decks == 0:
