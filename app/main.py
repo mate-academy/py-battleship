@@ -109,7 +109,7 @@ class Battleship:
             result += "\n"
         return result
 
-    def check_deck_status(self, row, column):
+    def check_deck_status(self, row: int, column: int) -> bool | str:
         for ship in self.ships.values():
             if ship.get_deck(row, column):
                 if ship.live_decks == 0:
