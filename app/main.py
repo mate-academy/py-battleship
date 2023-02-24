@@ -21,23 +21,26 @@ class Deck:
 
 class Ship:
     def __init__(
-        self, start: tuple[int, int], end: tuple[int, int], is_drowned=False
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        is_drowned: bool = False
     ) -> None:
         self.length = 0
         self.decks = []
         self.create_from_tuples_list(start, end)
         self.is_drowned = is_drowned
 
-    def get_deck(self, coords: tuple[int, int]):
+    def get_deck(self, coords: tuple[int, int]) -> Deck:
         for deck in self.decks:
             if tuple([deck.row, deck.column]) == coords:
                 return deck
 
-    def sunk(self):
+    def sunk(self) -> None:
         for deck in self.decks:
             deck.appearance = "x"
 
-    def fire(self, coords: tuple[int, int]):
+    def fire(self, coords: tuple[int, int]) -> str:
         deck = self.get_deck(coords)
         deck.is_alive = False
         deck.appearance = "*"
