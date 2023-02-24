@@ -46,10 +46,7 @@ class Ship:
             ruin_deck.is_alive = False
 
         if ruin_deck in self.decks:
-            count_hit = []
-            for deck in self.decks:
-                count_hit.append(deck.is_alive)
-            if not any(count_hit):
+            if not any(deck.is_alive for deck in self.decks):
                 self.is_drowned = True
 
 
