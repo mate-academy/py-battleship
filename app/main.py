@@ -40,12 +40,12 @@ class Ship:
 
         return self
 
-    def get_deck(self, row, column) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
-    def fire(self, row, column) -> bool:
+    def fire(self, row: int, column: int) -> bool:
         self.get_deck(row, column).is_alive = False
         for deck in self.decks:
             if deck.is_alive:
@@ -63,10 +63,10 @@ class Battleship:
                 Deck(ship[1][0], ship[1][1])
             ).create_ship()
 
-    def fire(self, location: tuple):
+    def fire(self, location: tuple) -> str:
         for ship in self.field:
             if self.field[ship].get_deck(location[0], location[1]):
                 if self.field[ship].fire(location[0], location[1]):
                     return "Sunk!"
                 return "Hit!"
-            return "Miss!"
+        return "Miss!"
