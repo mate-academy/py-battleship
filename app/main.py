@@ -5,6 +5,9 @@ class ShipCountError(Exception):
     pass
 
 
+Coords = tuple[int, int]
+
+
 class Deck:
     def __init__(
         self,
@@ -22,8 +25,8 @@ class Deck:
 class Ship:
     def __init__(
         self,
-        start: tuple[int, int],
-        end: tuple[int, int],
+        start: Coords,
+        end: Coords,
         is_drowned: bool = False
     ) -> None:
         self.length = 0
@@ -31,7 +34,7 @@ class Ship:
         self.create_from_tuples_list(start, end)
         self.is_drowned = is_drowned
 
-    def get_deck(self, coords: tuple[int, int]) -> Deck:
+    def get_deck(self, coords: Coords) -> Deck:
         for deck in self.decks:
             if tuple([deck.row, deck.column]) == coords:
                 return deck
@@ -40,7 +43,7 @@ class Ship:
         for deck in self.decks:
             deck.appearance = "x"
 
-    def fire(self, coords: tuple[int, int]) -> str:
+    def fire(self, coords: Coords) -> str:
         deck = self.get_deck(coords)
         deck.is_alive = False
         deck.appearance = "*"
@@ -51,7 +54,7 @@ class Ship:
         return "Sunk!"
 
     def create_from_tuples_list(
-        self, start: tuple[int, int], end: tuple[int, int]
+        self, start: Coords, end: Coords
     ) -> None:
         x1, y1 = start
         x2, y2 = end
@@ -70,7 +73,7 @@ class Ship:
 
 class Battleship:
     def __init__(
-        self, ships: list[tuple[tuple[int, int], tuple[int, int]]]
+        self, ships: list[tuple[Coords, Coords]]
     ) -> None:
         self._map = [[Deck(i, j) for j in range(10)] for i in range(10)]
         self.field = self._create_ships(ships)
@@ -78,9 +81,7 @@ class Battleship:
     def _validate_field(self) -> None:
         ships = list(self.field.values())
         expected_counts = {0: 10, 1: 4, 2: 3, 3: 2, 4: 1}
-        counts = {
-            i: len([s for s in ships if len(s.decks) == i]) for i in range(5)
-        }
+        counts = {i: sum(len(ship.decks) == i for ship in ships) for i in range(5)}
         for i in range(5):
             if counts[i] == expected_counts[i]:
                 raise ShipCountError(
@@ -97,11 +98,10 @@ class Battleship:
                     and (0 <= col + j < 10)
                     and (i != 0 or j != 0)
                 ]
-                for neighbor in neighbors:
-                    if neighbor in self.field:
-                        raise ValueError(
-                            "Ships should not be located in neighboring cells"
-                        )
+                if any(neighbor in self.field for neighbor in neighbors):
+                    raise ValueError(
+                        "Ships should not be located in neighboring cells"
+                    )
 
     def fire(self, location: tuple) -> str | None:
         if location not in self.field:
@@ -110,7 +110,7 @@ class Battleship:
 
     @staticmethod
     def _create_ships(
-        ships: list[tuple[tuple[int, int], tuple[int, int]]]
+        ships: list[tuple[Coords, Coords]]
     ) -> dict[tuple[Any, ...], Ship]:
         field = dict()
         ships = [Ship(*coords) for coords in ships]
