@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 
 class Deck:
@@ -19,39 +19,21 @@ class Ship:
         self.decks = []
 
     def create_ship(self) -> Any:
-        if (self.start.row == self.end.row
-                and self.start.column == self.end.column):
-            self.decks.append(Deck(self.start.row, self.start.column, True))
-
-        elif (self.start.row == self.end.row
-              and self.start.column != self.end.column):
-            self.decks.append(Deck(self.start.row, self.start.column, True))
-            for i in range(1, self.end.column - self.start.column + 1):
-                self.decks.append(
-                    Deck(self.start.row, self.start.column + i, True)
-                )
-
-        else:
-            self.decks.append(Deck(self.start.row, self.start.column, True))
-            for i in range(1, (self.end.row - self.start.row) + 1):
-                self.decks.append(
-                    Deck(self.start.row + i, self.start.column, True)
-                )
-
+        for row in range(self.start.row, self.end.row + 1):
+            for column in range(self.start.column, self.end.column + 1):
+                self.decks.append(Deck(row, column))
         return self
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> bool:
         self.get_deck(row, column).is_alive = False
-        for deck in self.decks:
-            if deck.is_alive:
-                return False
-        self.is_drowned = True
-        return True
+        if not any(deck.is_alive for deck in self.decks):
+            self.is_drowned = True
+            return True
 
 
 class Battleship:
