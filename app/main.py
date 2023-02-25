@@ -81,7 +81,9 @@ class Battleship:
     def _validate_field(self) -> None:
         ships = list(self.field.values())
         expected_counts = {0: 10, 1: 4, 2: 3, 3: 2, 4: 1}
-        counts = {i: sum(len(ship.decks) == i for ship in ships) for i in range(5)}
+        counts = {
+            i: sum(len(ship.decks) == i for ship in ships) for i in range(5)
+        }
         for i in range(5):
             if counts[i] == expected_counts[i]:
                 raise ShipCountError(
@@ -98,10 +100,11 @@ class Battleship:
                     and (0 <= col + j < 10)
                     and (i != 0 or j != 0)
                 ]
-                if any(neighbor in self.field for neighbor in neighbors):
-                    raise ValueError(
-                        "Ships should not be located in neighboring cells"
-                    )
+                for neighbor in neighbors:
+                    if neighbor in self.field:
+                        raise ValueError(
+                            "Ships should not be located in neighboring cells"
+                        )
 
     def fire(self, location: tuple) -> str | None:
         if location not in self.field:
