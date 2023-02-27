@@ -67,10 +67,7 @@ class Battleship:
 
     @staticmethod
     def create_field(ships: list) -> dict:
-        res = {}
-        for ship in ships:
-            res[ship] = Ship(start=ship[0], end=ship[1])
-        return res
+        return {ship: Ship(start=ship[0], end=ship[1]) for ship in ships}
 
     def print_field(self) -> None:
 
