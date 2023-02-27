@@ -39,7 +39,7 @@ Implement the class `Battleship` that takes a list of ships. Each ship is repres
 Example:
 ```python
 battle_ship = Battleship(
-    ships=[
+    ships=[ 
         ((0, 0), (0, 3)),
         ((0, 5), (0, 6)),
         ((0, 8), (0, 9)),
