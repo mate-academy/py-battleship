@@ -13,8 +13,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple[int],
-            end: tuple[int],
+            start: tuple[int, int],
+            end: tuple[int, int],
             is_drowned: bool = False
     ) -> None:
         self.decks = []
@@ -91,7 +91,7 @@ class Battleship:
                             "Ships cannot be located in neighboring cells"
                         )
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         if location in self.field.keys():
             self.field[location].fire(location[0], location[1])
             if self.field[location].is_drowned:
