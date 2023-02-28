@@ -1,3 +1,6 @@
+from typing import List, Optional
+
+
 class ValidateFieldError(Exception):
     pass
 
@@ -17,8 +20,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int],
+            end: tuple[int],
             is_drowned: bool = False
     ) -> None:
         # Create decks and save them to a list `self.decks`
@@ -29,16 +32,14 @@ class Ship:
         start_row, start_column = self.start
         end_row, end_column = self.end
 
-        if self.start == self.end:
-            self.decks.append(Deck(*self.start))
-        elif end_row - start_row:
-            for deck in range(end_row - start_row + 1):
-                self.decks.append(Deck(start_row + deck, start_column))
-        elif end_column - start_column:
-            for deck in range(end_column - start_column + 1):
-                self.decks.append(Deck(start_row, start_column + deck))
+        if start_row == end_row:
+            for column in range(start_column, end_column + 1):
+                self.decks.append(Deck(start_row, column))
+        elif start_column == end_column:
+            for row in range(start_row, end_row + 1):
+                self.decks.append(Deck(row, start_column))
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         # Find the corresponding deck in the list
         for deck in self.decks:
             if (deck.row, deck.column) == (row, column):
@@ -58,7 +59,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list = None) -> None:
+    def __init__(self, ships: List[tuple[int]] = None) -> None:
         self._ships = [Ship(*ship) for ship in ships]
         self._field = {
             tuple((deck.row, deck.column)
@@ -68,7 +69,7 @@ class Battleship:
         self._validate_field(self._field)
         self._ocean_map = [["🌊" for _ in range(10)] for _ in range(10)]
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int]) -> str:
         row, col = location
         for ship_location, ship in self._field.items():
             if location in ship_location:
@@ -77,7 +78,7 @@ class Battleship:
         return "Miss!"
 
     @staticmethod
-    def _validate_field(ships: dict = None) -> None:
+    def _validate_field(ships: dict[tuple, Ship] = None) -> None:
 
         text_error = ""
         if len(ships) != 10:
