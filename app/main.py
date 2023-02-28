@@ -13,19 +13,16 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int],
+            end: tuple[int],
             is_drowned: bool = False
     ) -> None:
         self.decks = []
         row1, col1 = start
         row2, col2 = end
-        if row1 == row2:
+        for row in range(row1, row2 + 1):
             for col in range(col1, col2 + 1):
-                self.decks.append(Deck(row1, col))
-        else:
-            for row in range(row1, row2 + 1):
-                self.decks.append(Deck(row, col1))
+                self.decks.append(Deck(row, col))
         self.is_drowned = is_drowned
 
     def get_deck(self, row: int, column: int) -> Deck:
@@ -43,7 +40,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(self, ships: list[Ship]) -> None:
         self.field = {}
         for ship in ships:
             ship_obj = Ship(ship[0], ship[1])
