@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(
             self,
@@ -25,7 +28,7 @@ class Ship:
                 self.decks.append(Deck(row, col))
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
