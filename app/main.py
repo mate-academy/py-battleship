@@ -89,7 +89,6 @@ class Battleship:
             print("Input is valid")
             return fields
         print("Wrong amount of ships")
-        return
 
     def print_field(self) -> None:
         for i in range(10):
