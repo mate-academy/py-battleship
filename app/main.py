@@ -9,7 +9,10 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple, is_drowned: bool = False):
+    def __init__(self,
+                 start: tuple,
+                 end: tuple,
+                 is_drowned: bool = False) -> None:
 
         self.is_drowned: bool = is_drowned
         self.deck_cells = self.create_ship_cells(start, end)
@@ -48,7 +51,8 @@ class Battleship:
         field = {}
         for first_cell, last_cell in ships:
             ship = Ship(first_cell, last_cell)
-            key = tuple([(self.cell.row, self.cell.col) for self.cell in ship.deck_cells])
+            key = tuple([(self.cell.row, self.cell.col)
+                         for self.cell in ship.deck_cells])
             field[key] = ship
 
         return field
