@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List
 
 
@@ -51,15 +53,16 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list) -> None:
-        field = {}
+        self.field = self.validate_field(ships)
+
+    @staticmethod
+    def validate_field(ships: list) -> dict | None:
+        fields = {}
         for coord in ships:
             ship = Ship(*coord)
             for deck in ship.decks:
-                field[(deck.row, deck.column)] = ship
-        self.field = field
-
-    def _validate_field(self) -> str:
-        ships = list({ship for ship in self.field.values()})
+                fields[(deck.row, deck.column)] = ship
+        ships = list(set(fields.values()))
         sizes = []
         for i, uniq_ship in enumerate(ships):
             sizes.append(len(uniq_ship.decks))
@@ -75,15 +78,17 @@ class Battleship:
                     if 0 <= x < 10 and 0 <= y < 10:
                         for index in range(i + 1, 9):
                             if ships[index].get_deck(x, y):
-                                return (f"Ship with coordinates "
-                                        f"x: {x}, y: {y} is in wrong position")
+                                print(f"Ship with coordinates "
+                                      f"x: {x}, y: {y} is in wrong position")
+                                return
         correct_sizes = all(
             (sizes.count(1) == 4, sizes.count(2) == 3,
              sizes.count(3) == 2, sizes.count(4) == 1)
         )
         if correct_sizes:
-            return "Input is validate"
-        return "Wrong amount of ships"
+            print("Input is valid")
+            return fields
+        print("Wrong amount of ships")
 
     def print_field(self) -> None:
         for i in range(10):
