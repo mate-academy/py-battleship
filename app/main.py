@@ -36,8 +36,13 @@ class Ship:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        self.get_deck(row, column).is_alive = False
+        deck = self.get_deck(row, column)
 
+        if deck is None:
+            print(f"No deck found at row {row}, column {column}")
+            return
+
+        deck.is_alive = False
         drowned = []
 
         for deck in self.decks:
