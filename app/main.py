@@ -4,7 +4,6 @@ class Deck:
                  column: int,
                  is_alive: bool = True
                  ) -> None:
-
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -29,15 +28,25 @@ class Ship:
             for pos in range(start[1], end[1] + 1):
                 self.decks.append(Deck(start[0], pos))
 
-    def get_deck(self, row: int, column: int) -> Deck:
-        return [deck for deck in self.decks if deck.row == row
-                and deck.column == column][0]
+    def get_deck(self,
+                 row: int,
+                 column: int
+                 ) -> Deck:
 
-    def fire(self, row: int, column: int) -> None:
+        return next(
+            deck for deck in self.decks if deck.row == row
+            and deck.column == column
+        )
+
+    def fire(self,
+             row: int,
+             column: int
+             ) -> None:
+
         deck = self.get_deck(row, column)
         deck.is_alive = False
-        if sum([1 for deck_ in self.decks if not
-                deck_.is_alive]) == len(self.decks):
+        if len([deck_ for deck_ in self.decks if not deck_.is_alive]) == len(
+                self.decks):
             self.is_drowned = True
 
 
@@ -61,68 +70,70 @@ class Battleship:
 
     def _validate_ship_positions(self) -> None:
         for ship in self.ships:
-            i, j = ship.start
-            i2, j2 = ship.end
-            if i == i2:
-                if j > j2:
-                    j, j2 = j2, j
-                self._validate_horizontal_ship_position(i, j, j2)
-            elif j == j2:
-                if i > i2:
-                    i, i2 = i2, i
-                self._validate_vertical_ship_position(j, i, i2)
+            row_start, col_start = ship.start
+            row_end, col_end = ship.end
+            if row_start == row_end:
+                if col_start > col_end:
+                    col_start, col_end = col_end, col_start
+                self._validate_horizontal_ship_position(
+                    row_start,
+                    col_start,
+                    col_end
+                )
+            elif col_start == col_end:
+                if row_start > row_end:
+                    row_start, row_end = row_end, row_start
+                self._validate_vertical_ship_position(
+                    col_start,
+                    row_start,
+                    row_end
+                )
             else:
                 raise ValueError
 
+    def check_h_position(self, row: int, index: int) -> None:
+        if not all(self.field[row + di][index] == self.EMPTY_CELL
+                   for di in [-1, 0, 1] if 0 <= row + di <= 9):
+            raise ValueError
+
     def _validate_horizontal_ship_position(self,
-                                           i: int,
-                                           _j: int
+                                           row: int,
+                                           col: int
                                            ) -> None:
 
-        if _j == 0:
-            if not all(self.field[i + di][0] == self.EMPTY_CELL
-                       for di in [-1, 0, 1] if 0 <= i + di <= 9):
-                raise ValueError
-            if not all(self.field[i + di][1] == self.EMPTY_CELL
-                       for di in [-1, 0, 1] if 0 <= i + di <= 9):
-                raise ValueError
-        elif _j == 9:
-            if not all(self.field[i + di][9] == self.EMPTY_CELL
-                       for di in [-1, 0, 1] if 0 <= i + di <= 9):
-                raise ValueError
-            if not all(self.field[i + di][8] == self.EMPTY_CELL
-                       for di in [-1, 0, 1] if 0 <= i + di <= 9):
-                raise ValueError
+        if col == 0:
+            self.check_h_position(row, 0)
+            self.check_h_position(row, 1)
+
+        elif col == 9:
+            self.check_h_position(row, 9)
+            self.check_h_position(row, 8)
         else:
-            if not all(self.field[i + di][_j + dj] == self.EMPTY_CELL
+            if not all(self.field[row + di][col + dj] == self.EMPTY_CELL
                        for di in [-1, 0, 1] for dj in [-1, 0, 1]
-                       if 0 <= i + di <= 9 and 0 <= _j + dj <= 9):
+                       if 0 <= row + di <= 9 and 0 <= col + dj <= 9):
                 raise ValueError
+
+    def check_v_position(self, col: int, index: int) -> None:
+        if not all(self.field[index][col + dj] == self.EMPTY_CELL
+                   for dj in [-1, 0, 1] if 0 <= col + dj <= 9):
+            raise ValueError
 
     def _validate_vertical_ship_position(self,
-                                         _j: int,
-                                         i: int,
-                                         i2: int
+                                         col: int,
+                                         row: int,
                                          ) -> None:
 
-        if i == 0:
-            if not all(self.field[0][_j + dj] == self.EMPTY_CELL
-                       for dj in [-1, 0, 1] if 0 <= _j + dj <= 9):
-                raise ValueError
-            if not all(self.field[1][_j + dj] == self.EMPTY_CELL
-                       for dj in [-1, 0, 1] if 0 <= _j + dj <= 9):
-                raise ValueError
-        elif i == 9:
-            if not all(self.field[9][_j + dj] == self.EMPTY_CELL
-                       for dj in [-1, 0, 1] if 0 <= _j + dj <= 9):
-                raise ValueError
-            if not all(self.field[8][_j + dj] == self.EMPTY_CELL
-                       for dj in [-1, 0, 1] if 0 <= _j + dj <= 9):
-                raise ValueError
+        if row == 0:
+            self.check_v_position(col, 0)
+            self.check_v_position(col, 1)
+        elif row == 9:
+            self.check_v_position(col, 9)
+            self.check_v_position(col, 8)
         else:
-            if not all(self.field[i + di][_j + dj] == self.EMPTY_CELL
+            if not all(self.field[row + di][col + dj] == self.EMPTY_CELL
                        for di in [-1, 0, 1] for dj in [-1, 0, 1] if
-                       0 <= i + di <= 9 and 0 <= _j + dj <= 9):
+                       0 <= row + di <= 9 and 0 <= col + dj <= 9):
                 raise ValueError
 
     def print_field(self) -> None:
@@ -139,8 +150,8 @@ class Battleship:
 
     def _get_ship(self, row: int, column: int) -> Ship:
         for ship in self.ships:
-            if len(ship.decks) == 1 and row == ship.start[0] \
-                    and column == ship.start[1]:
+            if (len(ship.decks) == 1 and row == ship.start[0]
+                    and column == ship.start[1]):
                 return ship
             num = 1 if ship.start[1] == ship.end[1] else 0
             if row == ship.start[num % 2] and ship.start[(num + 1) % 2] \
@@ -161,6 +172,4 @@ class Battleship:
             self.field[x][y] = self.HIT_SHIP_DECK
             return "Hit!"
         else:
-            for deck in ship.decks:
-                self.field[deck.row][deck.column] = self.DESTROYED_SHIP_DECK
             return "Sunk!"
