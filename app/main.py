@@ -24,7 +24,6 @@ class Ship:
                 ceil = (row, column)
                 self.deck.append(ceil)
 
-
     def fire(self, row: int, column: int) -> None:
         deck = Deck(row, column)
         self.deck.remove((row, column))
