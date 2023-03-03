@@ -171,5 +171,4 @@ class Battleship:
         if not ship.is_drowned:
             self.field[x][y] = self.HIT_SHIP_DECK
             return "Hit!"
-        else:
-            return "Sunk!"
+        return "Sunk!"
