@@ -24,19 +24,11 @@ class Ship:
                 ceil = (row, column)
                 self.deck.append(ceil)
 
-    # def get_deck(
-    #         self,
-    #         row: tuple,
-    #         column: tuple
-    # ) -> tuple:
-    #     for ceil in self.deck:
-    #         if ceil[0] == row and ceil[1] == column:
-    #             return ceil
 
     def fire(self, row: int, column: int) -> None:
         deck = Deck(row, column)
         self.deck.remove((row, column))
-        if len(self.deck) == 0:
+        if not self.deck:
             self.is_drowned = True
         deck.is_alive = False
 
