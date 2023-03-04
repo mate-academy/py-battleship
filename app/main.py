@@ -11,8 +11,8 @@ class Deck:
 
 class Ship:
     def __init__(self,
-                 start: tuple,
-                 end: tuple,
+                 start: tuple[int, int],
+                 end: tuple[int, int],
                  is_drowned: bool = False
                  ) -> None:
 
@@ -34,9 +34,8 @@ class Ship:
                  ) -> Deck:
 
         return next(
-            deck for deck in self.decks if deck.row == row
-            and deck.column == column
-        )
+            deck for deck in self.decks
+            if deck.row == row and deck.column == column)
 
     def fire(self,
              row: int,
@@ -45,9 +44,7 @@ class Ship:
 
         deck = self.get_deck(row, column)
         deck.is_alive = False
-        if len([deck_ for deck_ in self.decks if not deck_.is_alive]) == len(
-                self.decks):
-            self.is_drowned = True
+        self.is_drowned = not any(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
@@ -142,7 +139,7 @@ class Battleship:
                 print(item, end=" ")
             print()
 
-    def _add_ship(self, start: tuple, end: tuple) -> None:
+    def _add_ship(self, start: tuple[int, int], end: tuple[int, int]) -> None:
         ship = Ship(start, end)
         self.ships.append(ship)
         for deck in ship.decks:
@@ -158,7 +155,7 @@ class Battleship:
                     <= column <= ship.end[(num + 1) % 2]:
                 return ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         x, y = location
         if not (0 <= x <= 9 and 0 <= y <= 9):
             raise ValueError

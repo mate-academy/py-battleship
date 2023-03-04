@@ -39,7 +39,7 @@ Implement the class `Battleship` that takes a list of ships. Each ship is repres
 Example:
 ```python
 battle_ship = Battleship(
-    ships=[ 
+    ships=[
         ((0, 0), (0, 3)),
         ((0, 5), (0, 6)),
         ((0, 8), (0, 9)),
@@ -112,7 +112,7 @@ Feel free to use other symbols instead of these if you think it'd be better.
 #### 2. Validate input
 Write protected method `_validate_field` that
 should check the following conditions after creating
-a field in the constructor:
+a field in the `__init__` method:
 - the total number of the ships should be 10;
 - there should be 4 single-deck ships;
 - there should be 3 double-deck ships; 
