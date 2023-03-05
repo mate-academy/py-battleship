@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -8,8 +11,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int, int],
+            end: tuple[int, int],
             is_drowned: bool = False
     ) -> None:
         self.decks = None
@@ -19,18 +22,13 @@ class Ship:
         self.fill_decs()
 
     def fill_decs(self) -> None:
-        if self.start[0] == self.end[0]:
-            self.decks = [
-                Deck(self.start[0], i)
-                for i in range(self.start[1], self.end[1] + 1)
-            ]
-        if self.start[1] == self.end[1]:
-            self.decks = [
-                Deck(i, self.start[1])
-                for i in range(self.start[0], self.end[0] + 1)
-            ]
+        self.decks = []
 
-    def get_deck(self, row: int, column: int) -> Deck:
+        for st in range(self.start[0], self.end[0] + 1):
+            for en in range(self.start[1], self.end[1] + 1):
+                self.decks.append(Deck(st, en))
+
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -43,11 +41,8 @@ class Ship:
             return
 
         deck.is_alive = False
-        drowned = []
 
-        for deck in self.decks:
-            drowned.append(deck.is_alive)
-        if not any(drowned):
+        if not any(deck.is_alive for deck in self.decks):
             self.is_drowned = True
 
 
@@ -62,7 +57,7 @@ class Battleship:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
 
         if location in self.field:
             self.field[location].fire(location[0], location[1])
