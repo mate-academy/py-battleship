@@ -24,9 +24,9 @@ class Ship:
     def fill_decs(self) -> None:
         self.decks = []
 
-        for st in range(self.start[0], self.end[0] + 1):
-            for en in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(st, en))
+        for coord_x in range(self.start[0], self.end[0] + 1):
+            for coord_y in range(self.start[1], self.end[1] + 1):
+                self.decks.append(Deck(coord_x, coord_y))
 
     def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
