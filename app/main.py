@@ -20,13 +20,11 @@ class Ship:
         self.end = end
         self.is_drowned = is_drowned
         self.decks = []
-        if start[1] == end[1]:
-
-            for pos in range(start[0], end[0] + 1):
-                self.decks.append(Deck(pos, start[1]))
-        elif start[0] == end[0]:
-            for pos in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], pos))
+        self.decks = [Deck(pos1, pos2) for pos1, pos2 in
+                      zip(range(start[0], end[0] + 1),
+                          range(start[1], end[1] + 1))] \
+            if start[1] == end[1] else [
+                Deck(start[0], pos) for pos in range(start[1], end[1] + 1)]
 
     def get_deck(self,
                  row: int,
@@ -158,7 +156,7 @@ class Battleship:
     def fire(self, location: tuple[int, int]) -> str:
         x, y = location
         if not (0 <= x <= 9 and 0 <= y <= 9):
-            raise ValueError
+            raise ValueError("Out of range")
 
         if self.field[x][y] == self.EMPTY_CELL:
             return "Miss!"
