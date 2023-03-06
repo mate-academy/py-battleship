@@ -10,12 +10,16 @@ class Deck:
 
 class Ship:
     def __init__(
-            self, start: list[int], end: list[int], is_drowned: bool = False
+            self, start: tuple[int], end: tuple[int], is_drowned: bool = False
     ) -> None:
+        self.decks = []
         self.is_drowned = is_drowned
-        self.decks = [Deck(row, column)
-                      for row in range(start[0], end[0] + 1)
-                      for column in range(start[1], end[1] + 1)]
+        self._create_ship(start, end)
+
+    def _create_ship(self, start: tuple[int], end: tuple[int]) -> None:
+        for row in range(start[0], end[0] + 1):
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(row, column))
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
@@ -28,9 +32,8 @@ class Ship:
 
         if any(alive_decks):
             return "Hit!"
-        else:
-            self.is_drowned = True
-            return "Sunk!"
+        self.is_drowned = True
+        return "Sunk!"
 
 
 class Battleship:
