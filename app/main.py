@@ -63,24 +63,9 @@ class Battleship:
             for deck in ship.decks:
                 fields[(deck.row, deck.column)] = ship
         ships = list(set(fields.values()))
-        sizes = []
-        for i, uniq_ship in enumerate(ships):
-            sizes.append(len(uniq_ship.decks))
-            for deck in uniq_ship.decks:
-                x, y = deck.row, deck.column
-                tests = [
-                    (x, y + 1), (x, y - 1), (x + 1, y),
-                    (x - 1, y), (x + 1, y + 1), (x - 1, y + 1),
-                    (x + 1, y - 1), (x - 1, y - 1)
-                ]
-                for test in tests:
-                    x, y = test
-                    if 0 <= x < 10 and 0 <= y < 10:
-                        for index in range(i + 1, 9):
-                            if ships[index].get_deck(x, y):
-                                print(f"Ship with coordinates "
-                                      f"x: {x}, y: {y} is in wrong position")
-                                return
+
+        Battleship.fields_neighbors_test(ships)
+        sizes = [len(uniq_ship.decks) for uniq_ship in ships]
         correct_sizes = all(
             (sizes.count(1) == 4, sizes.count(2) == 3,
              sizes.count(3) == 2, sizes.count(4) == 1)
@@ -88,7 +73,26 @@ class Battleship:
         if correct_sizes:
             print("Input is valid")
             return fields
-        print("Wrong amount of ships")
+        raise ValueError("Wrong amount of ships")
+
+    @staticmethod
+    def fields_neighbors_test(ships: List[Ship]) -> None:
+        field_neighbors = [
+            (0, 1), (0, -1), (1, 0),
+            (-1, 0), (1, 1), (-1, 1),
+            (1, -1), (-1, -1)
+        ]
+        for i, uniq_ship in enumerate(ships):
+            for deck in uniq_ship.decks:
+                for field_neighbor in field_neighbors:
+                    x, y = deck.row, deck.column
+                    x += field_neighbor[0]
+                    y += field_neighbor[1]
+                    if 0 <= x < 10 and 0 <= y < 10:
+                        for index in range(i + 1, 9):
+                            if ships[index].get_deck(x, y):
+                                raise ValueError(f"Ship with coordinates "
+                                      f"x: {x}, y: {y} is in wrong position")
 
     def print_field(self) -> None:
         for i in range(10):
