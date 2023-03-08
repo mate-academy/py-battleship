@@ -3,6 +3,26 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
+class CountShipsException(Exception):
+    pass
+
+
+class CountFourDecksShipException(Exception):
+    pass
+
+
+class CountThreeDecksShipException(Exception):
+    pass
+
+
+class CountTwoDecksShipException(Exception):
+    pass
+
+
+class CountOneDeckShipException(Exception):
+    pass
+
+
 @dataclass
 class Deck:
     row: int
@@ -55,8 +75,7 @@ class Battleship:
                         ship.is_drowned = True
                         return "Sunk!"
                     return "Hit!"
-        else:
-            return "Miss!"
+        return "Miss!"
 
     def draw_matrix(self, rows: int, columns: int) -> str:
         result = ""
@@ -83,3 +102,23 @@ class Battleship:
                     return "is_alive"
                 return "dead_deck"
         return False
+
+    def _validate_field(self) -> bool:
+        if len(self.ships) != 10:
+            raise CountShipsException
+
+        ship_on_the_board = [len(ship.decks) for ship in self.ships.values()]
+
+        if 4 not in ship_on_the_board or ship_on_the_board.count(4) != 1:
+            raise CountFourDecksShipException
+
+        if 3 not in ship_on_the_board or ship_on_the_board.count(3) != 2:
+            raise CountThreeDecksShipException
+
+        if 2 not in ship_on_the_board or ship_on_the_board.count(2) != 3:
+            raise CountTwoDecksShipException
+
+        if 1 not in ship_on_the_board or ship_on_the_board.count(1) != 4:
+            raise CountOneDeckShipException
+
+        return True
