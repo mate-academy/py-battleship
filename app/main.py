@@ -47,9 +47,10 @@ class Ship:
             deck.is_alive = False
             self.check_drowned()
 
-    def check_drowned(self) -> None:
+    def check_drowned(self) -> bool:
         if all([not deck.is_alive for deck in self.decks]):
             self.is_drowned = True
+            return self.is_drowned
 
 
 class Battleship:
@@ -75,9 +76,11 @@ class Battleship:
         if location in self.field:
             ship = self.field[location]
             deck = ship.get_deck(*location)
+            if not deck.is_alive:
+                return "Miss!"
             deck.is_alive = False
-            if all(deck.is_alive is False for deck in ship.decks):
-                ship.is_drowned = True
+            ship.check_drowned()
+            if ship.is_drowned:
                 return "Sunk!"
             deck.is_hit = True
             return "Hit!"
