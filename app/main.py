@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import itertools
+
 
 class ErrorNumberOfTheShips(ValueError):
     pass
@@ -17,17 +19,16 @@ class Deck:
 
     @staticmethod
     def decks_maker(start: tuple, end: tuple) -> list[Deck]:
-        decks = []
-        if start[0] - end[0] != 0:
-            for row in range(start[0], end[0] + 1):
-                decks.append(Deck(row, end[1]))
-        elif start[1] - end[1] != 0:
-            for column in range(start[1], end[1] + 1):
-                decks.append(Deck(start[0], column))
-        elif start == end:
-            decks.append(Deck(start[0], start[1]))
 
-        return decks
+        if start == end:
+            return [Deck(start[0], start[1])]
+
+        else:
+            rows = range(start[0], end[0] + 1)
+            columns = range(start[1], end[1] + 1)
+            coords = itertools.product(rows, columns)
+            decks = [Deck(*coord) for coord in coords]
+            return decks
 
 
 class Ship:
@@ -43,17 +44,16 @@ class Ship:
         self.is_drowned = is_drowned
 
     def get_deck(self, row: int, column: int) -> Deck:
+
         for deck in self.decks:
+
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
-        alive = False
-        for deck in self.decks:
-            if deck.is_alive:
-                alive = True
-        if not alive:
+
+        if not any([deck.is_alive for deck in self.decks]):
             self.is_drowned = True
 
 
@@ -65,7 +65,9 @@ class Battleship:
 
     def make_start_battle_map(self) -> list:
         battle_map = [["~" for _ in range(10)] for _ in range(10)]
+
         for ship_key in self.field:
+
             for row, column in ship_key:
                 battle_map[row][column] = u"\u25A1"
 
@@ -73,29 +75,37 @@ class Battleship:
 
     def print_field(self) -> None:
         picture = ""
+
         for row in self.field_picture:
             picture += "  ".join(row) + "\n"
+
         print(picture)
 
     def fire_on_picture(self, row: int, column: int) -> None:
         self.field_picture[row][column] = "*"
 
     def make_sunk_ship_on_picture(self, ship_decks: tuple) -> None:
+
         for deck in ship_decks:
             self.field_picture[deck[0]][deck[1]] = "x"
 
     def fire(self, location: tuple) -> str:
 
         for ship_decks in self.field:
+
             if location in ship_decks:
+
                 for deck in self.field[ship_decks].decks:
+
                     if location == (deck.row, deck.column):
                         self.fire_on_picture(deck.row, deck.column)
                         self.field[ship_decks].fire(deck.row, deck.column)
+
                         if self.field[ship_decks].is_drowned:
                             self.make_sunk_ship_on_picture(ship_decks)
                             self.print_field()
                             return "Sunk!"
+
                         self.print_field()
                         return "Hit!"
         self.print_field()
@@ -104,6 +114,7 @@ class Battleship:
     @staticmethod
     def field_maker(ships: list[tuple[tuple]]) -> dict:
         field = {}
+
         for start, end in ships:
             ship = Ship(start, end)
             field[tuple(
@@ -114,15 +125,45 @@ class Battleship:
 
     @staticmethod
     def _validate_field(ships: dict) -> None:
+
         if len(ships) != 10:
             raise ErrorNumberOfTheShips(
                 "The total number of the ships should be 10")
+
         decks = [len(ships[key].decks) for key in ships]
+
         if decks.count(4) != 1:
             raise ErrorNumberOfShipsDeck("There should be 1 four-deck ship")
+
         if decks.count(3) != 2:
             raise ErrorNumberOfShipsDeck("There should be 2 three-deck ships")
+
         if decks.count(2) != 3:
             raise ErrorNumberOfShipsDeck("There should be 3 double-deck ships")
+
         if decks.count(1) != 4:
             raise ErrorNumberOfShipsDeck("There should be 4 single-deck ships")
+
+
+battle_ship = Battleship(
+    ships=[
+        ((0, 0), (0, 3)),
+        ((0, 5), (0, 6)),
+        ((0, 8), (0, 9)),
+        ((2, 0), (4, 0)),
+        ((2, 4), (2, 6)),
+        ((2, 8), (2, 9)),
+        ((9, 9), (9, 9)),
+        ((7, 7), (7, 7)),
+        ((7, 9), (7, 9)),
+        ((9, 7), (9, 7)),
+    ]
+)
+
+print(
+    battle_ship.fire((0, 4)),  # Miss!
+    battle_ship.fire((0, 3)),  # Hit!
+    battle_ship.fire((0, 2)),  # Hit!
+    battle_ship.fire((0, 1)),  # Hit!
+    battle_ship.fire((0, 0)),  # Sunk!
+)
