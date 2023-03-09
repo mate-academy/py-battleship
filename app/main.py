@@ -1,3 +1,6 @@
+from typing import Tuple, List
+
+
 class Deck:
     def __init__(
             self,
@@ -13,8 +16,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: list,
-            end: list,
+            start: Tuple[int, int],
+            end: Tuple[int, int],
             is_drowned: bool = False
     ) -> None:
         # Create decks and save them to a list `self.decks`
@@ -46,7 +49,10 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(
+            self,
+            ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+    ) -> None:
         # Create a dict `self.field`.
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
@@ -59,7 +65,7 @@ class Battleship:
 
         self._validate()
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: Tuple[int, int]) -> str:
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
@@ -81,11 +87,11 @@ class Battleship:
         for ship in ships:
             different_ships_count[len(ship.decks) - 1] += 1
 
-        assert len(ships) == 10, \
+        if len(ships) == 10:
             ValueError("the total number of the ships should be 10")
 
         for index in range(4):
-            assert different_ships_count[index] == 4 - index, \
+            if different_ships_count[index] == 4 - index:
                 ValueError(f"there should be {4 - index} "
                            f"{index + 1}-deck ships")
 
