@@ -46,6 +46,7 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list[tuple, int]) -> None:
+        self.grid_size = 10
         self.field = {}
         for coordinates in ships:
             start_row, start_column = coordinates[0][0], coordinates[0][1]
@@ -67,8 +68,8 @@ class Battleship:
         return "Hit!"
 
     def print_field(self) -> None:
-        for row in range(0, 10):
-            for column in range(0, 10):
+        for row in range(0, self.grid_size):
+            for column in range(0, self.grid_size):
                 ship = self.field.get((row, column))
                 if not ship:
                     print("~    ", end="")
@@ -111,7 +112,8 @@ class Battleship:
             ships_copy = list(ships.values()).copy()
             ships_copy.remove(coordinates)
             ships_copy = [
-                coordinate for coordinate_list in ships_copy
+                coordinate
+                for coordinate_list in ships_copy
                 for coordinate in coordinate_list
             ]
             for coordinate in coordinates:
