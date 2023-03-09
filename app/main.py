@@ -20,25 +20,29 @@ class Ship:
             end: Tuple[int, int],
             is_drowned: bool = False
     ) -> None:
-        # Create decks and save them to a list `self.decks`
         self.is_drowned = is_drowned
-        self.decks = []
+        self.decks = self.get_decks_list(start, end)
+
+    @staticmethod
+    def get_decks_list(
+            start: Tuple[int, int],
+            end: Tuple[int, int]
+    ) -> List[Deck]:
+        deck_list = []
         if start[0] != end[0]:
             for i in range(start[0], end[0] + 1):
-                self.decks.append(Deck(i, start[1]))
+                deck_list.append(Deck(i, start[1]))
         else:
             for i in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], i))
+                deck_list.append(Deck(start[0], i))
+        return deck_list
 
     def get_deck(self, row: int, column: int) -> Deck:
-        # Find the corresponding deck in the list
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> str:
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
         deck = self.get_deck(row, column)
         deck.is_alive = False
         for deck in self.decks:
@@ -53,10 +57,6 @@ class Battleship:
             self,
             ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
     ) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
         self.field = {}
         for ship_coordinates in ships:
             ship = Ship(*ship_coordinates)
@@ -66,14 +66,10 @@ class Battleship:
         self._validate()
 
     def fire(self, location: Tuple[int, int]) -> str:
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
         if location in self.field:
-            res = self.field[location].fire(*location)
+            result_string = self.field[location].fire(*location)
             self.print_field()
-            return res
+            return result_string
         else:
             return "Miss!"
 
