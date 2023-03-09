@@ -75,14 +75,9 @@ class Battleship:
     def fire(self, location: Tuple[int, int]) -> str:
         if location in self.field:
             ship = self.field[location]
-            deck = ship.get_deck(*location)
-            if not deck.is_alive:
-                return "Miss!"
-            deck.is_alive = False
-            ship.check_drowned()
+            ship.fire(*location)
             if ship.is_drowned:
                 return "Sunk!"
-            deck.is_hit = True
             return "Hit!"
         return "Miss!"
 
