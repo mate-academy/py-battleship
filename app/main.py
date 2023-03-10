@@ -37,19 +37,22 @@ class Ship:
                 deck_list.append(Deck(start[0], i))
         return deck_list
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
+        return None
 
     def fire(self, row: int, column: int) -> str:
         deck = self.get_deck(row, column)
-        deck.is_alive = False
-        for deck in self.decks:
-            if deck.is_alive:
-                return "Hit!"
-        self.is_drowned = True
-        return "Sunk!"
+        if deck:
+            deck.is_alive = False
+            for deck in self.decks:
+                if deck.is_alive:
+                    return "Hit!"
+            self.is_drowned = True
+            return "Sunk!"
+        return "Miss!"
 
 
 class Battleship:
@@ -70,8 +73,7 @@ class Battleship:
             result_string = self.field[location].fire(*location)
             self.print_field()
             return result_string
-        else:
-            return "Miss!"
+        return "Miss!"
 
     def _validate(self) -> None:
         ships = set(self.field.values())
@@ -94,8 +96,10 @@ class Battleship:
         for cell in self.field:
             for other_cell in self.field:
                 if self.field[cell] != self.field[other_cell]:
-                    if abs(cell[0] - other_cell[0]) < 2 \
-                            and abs(cell[1] - other_cell[1]) < 2:
+                    if (
+                            abs(cell[0] - other_cell[0]) < 2
+                            and abs(cell[1] - other_cell[1]) < 2
+                    ):
                         raise ValueError(
                             "ships "
                             "shouldn't be located in the neighboring cells "
