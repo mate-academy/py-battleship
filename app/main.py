@@ -1,15 +1,11 @@
-# class Deck:
-#     def __init__(self, row, column, is_alive=True):
-#         pass
-
 class Ship:
     decks = []
 
-    def __init__(self,
-                 start: tuple,
-                 end: tuple,
-                 is_drowned: bool = False) -> None:
-        # Create decks and save them to a list `self.decks`
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+    ) -> None:
         self.deck = self.create_deck(start, end)
         Ship.decks.append(self)
 
@@ -21,7 +17,7 @@ class Ship:
         return [(start[1], point) for point in range(start[0], end[0] + 1)]
 
 
-class NotEnoughtShips(Exception):
+class NotEnoughShips(Exception):
     pass
 
 
@@ -33,18 +29,10 @@ class Battleship:
     battle_field = [["~"] * 10] * 10
 
     def __init__(self, ships: list) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
         self.field = self.create_field(ships)
         self._validate_field()
 
     def fire(self, location: tuple) -> str:
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
         for ship in Ship.decks:
             self.battle_field[location[0]][location[1]] = "x"
             if location in ship.deck and len(ship.deck) == 1:
@@ -82,9 +70,9 @@ class Battleship:
             1: 0
         }
         if len(self.field) != 10:
-            raise NotEnoughtShips("Pleas enter correct number of ships")
+            raise NotEnoughShips("Pleas enter correct number of ships")
         for ship in Ship.decks:
             dic_ships[len(ship.deck)] += 1
         if dic_ships != check_dict:
-            raise MissingSomeShips("Please check the correctness"
-                                   " of the entered data")
+            raise MissingSomeShips("Please check the correctness "
+                                   "of the entered data")
