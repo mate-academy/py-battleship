@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(
             self,
@@ -23,7 +26,7 @@ class Ship:
             for row in range(start[0], end[0] + 1):
                 self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -45,7 +48,7 @@ class Battleship:
             for deck in self.ship.decks:
                 self.field[deck.row, deck.column] = self.ship
 
-    def fire(self, location: tuple[int]) -> None:
+    def fire(self, location: tuple[int]) -> str:
         if location not in self.field:
             return "Miss!"
         else:
