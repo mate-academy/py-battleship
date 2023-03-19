@@ -1,6 +1,7 @@
 class Deck:
     def __init__(
-            self, row: int,
+            self,
+            row: int,
             column: int,
             is_alive: bool = True
     ) -> None:
@@ -39,7 +40,6 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
-        self.ships = ships
         self.field = {}
         for ship in ships:
             battle_ship = Ship(ship[0], ship[1])
