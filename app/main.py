@@ -49,9 +49,9 @@ class Battleship:
     def __init__(self, ships: list[tuple[tuple]]) -> None:
         self.fields = {}
         for ship in ships:
-            self.ship = Ship(ship[0], ship[1])
-            for deck in self.ship.decks:
-                self.fields[deck.row, deck.column] = self.ship
+            ship = Ship(ship[0], ship[1])
+            for deck in ship.decks:
+                self.fields[deck.row, deck.column] = ship
 
     def fire(self, location: tuple[int, int]) -> str:
         if location not in self.fields:
