@@ -9,6 +9,14 @@ class Deck:
         self.column = column
         self.is_alive = is_alive
 
+    @staticmethod
+    def decks_group(start: tuple[int, int], end: tuple[int, int]) -> list:
+        list_decks = []
+        for row in range(start[0], end[0] + 1):
+            for column in range(start[1], end[1] + 1):
+                list_decks.append(Deck(row, column))
+        return list_decks
+
 
 class Ship:
     def __init__(
@@ -19,10 +27,7 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = []
-        for row in range(self.start[0], self.end[0] + 1):
-            for column in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(row, column))
+        self.decks = Deck.decks_group(start, end)
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
