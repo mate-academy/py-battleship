@@ -1,3 +1,7 @@
+from __future__ import annotations
+from typing import Optional
+
+
 class Deck:
     def __init__(
             self,
@@ -10,7 +14,10 @@ class Deck:
         self.is_alive = is_alive
 
     @staticmethod
-    def decks_group(start: tuple[int, int], end: tuple[int, int]) -> list:
+    def decks_group(
+            start: tuple[int, int],
+            end: tuple[int, int]
+    ) -> list[Deck]:
         list_decks = []
         for row in range(start[0], end[0] + 1):
             for column in range(start[1], end[1] + 1):
@@ -29,18 +36,14 @@ class Ship:
         self.is_drowned = is_drowned
         self.decks = Deck.decks_group(start, end)
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
-        for deck in self.decks:
-            self.is_drowned = True
-            if deck.is_alive:
-                self.is_drowned = False
-                return
+        self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
