@@ -36,12 +36,17 @@ class Ship:
 
     def get_deck(self, row, column):
         # Find the corresponding deck in the list
-        pass
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
 
     def fire(self, row, column):
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
-        pass
+        self.get_deck(row, column).is_alive = False
+
+        if not any(deck.is_alive for deck in self.decks):
+            self.is_drowned = True
 
 
 class Battleship:
@@ -67,6 +72,14 @@ class Battleship:
         # in the ship or not.
         if location in self.field:
             ship = self.field.get(location)
+            ship.fire(location[0], location[1])
+
+            if ship.is_drowned:
+                return "Sunk!"
+
+            return "Hit!"
+
+        return "Miss!"
 
     def print_field(self):
         field_matrix = []
@@ -75,8 +88,19 @@ class Battleship:
             row_items = ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"]
             field_matrix.append(row_items)
 
-        for cell in self.field:
-            field_matrix[cell[0]][cell[1]] = u"\u25A1"
+        for location in self.field:
+            ship = self.field.get(location)
+
+            if ship.is_drowned:
+                field_matrix[location[0]][location[1]] = "X"
+
+            else:
+                deck = ship.get_deck(location[0], location[1])
+
+                if deck.is_alive:
+                    field_matrix[location[0]][location[1]] = u"\u25A1"
+                else:
+                    field_matrix[location[0]][location[1]] = "*"
 
         print('\n'.join([''.join(['{:4}'.format(item) for item in row])
                          for row in field_matrix]))
@@ -100,7 +124,18 @@ battle_ship = Battleship(
 print(battle_ship.field)
 battle_ship.print_field()
 
-for s in battle_ship.ships:
-    for d in s.decks:
-        print(d.row, d.column)
+print(battle_ship.fire((0, 4)))  # Miss!
+battle_ship.print_field()
+
+print(battle_ship.fire((0, 3)))  # Hit!
+battle_ship.print_field()
+
+print(battle_ship.fire((0, 2)))  # Hit!
+battle_ship.print_field()
+
+print(battle_ship.fire((0, 1)))  # Hit!
+battle_ship.print_field()
+
+print(battle_ship.fire((0, 0)))  # Sunk!
+battle_ship.print_field()
 
