@@ -38,10 +38,7 @@ class Ship:
         self.change_is_drowned()
 
     def change_is_drowned(self) -> None:
-        if any(dec.is_alive for dec in self.decks):
-            self.is_drowned = False
-        else:
-            self.is_drowned = True
+        self.is_drowned = not any(dec.is_alive for dec in self.decks)
 
 
 class Battleship:
