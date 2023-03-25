@@ -28,7 +28,7 @@ class Ship:
         self.decks_with_margin_cells = set()
         self.set_decks_with_margin_cells()
 
-    def set_decks(self):
+    def set_decks(self) -> None:
         if self.start[0] != self.end[0]:
             for i in range(self.start[0], self.end[0] + 1):
                 self.decks.append(Deck(i, self.start[1]))
@@ -43,7 +43,7 @@ class Ship:
             self.decks.append(Deck(self.start[0], self.start[1]))
             self.decks_cells.add((self.start[0], self.start[1]))
 
-    def set_decks_with_margin_cells(self):
+    def set_decks_with_margin_cells(self) -> None:
         for deck in self.decks:
             if deck.row == 0 and deck.column == 0:
                 self.decks_with_margin_cells.update([
@@ -138,15 +138,12 @@ class Ship:
                     (deck.row - 1, deck.column - 1),
                 ])
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
+    def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
 
         if not any(deck.is_alive for deck in self.decks):
@@ -154,24 +151,22 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list[Ship]) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        self.ships = ships
+    def __init__(
+            self,
+            ships: list[tuple[tuple[int, int], tuple[int, int]]]
+    ) -> None:
+        self.ships: list[Ship] = []
         self.field = {}
-        self._validate_field()
 
         for ship in ships:
-            for deck in ship.decks:
-                self.field[(deck.row, deck.column)] = ship
+            ship_instance = Ship(ship[0], ship[1])
+            self.ships.append(ship_instance)
+            for deck in ship_instance.decks:
+                self.field[(deck.row, deck.column)] = ship_instance
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
+        self._validate_field()
+
+    def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field.get(location)
             ship.fire(location[0], location[1])
@@ -183,7 +178,7 @@ class Battleship:
 
         return "Miss!"
 
-    def _validate_field(self):
+    def _validate_field(self) -> None:
         if len(self.ships) != 10:
             raise Exception("Number of ships must be 10")
         if sum(len(ship.decks) for ship in self.ships) != 20:
@@ -193,23 +188,17 @@ class Battleship:
         for i in range(len(self.ships)):
             ship = self.ships[i]
 
-            for j in range(i + 1, len(self.ships)):
+            for count in range(i + 1, len(self.ships)):
 
                 if len(ship.decks_with_margin_cells.intersection(
-                    self.ships[j].decks_cells
+                    self.ships[count].decks_cells
                 )) != 0:
-                    print(i, j, ship.decks_with_margin_cells.intersection(
-                        self.ships[j].decks_with_margin_cells
-                    ))
                     raise Exception("Ships shouldn't be located "
                                     "in the neighboring cells "
-                                    "(even if cells are neighbors by diagonal)")
+                                    "(even if cells are neighbors "
+                                    "by diagonal)")
 
-                j += 1
-
-            i += 1
-
-    def print_field(self):
+    def print_field(self) -> None:
         field_matrix = []
 
         for _ in range(10):
@@ -230,43 +219,5 @@ class Battleship:
                 else:
                     field_matrix[location[0]][location[1]] = "*"
 
-        print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+        print("\n".join(["".join(["{:4}".format(item) for item in row])
                          for row in field_matrix]))
-
-
-battle_ship = Battleship(
-    ships=[
-        Ship((0, 0), (0, 3)),
-        Ship((0, 5), (0, 6)),
-        Ship((0, 8), (0, 9)),
-        Ship((2, 0), (4, 0)),
-        Ship((2, 4), (2, 6)),
-        Ship((2, 8), (2, 9)),
-        Ship((9, 9), (9, 9)),
-        Ship((7, 7), (7, 7)),
-        Ship((7, 9), (7, 9)),
-        Ship((9, 7), (9, 7)),
-    ]
-)
-
-print(battle_ship.field)
-battle_ship.print_field()
-
-print(battle_ship.fire((0, 4)))  # Miss!
-battle_ship.print_field()
-
-print(battle_ship.fire((0, 3)))  # Hit!
-battle_ship.print_field()
-
-print(battle_ship.fire((0, 2)))  # Hit!
-battle_ship.print_field()
-
-print(battle_ship.fire((0, 1)))  # Hit!
-battle_ship.print_field()
-
-print(battle_ship.fire((0, 0)))  # Sunk!
-battle_ship.print_field()
-
-for s in battle_ship.ships:
-    print(s.decks_cells)
-    print(s.decks_with_margin_cells)
