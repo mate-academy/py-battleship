@@ -22,6 +22,7 @@ class Ship:
         self.is_drowned = is_drowned
 
         self.decks = []
+        self.decks_cells = set()
         self.set_decks()
 
         self.decks_with_margin_cells = set()
@@ -31,13 +32,16 @@ class Ship:
         if self.start[0] != self.end[0]:
             for i in range(self.start[0], self.end[0] + 1):
                 self.decks.append(Deck(i, self.start[1]))
+                self.decks_cells.add((i, self.start[1]))
 
         if self.start[1] != self.end[1]:
             for i in range(self.start[1], self.end[1] + 1):
                 self.decks.append(Deck(self.start[0], i))
+                self.decks_cells.add((self.start[0], i))
 
         if self.start[0] == self.end[0] and self.start[1] == self.end[1]:
             self.decks.append(Deck(self.start[0], self.start[1]))
+            self.decks_cells.add((self.start[0], self.start[1]))
 
     def set_decks_with_margin_cells(self):
         for deck in self.decks:
@@ -157,6 +161,7 @@ class Battleship:
         # which is located in it
         self.ships = ships
         self.field = {}
+        self._validate_field()
 
         for ship in ships:
             for deck in ship.decks:
@@ -179,7 +184,30 @@ class Battleship:
         return "Miss!"
 
     def _validate_field(self):
-        pass
+        if len(self.ships) != 10:
+            raise Exception("Number of ships must be 10")
+        if sum(len(ship.decks) for ship in self.ships) != 20:
+            raise Exception("There must be 4 single-deck ships, "
+                            "3 double-deck ships, 2 three-deck ships "
+                            "and 1 four-deck ship")
+        for i in range(len(self.ships)):
+            ship = self.ships[i]
+
+            for j in range(i + 1, len(self.ships)):
+
+                if len(ship.decks_with_margin_cells.intersection(
+                    self.ships[j].decks_cells
+                )) != 0:
+                    print(i, j, ship.decks_with_margin_cells.intersection(
+                        self.ships[j].decks_with_margin_cells
+                    ))
+                    raise Exception("Ships shouldn't be located "
+                                    "in the neighboring cells "
+                                    "(even if cells are neighbors by diagonal)")
+
+                j += 1
+
+            i += 1
 
     def print_field(self):
         field_matrix = []
@@ -239,5 +267,6 @@ battle_ship.print_field()
 print(battle_ship.fire((0, 0)))  # Sunk!
 battle_ship.print_field()
 
-for ship in battle_ship.ships:
-    print(ship.decks_with_margin_cells)
+for s in battle_ship.ships:
+    print(s.decks_cells)
+    print(s.decks_with_margin_cells)
