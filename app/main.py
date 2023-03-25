@@ -1,4 +1,4 @@
-from typing import Tuple, List, Union
+from typing import Tuple, List, Optional
 
 
 class Deck:
@@ -11,8 +11,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: Tuple[int],
-            end: Tuple[int],
+            start: Tuple[int, int],
+            end: Tuple[int, int],
             is_drowned: bool = False
     ) -> None:
         self.start = start
@@ -24,7 +24,7 @@ class Ship:
             for row in range(start[0], end[0] + 1)
         ]
 
-    def get_deck(self, row: int, column: int) -> Union[Deck, None]:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
