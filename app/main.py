@@ -1,4 +1,5 @@
 import numpy
+from typing import Optional
 
 
 class Deck:
@@ -22,16 +23,11 @@ class Ship:
         self.end = end
         self.is_drowned = is_drowned
         self.decks = []
-        if self.start[0] == self.end[0]:
-            for i in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(self.start[0], i))
-            return
-        if self.start[1] == self.end[1]:
-            for i in range(self.start[0], self.end[0] + 1):
-                self.decks.append(Deck(i, self.start[1]))
-            return
+        for row in range(start[0], end[0] + 1):
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -53,16 +49,17 @@ class Battleship:
         self.battle_field = numpy.array([["~"] * 10] * 10)
         self.ships = ships
         self.field = {}
+        self.all_decks = []
         for ship in self.ships:
             self.field[ship] = Ship(ship[0], ship[1])
-        self._validate_field(self.field)
+            for deck in self.field[ship].decks:
+                self.all_decks.append(deck)
 
     def fire(self, location: tuple) -> str:
-        for key, value in self.field.items():
-            if (location[0] in range(key[0][0], key[1][0] + 1)
-                    and location[1] in range(key[0][1], key[1][1] + 1)):
-                value.fire(location[0], location[1])
-                if value.is_drowned is True:
+        for ship in self.field.values():
+            if location in [(deck.row, deck.column) for deck in ship.decks]:
+                ship.fire(location[0], location[1])
+                if ship.is_drowned:
                     return "Sunk!"
                 return "Hit!"
         return "Miss!"
