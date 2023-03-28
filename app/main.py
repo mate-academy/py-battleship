@@ -9,10 +9,10 @@ class Ship:
     def __init__(self, start, end, is_drowned=False):
         self.start = start
         self.end = end
-        self.decks = []
+        self.decks = self.create_decks()
         self.is_drowned = False
 
-    def get_deck(self, row, column) -> list[Deck]:
+    def create_decks(self) -> list[Deck]:
         decks = []
         if self.start[0] == self.end[0]:
             for column in range(self.start[1], self.end[1] + 1):
@@ -22,12 +22,17 @@ class Ship:
                 decks.append(Deck(row, self.start[1]))
         return decks
 
-    def fire(self, row, column):
+    def get_deck(self, row: int, column: int) -> None:
         for deck in self.decks:
-            if deck[0] == row and deck[1] == column:
-                deck.is_alive = False
-        if len([deck.is_alive for deck in self.decks]) == 0:
-            self.is_drowned = True
+            if deck.row == row and deck.column == column:
+                return deck
+
+    def fire(self, row, column):
+        deck = self.get_deck( row, column)
+        if deck:
+            deck.is_alive = False
+            # if not any([deck.is_alive for deck in self.decks]):
+            #     self.is_drowned = True
 
 
 class Battleship:
@@ -36,9 +41,10 @@ class Battleship:
 
     def fire(self, location: tuple):
         for ship in self.field:
-            if location in ship:
+            if Ship(*ship).get_deck(*location):
                 Ship(*ship).fire(*location)
-                if Ship(*ship).is_drowned:
+                if not any([deck.is_alive for deck in Ship(*ship).decks]):
+                    Ship(*ship).is_drowned = True
                     return "Sunk!"
                 return "Hit!"
-            return "Miss!"
+        return "Miss!"
