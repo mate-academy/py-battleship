@@ -79,4 +79,3 @@ class Battleship:
                 else:
                     print("~ ", end="")
             print()
-
