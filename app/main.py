@@ -66,16 +66,15 @@ class Battleship:
         return "Miss!"
 
     def print_field(self) -> None:
-        print()
         for row in range(10):
-            for colomn in range(10):
-                if (row, colomn) in self.field:
-                    if self.field[(row, colomn)].is_drowned:
-                        print("x", end="  ")
-                    elif self.field[(row, colomn)].get_deck(row, colomn):
-                        print(u"\u25A1", end="  ")
+            for col in range(10):
+                if (row, col) in self.field:
+                    if self.field[(row, col)].is_drowned:
+                        print("x ", end="")
+                    elif not self.field[(row, col)].get_deck(row, col):
+                        print("* ", end="")
                     else:
-                        print("*", end="  ")
+                        print("□ ", end="")
                 else:
-                    print("~", end="  ")
+                    print("~ ", end="")
             print()
