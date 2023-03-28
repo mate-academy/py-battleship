@@ -68,13 +68,15 @@ class Battleship:
     def print_field(self) -> None:
         for row in range(10):
             for col in range(10):
-                if (row, col) in self.field:
-                    if self.field[(row, col)].is_drowned:
+                cell = self.field.get((row, col))
+                if cell:
+                    if cell.is_drowned:
                         print("x ", end="")
-                    elif not self.field[(row, col)].get_deck(row, col):
+                    elif not cell.get_deck(row, col):
                         print("* ", end="")
                     else:
                         print("□ ", end="")
                 else:
                     print("~ ", end="")
             print()
+
