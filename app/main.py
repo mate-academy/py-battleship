@@ -48,22 +48,24 @@ class Battleship:
             boat = Ship(ship[0], ship[1])
             self.field[ship[0]] = boat
             step = ship[1][0] - ship[0][0] + ship[1][1] - ship[0][1]
-            for i in range(1, step + 1):
+            for some_ship in range(1, step + 1):
                 if ship[0][0] == ship[1][0]:
-                    self.field[(ship[0][0], ship[0][1] + i)] = boat
+                    self.field[(ship[0][0], ship[0][1] + some_ship)] = boat
                 else:
-                    self.field[(ship[0][0] + i, ship[0][1])] = boat
+                    self.field[(ship[0][0] + some_ship, ship[0][1])] = boat
 
     def print_field(self) -> None:
-        for st in range(10):
-            for cl in range(10):
-                if (st, cl) not in self.field:
+        for string in range(10):
+            for column in range(10):
+                if (string, column) not in self.field:
                     print("~", end="\t")
-                elif self.field[(st, cl)].is_drowned:
+                elif self.field[(string, column)].is_drowned:
                     print("X", end="\t")
-                elif not self.field[(st, cl)].get_deck(st, cl).is_alive:
+                elif not self.field[(string,
+                                     column)].get_deck(string,
+                                                       column).is_alive:
                     print("*", end="\t")
-                elif (st, cl) in self.field:
+                elif (string, column) in self.field:
                     print(u"\u25A1", end="\t")
             print()
 
