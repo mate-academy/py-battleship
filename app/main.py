@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     """A class to create ship deck."""
 
@@ -24,7 +27,7 @@ class Ship:
         self.is_drowned = is_drowned
         self.decks = self.create_ship()
 
-    def create_ship(self) -> list[Deck]:
+    def create_ship(self) -> Optional[list[Deck]]:
         """Create ship (list of decks)"""
         ship_start = Deck(self.start[0], self.start[1])
         ship_end = Deck(self.end[0], self.end[1])
@@ -62,7 +65,7 @@ class Ship:
             ]
         return [ship_start, ship_end]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         """Find the corresponding deck in the list."""
         for deck in self.decks:
             if deck.row == row and deck.column == column:
