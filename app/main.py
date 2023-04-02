@@ -14,8 +14,8 @@ class Ship:
 
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int, int],
+            end: tuple[int, int],
             is_drowned: bool = False
     ) -> None:
         """Create decks and save them to a list `self.decks`"""
@@ -60,8 +60,7 @@ class Ship:
                 Deck(ship_start.row, ship_start.column + 2),
                 ship_end
             ]
-        else:
-            return [ship_start, ship_end]
+        return [ship_start, ship_end]
 
     def get_deck(self, row: int, column: int) -> Deck:
         """Find the corresponding deck in the list."""
@@ -101,7 +100,7 @@ class Battleship:
                 field[deck.deck] = ship
         return field
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         """Simulate a shot to cell."""
         if location in self.field:
             self.field[location].fire(location[0], location[1])
