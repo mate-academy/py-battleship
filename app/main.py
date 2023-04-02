@@ -15,11 +15,11 @@ class Ship:
                  is_drowned: bool = False) -> None:
         self.decks = [Deck(start[0], start[1])]
         step = end[0] - start[0] + end[1] - start[1]
-        for i in range(1, step + 1):
+        for some_ship in range(1, step + 1):
             if end[0] == start[0]:
-                self.decks.append(Deck(start[0], start[1] + i))
+                self.decks.append(Deck(start[0], start[1] + some_ship))
             else:
-                self.decks.append(Deck(start[0] + i, start[1]))
+                self.decks.append(Deck(start[0] + some_ship, start[1]))
         self.is_drowned = is_drowned
 
     def get_deck(self,
