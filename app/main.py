@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Union
 
 
 class Deck:
@@ -62,7 +62,7 @@ class Battleship:
                 else:
                     self._buttlefield[deck.row][deck.column] = "*"
 
-    def _validate_field(self) -> Optional[None, Exception]:
+    def _validate_field(self) -> Union[None, Exception]:
         if len(self.field) != 10:
             Exception("You ought to create 10 ships")
             check_ships = [len(ship.decks) for ship in self.field.values()]
