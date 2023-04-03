@@ -1,6 +1,3 @@
-from typing import Union
-
-
 class Deck:
     def __init__(self, row: int, column: int) -> None:
         self.row = row
@@ -62,20 +59,21 @@ class Battleship:
                 else:
                     self._buttlefield[deck.row][deck.column] = "*"
 
-    def _validate_field(self) -> Union[None, Exception]:
+    def _validate_field(self) -> None:
+        check_ships = [len(ship.decks) for ship in self.field.values()]
         if len(self.field) != 10:
-            Exception("You ought to create 10 ships")
-            check_ships = [len(ship.decks) for ship in self.field.values()]
-            if check_ships.count(1) != 4:
-                Exception("There should be 4 1-deck ships!")
-            if check_ships.count(2) != 3:
-                Exception("There should be 3 2-deck ships!")
-            if check_ships.count(3) != 2:
-                Exception("There should be 2 2-deck ships!")
-            if check_ships.count(4) != 1:
-                Exception("There should be only one 1-deck ship!")
+            raise Exception("You ought to create 10 ships")
+        if check_ships.count(1) != 4:
+            raise Exception("There should be 4 1-deck ships!")
+        if check_ships.count(2) != 3:
+            raise Exception("There should be 3 2-deck ships!")
+        if check_ships.count(3) != 2:
+            raise Exception("There should be 2 2-deck ships!")
+        if check_ships.count(4) != 1:
+            raise Exception("There should be only one 1-deck ship!")
         for ship in self.field.values():
             for deck in ship.decks:
                 for row, column in (deck[0] - 1, deck[1] + 2):
                     if Deck(row, column) not in ship.decks:
-                        Exception("deck shouldn't border other ship's deck")
+                        raise Exception("deck shouldn't "
+                                        "border other ship's deck")
