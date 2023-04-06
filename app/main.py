@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -16,36 +19,24 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
-        self.start = Deck(start[0], start[1])
-        self.end = Deck(end[0], end[1])
         self.is_drowned = is_drowned
-        self.decks = [self.start]
-        if self.start.coordinates != self.end.coordinates:
-            self.create_list_of_decks()
+        self.decks = []
+        for row in range(start[0], end[0] + 1):
+            for colum in range(start[1], end[1] + 1):
+                self.decks.append(Deck(row, colum))
 
     def __repr__(self) -> str:
         return f"{self.decks}"
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.colum == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
-        if deck.is_alive:
-            deck.is_alive = False
-        if not any([elem.is_alive for elem in self.decks]):
-            self.is_drowned = True
-
-    def create_list_of_decks(self) -> None:
-        if self.start.row == self.end.row:
-            for i in range(self.start.colum + 1, self.end.colum):
-                self.decks.append(Deck(self.start.row, i))
-        if self.start.colum == self.end.colum:
-            for i in range(self.start.row + 1, self.end.row):
-                self.decks.append(Deck(i, self.start.colum))
-        self.decks.append(self.end)
+        deck.is_alive = False
+        self.is_drowned = not any([deck.is_alive for deck in self.decks])
 
 
 class Battleship:
@@ -62,25 +53,22 @@ class Battleship:
                     ship.fire(location[0], location[1])
                     if ship.is_drowned:
                         return "Sunk!"
-                    if not ship.is_drowned and not ship.get_deck(
-                            location[0], location[1]
-                    ).is_alive:
-                        return "Hit!"
+                    return "Hit!"
         return "Miss!"
 
     def create_field(self) -> None:
         for ship in self.ships:
             for deck in ship.decks:
                 self.field[deck.coordinates] = "□"
-        for i in range(0, 10):
-            for el_2 in range(0, 10):
-                if (i, el_2) not in self.field:
-                    self.field[(i, el_2)] = "~"
+        for x_coord in range(0, 10):
+            for y_coord in range(0, 10):
+                if (x_coord, y_coord) not in self.field:
+                    self.field[(x_coord, y_coord)] = "~"
 
     def print_field(self) -> None:
-        for i in range(0, 10):
+        for x_coord in range(0, 10):
             new_dict = {}
-            for el_2 in range(0, 10):
-                new_dict[i, el_2] = self.field[i, el_2]
+            for y_coord in range(0, 10):
+                new_dict[x_coord, y_coord] = self.field[x_coord, y_coord]
             print("     ".join(list(new_dict.values())))
             del new_dict
