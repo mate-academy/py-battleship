@@ -1,3 +1,6 @@
+from typing import List
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -15,31 +18,31 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
-        # Create decks and save them to a list `self.decks`
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = []
-        start_row, start_column = start
-        end_row, end_column = end
+        self.decks = self._create_decks()
+
+    def _create_decks(self) -> List[Deck]:
+        start_row, start_column = self.start
+        end_row, end_column = self.end
+        decks = []
         for row in range(min(start_row, end_row), max(start_row, end_row) + 1):
             for column in range(min(start_column, end_column),
                                 max(start_column, end_column) + 1):
-                self.decks.append(Deck(row, column))
+                decks.append(Deck(row, column))
+        return decks
 
     def __repr__(self) -> str:
         return f"Ship({self.start}, {self.end}, {self.is_drowned})"
 
     def get_deck(self, row: int, column: int) -> Deck | None:
-        # Find the corresponding deck in the list
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
         return None
 
     def fire(self, row: int, column: int) -> None:
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
@@ -75,7 +78,7 @@ class Battleship:
         ship = self.field[(row, column)]
         deck = ship.get_deck(row, column)
         deck.is_alive = False
-        if all(not d.is_alive for d in ship.decks):
+        if all(not deck.is_alive for deck in ship.decks):
             ship.is_drowned = True
             return "Sunk!"
         return "Hit!"
