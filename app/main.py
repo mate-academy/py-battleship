@@ -41,18 +41,14 @@ class Ship:
                 decks.append(Deck(row, column))
         return decks
 
-    def get_deck(self, row: int, column: int) -> Deck | None:
-        # Find the corresponding deck in the list
-        for deck in self.decks:
-            if deck.row == row and deck.column == column:
-                return deck
-        return None
+    def get_deck(self, row: int, column: int) -> None:
+        pass
 
     def fire(self, row: int, column: int) -> None:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
         deck = self.get_deck(row, column)
-        if deck:
+        if deck is not None:
             deck.is_alive = False
         if all(not d.is_alive for d in self.decks):
             self.is_drowned = True
@@ -79,10 +75,13 @@ class Battleship:
         row, column = location
         if (row, column) not in self.field:
             return "Miss!"
-        ship = self.field[(row, column)]
-        deck = ship.get_deck(row, column)
-        deck.is_alive = False
-        if all(not deck.is_alive for deck in ship.decks):
-            ship.is_drowned = True
-            return "Sunk!"
-        return "Hit!"
+        ship = self.field.get((row, column))
+        if ship is None:
+            return "Miss!"
+        for deck in ship.decks:
+            if deck.row == row and deck.column == column:
+                deck.is_alive = False
+                if all(not d.is_alive for d in ship.decks):
+                    ship.is_drowned = True
+                    return "Sunk!"
+                return "Hit!"
