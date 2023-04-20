@@ -27,29 +27,27 @@ class Ship:
             start: tuple[int, int],
             end: tuple[int, int]
     ) -> None:
-        if start[1] != end[1]:
-            self.decks = [Deck(start[0], index)
-                          for index in range(start[1], end[1] + 1)]
-        elif start[0] != end[0]:
-            self.decks = [Deck(index, end[1])
-                          for index in range(start[0], end[0] + 1)]
-        else:
-            self.decks = [Deck(start[0], end[1])
-                          for index in range(start[0], end[0] + 1)]
+        self.decks = [Deck(row_index, column_index)
+                      for row_index in range(start[0], end[0] + 1)
+                      for column_index in range(start[1], end[1] + 1)]
 
     def location(self) -> list:
         return [(deck.row, deck.column) for deck in self.decks]
 
     def get_deck(self, row: int, col: int) -> Optional[Deck]:
-        return next((deck for deck in self.decks
-                     if deck.row == row and deck.col == col), None)
+        return next(
+            filter(
+                lambda deck: deck.row == row and deck.col == col,
+                self.decks
+            ),
+            None
+        )
 
     def fire(self, row: int, col: int) -> None:
         deck = self.get_deck(row, col)
         if deck:
             deck.is_alive = False
-            if all(not deck.is_alive for deck in self.decks):
-                self.is_drowned = True
+            self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
     def __repr__(self) -> str:
         return f"Ship(decks={self.decks}, is_drowned={self.is_drowned})"
