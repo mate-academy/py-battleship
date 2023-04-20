@@ -8,8 +8,10 @@ class Deck:
         self.is_alive = is_alive
 
     def __repr__(self) -> str:
-        return f"Deck(row={self.row}, col={self.col}, " \
-               f"is_alive={self.is_alive})"
+        return (
+            f"Deck(row={self.row}, col={self.col}, "
+            f"is_alive={self.is_alive})"
+        )
 
 
 class Ship:
@@ -148,8 +150,7 @@ class ValidateInput:
 
         for ship in self.field.values():
             for row, col in ship.location():
-                for r_offset in [-1, 0, 1]:
-                    for c_offset in [-1, 0, 1]:
-                        if (r_offset != 0 or c_offset != 0) and \
-                                self.field.get((row + r_offset, col + c_offset)):
-                            raise ValueError("Ships cannot be adjacent")
+                if any(self.field.get((row + r, col + c))
+                       for r, c in [(-1, 0), (0, -1), (0, 1), (1, 0)]
+                       if self.field.get((row + r, col + c))):
+                    raise ValueError("Ships cannot be adjacent")
