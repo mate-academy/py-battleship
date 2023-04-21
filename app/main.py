@@ -13,18 +13,15 @@ class Ship:
                  start: tuple,
                  end: tuple,
                  is_drowned: bool = False) -> None:
-        self.decks = [Deck(start[0], start[1])]
-        step = end[0] - start[0] + end[1] - start[1]
-        for i in range(1, step + 1):
-            if end[0] == start[0]:
-                self.decks.append(Deck(start[0], start[1] + i))
-            else:
-                self.decks.append(Deck(start[0] + i, start[1]))
+        self.decks = []
+        for row_index in range(start[0], end[0] + 1):
+            for column_index in range(start[1], end[1] + 1):
+                self.decks.append(Deck(row_index, column_index))
         self.is_drowned = is_drowned
 
     def get_deck(self,
                  row: int,
-                 column: int) -> Deck:
+                 column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -42,14 +39,9 @@ class Battleship:
                  ships: list) -> None:
         self.field = {}
         for ship in ships:
-            boat = Ship(ship[0], ship[1])
-            self.field[ship[0]] = boat
-            step = ship[1][0] - ship[0][0] + ship[1][1] - ship[0][1]
-            for i in range(1, step + 1):
-                if ship[0][0] == ship[1][0]:
-                    self.field[(ship[0][0], ship[0][1] + i)] = boat
-                else:
-                    self.field[(ship[0][0] + i, ship[0][1])] = boat
+            my_ship = Ship(ship[0], ship[1])
+            for deck in my_ship.decks:
+                self.field[(deck.row, deck.column)] = my_ship
 
     def fire(self,
              location: tuple) -> str:
