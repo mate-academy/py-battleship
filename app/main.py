@@ -19,32 +19,27 @@ class Ship:
                 self.decks.append(Deck(row_index, column_index))
         self.is_drowned = is_drowned
 
-    def get_deck(self,
-                 row: int,
-                 column: int) -> Deck | None:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
-            if deck.row == row and deck.column == column:
-                return deck
+            if deck is not None:
+                if deck.row == row and deck.column == column:
+                    return deck
 
-    def fire(self,
-             row: int,
-             column: int) -> None:
+    def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
         if all(not deck.is_alive for deck in self.decks):
             self.is_drowned = True
 
 
 class Battleship:
-    def __init__(self,
-                 ships: list) -> None:
+    def __init__(self, ships: list) -> None:
         self.field = {}
         for ship in ships:
             my_ship = Ship(ship[0], ship[1])
             for deck in my_ship.decks:
                 self.field[(deck.row, deck.column)] = my_ship
 
-    def fire(self,
-             location: tuple) -> str:
+    def fire(self, location: tuple) -> str:
         if location not in self.field:
             return "Miss!"
         self.field[location].fire(location[0], location[1])
