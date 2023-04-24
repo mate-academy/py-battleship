@@ -48,7 +48,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(self, ships: list[tuple]) -> None:
         self.field = dict()
         for ship in ships:
             battleship = Ship(ship[0], ship[1])
