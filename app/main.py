@@ -40,7 +40,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-            if all(not d.is_alive for d in self.decks):
+            if all(not deck.is_alive for deck in self.decks):
                 self.is_drowned = True
 
 
@@ -59,7 +59,5 @@ class Battleship:
             ship.fire(location[0], location[1])
             if ship.is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
