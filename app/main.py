@@ -24,12 +24,9 @@ class Ship:
         self.create_decks()
 
     def create_decks(self) -> None:
-        if self.start[0] == self.end[0]:
-            for col in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(self.start[0], col))
-        elif self.start[1] == self.end[1]:
-            for row in range(self.start[0], self.end[0] + 1):
-                self.decks.append(Deck(row, self.start[1]))
+        for row in range(self.start[0], self.end[0] + 1):
+            for column in range(self.start[1], self.end[1] + 1):
+                self.decks.append(Deck(row, column))
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
@@ -40,8 +37,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-            if all(not deck.is_alive for deck in self.decks):
-                self.is_drowned = True
+            self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
