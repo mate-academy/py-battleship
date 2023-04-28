@@ -59,23 +59,35 @@ class Battleship:
             return "Hit!"
         return "Miss!"
 
+    @staticmethod
+    def print_deck(ship: Ship, row: int, column: int) -> str:
+        if ship.is_drowned:
+            return "x    "
+        else:
+            deck = ship.get_deck(row, column)
+            if deck.is_alive:
+                return u"\u25A1    "
+            else:
+                return "*    "
+
     def print_field(self) -> None:
         for row in range(10):
             line = ""
             for column in range(10):
                 ship = self.field.get((row, column))
                 if ship is not None:
-                    if ship.is_drowned:
-                        line += "x    "
-                    else:
-                        deck = ship.get_deck(row, column)
-                        if deck.is_alive:
-                            line += u"\u25A1    "
-                        else:
-                            line += "*    "
+                    line += self.print_deck(ship, row, column)
                 else:
                     line += "~    "
             print(f"{line}\n")
+
+    def check_distance(self, tested_deck: tuple, other_deck: tuple) -> None:
+        if (tested_deck != other_deck
+                and self.field[tested_deck] != self.field[other_deck]):
+            if (abs(tested_deck[0] - other_deck[0]) < 2
+                    and abs(tested_deck[1] - other_deck[1]) < 2):
+                raise ValueError("Ships shouldn't be located in the "
+                                 "neighboring cells")
 
     def _validate_field(self, ships: set) -> None:
         if len(ships) != 10:
@@ -102,9 +114,4 @@ class Battleship:
         keys = self.field.keys()
         for tested_deck in keys:
             for other_deck in keys:
-                if (tested_deck != other_deck
-                        and self.field[tested_deck] != self.field[other_deck]):
-                    if (abs(tested_deck[0] - other_deck[0]) < 2
-                            and abs(tested_deck[1] - other_deck[1]) < 2):
-                        raise ValueError("Ships shouldn't be located in the "
-                                         "neighboring cells")
+                self.check_distance(tested_deck, other_deck)
