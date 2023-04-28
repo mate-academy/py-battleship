@@ -63,12 +63,10 @@ class Battleship:
     def print_deck(ship: Ship, row: int, column: int) -> str:
         if ship.is_drowned:
             return "x    "
-        else:
-            deck = ship.get_deck(row, column)
-            if deck.is_alive:
-                return u"\u25A1    "
-            else:
-                return "*    "
+        deck = ship.get_deck(row, column)
+        if deck.is_alive:
+            return u"\u25A1    "
+        return "*    "
 
     def print_field(self) -> None:
         for row in range(10):
