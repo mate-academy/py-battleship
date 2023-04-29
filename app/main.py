@@ -12,16 +12,21 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
+        self.start = start
+        self.end = end
         self.is_drowned = is_drowned
         self.decks = []
-        if start == end:
-            self.decks.append(Deck(start[0], start[1]))
-        elif start[0] == end[0] and start[1] != end[1]:
-            for column in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], column))
-        elif start[0] != end[0] and start[1] == end[1]:
-            for row in range(start[0], end[0] + 1):
-                self.decks.append(Deck(row, start[1]))
+        self.set_deck()
+
+    def set_deck(self) -> None:
+        if self.start == self.end:
+            self.decks.append(Deck(self.start[0], self.start[1]))
+        elif self.start[0] == self.end[0] and self.start[1] != self.end[1]:
+            for column in range(self.start[1], self.end[1] + 1):
+                self.decks.append(Deck(self.start[0], column))
+        elif self.start[0] != self.end[0] and self.start[1] == self.end[1]:
+            for row in range(self.start[0], self.end[0] + 1):
+                self.decks.append(Deck(row, self.start[1]))
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
