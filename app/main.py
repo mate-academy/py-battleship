@@ -1,34 +1,92 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+        self.cell = (row, column)
+        self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
+        self.decks = []
+        if start[0] == end[0]:
+            for i in range(start[1], end[1] + 1):
+                self.decks.append(Deck(start[0], i))
+        else:
+            for i in range(start[0], end[0] + 1):
+                self.decks.append(Deck(i, end[1]))
+        self.is_drowned = is_drowned
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    def get_deck(self, row: int, column: int) -> bool:
+        for deck in self.decks:
+            return (row, column) in deck.cell
+
+    def fire(self, row: int, column: int) -> None:
+        for deck in self.decks:
+            print(deck.cell)
+        if (row, column) in self.decks:
+            if not self.decks:
+                self.is_drowned = True
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def __init__(self, ships: list) -> None:
+        self.field = {}
+        self.battle_field = []
+        for _ in range(10):
+            self.battle_field.append(["~" for _ in range(10)])
+
+        for ship in ships:
+            self.field[ship] = Ship(ship[0], ship[1])
+            for deck in self.field[ship].decks:
+                self.battle_field[deck.cell[0]][deck.cell[1]] = "□"
+        self._validate_field()
+
+    def fire(self, location: tuple) -> str:
+        for ship in self.field.values():
+            print(location, "and", ship)
+            for deck in ship.decks:
+                if deck.cell == location:
+                    x, y = deck.cell
+                    deck.is_alive = False
+                    are_any_alive = [deck.is_alive for deck in ship.decks]
+                    if not any(are_any_alive):
+                        ship.is_drowned = True
+                        for deck in ship.decks:
+                            x, y = deck.cell
+                            self.battle_field[x][y] = "x"
+                        return "Sunk!"
+                    self.battle_field[x][y] = "*"
+                    return "Hit!"
+        return "Miss!"
+
+    def _validate_field(self) -> None:
+        len_is_10 = len(self.field) == 10
+        all_ships = []
+        for ship in self.field.values():
+            all_ships.append(len(ship.decks))
+
+        one_four_deck = all_ships.count(4) == 1
+        two_triple_deck = all_ships.count(3) == 2
+        three_double_deck = all_ships.count(2) == 3
+        four_single_deck = all_ships.count(1) == 4
+
+        if all((
+                len_is_10,
+                one_four_deck,
+                two_triple_deck,
+                three_double_deck,
+                four_single_deck
+        )):
+            print("Field is validated")
+        else:
+            print("You break the rules of battleship game")
+
+    def print_field(self) -> None:
+        for row in self.battle_field:
+            print("       ".join(row))
