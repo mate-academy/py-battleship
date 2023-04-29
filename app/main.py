@@ -17,11 +17,11 @@ class Ship:
         if start == end:
             self.decks.append(Deck(start[0], start[1]))
         elif start[0] == end[0] and start[1] != end[1]:
-            for i in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], i))
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(start[0], column))
         elif start[0] != end[0] and start[1] == end[1]:
-            for i in range(start[0], end[0] + 1):
-                self.decks.append(Deck(i, start[1]))
+            for row in range(start[0], end[0] + 1):
+                self.decks.append(Deck(row, start[1]))
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
@@ -46,7 +46,7 @@ class Battleship:
             for deck in battle_ship.decks:
                 self.field[(deck.row, deck.column)] = battle_ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
             return "Miss!"
         self.field[location].fire(location[0], location[1])
