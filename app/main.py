@@ -18,15 +18,19 @@ class Ship:
             is_drowned: bool = False
     ) -> None:
         self.is_drowned = is_drowned
-        self.decks = []
+        self.decks = self.place_ship_decks(start, end)
+
+    def place_ship_decks(self, start: tuple, end: tuple) -> list:
         ship_length = abs(sum(start) - sum(end)) + 1
+        decks = []
         for i in range(ship_length):
             if start[1] < end[1]:
-                self.decks.append(Deck(row=start[0], column=start[1] + i))
+                decks.append(Deck(row=start[0], column=start[1] + i))
             if start[0] < end[0]:
-                self.decks.append(Deck(row=start[0] + i, column=start[1]))
+                decks.append(Deck(row=start[0] + i, column=start[1]))
             if start[0] == end[0] and start[1] == end[1]:
-                self.decks.append(Deck(row=start[0], column=start[1]))
+                decks.append(Deck(row=start[0], column=start[1]))
+        return decks
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
