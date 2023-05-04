@@ -41,7 +41,7 @@ class Ship:
             self.is_drowned = True
         return self.is_drowned
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "*" if not self.is_drowned else "x"
 
 
