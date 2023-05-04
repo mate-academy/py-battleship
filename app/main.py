@@ -21,13 +21,12 @@ class Ship:
                 self.decks.append(Deck(i, end[1]))
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> bool:
+    def get_deck(self, row: int, column: int) -> tuple:
         for deck in self.decks:
-            return (row, column) in deck.cell
+            if (row, column) in deck.cell:
+                return deck.cell
 
     def fire(self, row: int, column: int) -> None:
-        for deck in self.decks:
-            print(deck.cell)
         if (row, column) in self.decks:
             if not self.decks:
                 self.is_drowned = True
@@ -49,7 +48,6 @@ class Battleship:
 
     def fire(self, location: tuple) -> str:
         for ship in self.field.values():
-            print(location, "and", ship)
             for deck in ship.decks:
                 if deck.cell == location:
                     x, y = deck.cell
