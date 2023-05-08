@@ -16,11 +16,7 @@ class Ship:
         self.is_drowned = is_drowned
         self.decks = []
         for coord_row in range(start[0], end[0] + 1):
-            if start[0] == end[0]:
-                columns = range(start[1], end[1] + 1)
-            else:
-                columns = [start[1]]
-            for column in columns:
+            for column in range(start[1], end[1] + 1):
                 self.decks.append(Deck(coord_row, column))
 
     def get_deck(self, row: int, column: int) -> Optional[Deck]:
@@ -32,8 +28,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck is not None:
             deck.is_alive = False
-            if all(not deck.is_alive for deck in self.decks):
-                self.is_drowned = True
+            self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
