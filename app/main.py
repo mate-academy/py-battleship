@@ -44,10 +44,6 @@ class Battleship:
                 self.field[deck] = battle_ship
 
     def fire(self, location: Tuple[int, int]) -> str:
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
         deck_dict = {(deck.row, deck.column): ship
                      for deck, ship in self.field.items()}
         if location in deck_dict:
@@ -58,14 +54,6 @@ class Battleship:
                 return "Sunk!"
             return "Hit!"
         return "Miss!"
-
-        # if location not in self.field:
-        #     return "Miss!"
-        #
-        # self.field[location].fire(*location)
-        # if self.field[location].is_drowned:
-        #     return "Sunk!"
-        # return "Hit!"
 
     def _validate_field(self) -> None:
         ship_decks = [0, 0, 0, 0]
