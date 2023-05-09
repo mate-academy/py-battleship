@@ -36,41 +36,62 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: List[Tuple[tuple]]) -> None:
+    def __init__(self, ships: List[Tuple[tuple[int]]]) -> None:
         self.field = {}
         for ship in ships:
             battle_ship = Ship(ship[0], ship[1])
             for deck in battle_ship.decks:
-                self.field[(deck.row, deck.column)] = battle_ship
+                self.field[deck] = battle_ship
 
-    def fire(self, location: Tuple[int]) -> str:
+    def fire(self, location: Tuple[int, int]) -> str:
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        if location not in self.field:
-            return "Miss!"
-        self.field[location].fire(*location)
-        if self.field[location].is_drowned:
-            return "Sunk!"
-        return "Hit!"
+        deck_dict = {(deck.row, deck.column): ship
+                     for deck, ship in self.field.items()}
+        if location in deck_dict:
+            ship = deck_dict[(location[0], location[1])]
+            ship.fire(location[0], location[1])
+
+            if ship.is_drowned:
+                return "Sunk!"
+            return "Hit!"
+        return "Miss!"
+
+        # if location not in self.field:
+        #     return "Miss!"
+        #
+        # self.field[location].fire(*location)
+        # if self.field[location].is_drowned:
+        #     return "Sunk!"
+        # return "Hit!"
 
     def _validate_field(self) -> None:
-        single, double, three, four = 0, 0, 0, 0
+        ship_decks = [0, 0, 0, 0]
         ship_set = set(ship for ship in self.field.values())
         if len(ship_set) != 10:
-            return "Total number of the ships must be 10"
+            raise Exception("Total number of the ships must be 10")
         for ship in ship_set:
-            if len(ship.decks) == 4:
-                four += 1
-            elif len(ship.decks) == 3:
-                three += 1
-            elif len(ship.decks) == 2:
-                double += 1
-            elif len(ship.decks) == 1:
-                single += 1
+            if len(ship.decks) > 4:
+                raise Exception("Abnormal length of the ship")
+            ship_decks[len(ship.decks) - 1] += 1
+        if ship_decks != [4, 3, 2, 1]:
+            raise Exception("Please chose 4 single-deck ships, 3 double-deck "
+                            "ships, 2 three-deck ships and 1 four-deck ship")
+
+
+def print_field(battle_field: Battleship) -> None:
+    field = [["~" for _ in range(0, 10)] for _ in range(0, 10)]
+    # battle_field._validate_field()
+    for deck, ship in battle_field.field.items():
+        if deck.is_alive:
+            field[deck.row][deck.column] = u"\u25A1"
+        else:
+            if ship.is_drowned:
+                field[deck.row][deck.column] = "x"
             else:
-                print("Abnormal length of the ship")
-        if (single, double, three, four) != (4, 3, 2, 1):
-            print("Please chose 4 single-deck ships, 3 double-deck ships, "
-                  "2 three-deck ships and 1 four-deck ship")
+                field[deck.row][deck.column] = "*"
+
+    for row in field:
+        print(row)
