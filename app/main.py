@@ -71,7 +71,7 @@ class Battleship:
 
 def print_field(battle_field: Battleship) -> None:
     field = [["~" for _ in range(0, 10)] for _ in range(0, 10)]
-    # battle_field._validate_field()
+
     for deck, ship in battle_field.field.items():
         if deck.is_alive:
             field[deck.row][deck.column] = u"\u25A1"
