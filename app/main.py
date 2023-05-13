@@ -61,24 +61,19 @@ class Battleship:
     def _validate_field(self) -> None:
         if len(set(self.field.values())) != 10:
             raise ValueError("The total number of ships is not 10")
-        count_ships = {1: 0, 2: 0, 3: 0, 4: 0}
+        expected_ship_types = {1: 4, 2: 3, 3: 2, 4: 1}
+        ships_types = {1: 0, 2: 0, 3: 0, 4: 0}
         for ship in set(self.field.values()):
             if len(ship.decks) == 1:
-                count_ships[1] += 1
+                ships_types[1] += 1
             if len(ship.decks) == 2:
-                count_ships[2] += 1
+                ships_types[2] += 1
             if len(ship.decks) == 3:
-                count_ships[3] += 1
+                ships_types[3] += 1
             if len(ship.decks) == 4:
-                count_ships[4] += 1
-        if count_ships[1] != 4:
-            raise ValueError("The total number of single-deck ships is not 4")
-        if count_ships[2] != 3:
-            raise ValueError("The total number of double-deck ships is not 3")
-        if count_ships[3] != 2:
-            raise ValueError("The total number of tree-deck ships is not 2")
-        if count_ships[4] != 1:
-            raise ValueError("The total number of four-deck ship is not 1")
+                ships_types[4] += 1
+        if ships_types != expected_ship_types:
+            raise ValueError("Incorrect number of ships of different types")
         for ship_1 in self.field.values():
             for ship_2 in self.field.values():
                 if ship_1 != ship_2:
