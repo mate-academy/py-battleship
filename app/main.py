@@ -24,15 +24,12 @@ class Ship:
         ship_length = abs(sum(start) - sum(end)) + 1
         decks = []
         for i in range(ship_length):
-            if start[1] < end[1]:
-                decks.append(Deck(row=start[0], column=start[1] + i))
-            if start[0] < end[0]:
-                decks.append(Deck(row=start[0] + i, column=start[1]))
-            if start[0] == end[0] and start[1] == end[1]:
-                decks.append(Deck(row=start[0], column=start[1]))
+            row = start[0] + i * (start[0] < end[0])
+            col = start[1] + i * (start[1] < end[1])
+            decks.append(Deck(row=row, column=col))
         return decks
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -41,8 +38,7 @@ class Ship:
         ruined_deck = self.get_deck(row, column)
         ruined_deck.is_alive = False
         deck_status = [deck.is_alive for deck in self.decks]
-        if not any(deck_status):
-            self.is_drowned = True
+        self.is_drowned = not any(deck_status)
 
 
 class Battleship:
@@ -52,8 +48,8 @@ class Battleship:
         for ship in self.ships:
             battleship = Ship(start=ship[0], end=ship[1])
             for deck in battleship.decks:
-                key = (deck.row, deck.column)
-                self.field[key] = battleship
+                coords = (deck.row, deck.column)
+                self.field[coords] = battleship
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
