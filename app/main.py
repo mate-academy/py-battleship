@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(self, row: int, column: int) -> None:
         self.row = row
@@ -13,7 +16,7 @@ class Ship:
             for column in range(start[1], end[1] + 1):
                 self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if (deck.row, deck.column) == (row, column):
                 return deck
@@ -76,7 +79,7 @@ class Battleship:
             raise ValueError("Incorrect number of ships of different types")
         for ship_1 in self.field.values():
             for ship_2 in self.field.values():
-                if ship_1 != ship_2:
+                if ship_1 is ship_2:
                     for deck_1 in ship_1.decks:
                         for deck_2 in ship_2.decks:
                             if abs(deck_1.row - deck_2.row) <= 1 and \
