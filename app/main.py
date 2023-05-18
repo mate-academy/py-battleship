@@ -21,15 +21,13 @@ class Ship:
         self.decks = self.place_ship_decks(start, end)
 
     def place_ship_decks(self, start: tuple, end: tuple) -> list:
-        ship_length = abs(sum(start) - sum(end)) + 1
         decks = []
-        for i in range(ship_length):
-            row = start[0] + i * (start[0] < end[0])
-            col = start[1] + i * (start[1] < end[1])
-            decks.append(Deck(row=row, column=col))
+        for row_index in range(start[0], end[0] + 1):
+            for col_index in range(start[1], end[1] + 1):
+                decks.append(Deck(row=row_index, column=col_index))
         return decks
 
-    def get_deck(self, row: int, column: int) -> None:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
