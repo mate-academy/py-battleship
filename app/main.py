@@ -20,43 +20,41 @@ class Ship:
         self.is_drowned = is_drowned
 
     def get_deck(self, row: int, column: int) -> tuple:
-        for _deck in self.decks:
-            if (row, column) in _deck.cell:
-                return _deck.cell
+        for deck in self.decks:
+            if (row, column) in deck.cell:
+                return deck.cell
 
     def fire(self, row: int, column: int) -> None:
-        if (row, column) in self.decks:
-            if not self.decks:
-                self.is_drowned = True
+        for deck in self.decks:
+            if (row, column) == deck.cell:
+                deck.is_alive = False
+        self.is_drowned = not any([deck.is_alive for deck in self.decks])
 
 
 class Battleship:
 
     def __init__(self, ships: list) -> None:
         self.field = {}
-        for _ship in ships:
-            self.field[_ship] = Ship(_ship[0], _ship[1])
+        for ship in ships:
+            ship = Ship(ship[0], ship[1])
+            for deck in ship.decks:
+                self.field[deck.cell] = ship
 
         self._validate_field()
 
     def fire(self, location: tuple) -> str:
-        for _ship in self.field.values():
-            for _deck in _ship.decks:
-                if _deck.cell == location:
-                    _deck.is_alive = False
-                    are_any_alive = [_deck.is_alive for _deck in _ship.decks]
-                    if not any(are_any_alive):
-                        _ship.is_drowned = True
-                        return "Sunk!"
-                    _deck.is_alive = False
-                    return "Hit!"
+        if location in self.field:
+            self.field[location].fire(location[0], location[1])
+            if self.field[location].is_drowned:
+                return "Sunk!"
+            return "Hit!"
         return "Miss!"
 
     def _validate_field(self) -> None:
-        len_is_10 = len(self.field) == 10
+        len_is_10 = len(self.field) == 20
         all_ships = []
-        for _ship in self.field.values():
-            all_ships.append(len(_ship.decks))
+        for ship in set(self.field.values()):
+            all_ships.append(len(ship.decks))
 
         one_four_deck = all_ships.count(4) == 1
         two_triple_deck = all_ships.count(3) == 2
@@ -74,20 +72,26 @@ class Battleship:
         else:
             print("You break the rules of battleship game")
 
-    def _print(self) -> None:
+    def __str__(self) -> str:
         field = []
         for _ in range(10):
             field.append(["~" for _ in range(10)])
 
-        for _, ship in self.field.items():
+        for ship in self.field.values():
             if ship.is_drowned:
                 for deck in ship.decks:
-                    field[deck.cell[0]][deck.cell[1]] = "x"
-            else:
-                for deck in ship.decks:
-                    if deck.is_alive:
-                        field[deck.cell[0]][deck.cell[1]] = "□"
-                    else:
-                        field[deck.cell[0]][deck.cell[1]] = "*"
+                    x, y = deck.cell
+                    field[x][y] = "x"
+                continue
+            for deck in ship.decks:
+                x, y = deck.cell
+                if deck.is_alive:
+                    field[x][y] = "□"
+                else:
+                    field[x][y] = "*"
+
+        new_field = ""
         for line in field:
-            print("      ".join(line))
+            new_field += "      ".join(line) + "\n"
+
+        return new_field
