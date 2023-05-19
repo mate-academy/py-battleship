@@ -29,7 +29,7 @@ class Ship:
         for deck in self.decks:
             if self.get_deck(row, column) == deck:
                 deck.is_alive = False
-                if any([decks.is_alive for decks in self.decks]) is False:
+                if any(decks.is_alive for decks in self.decks) is False:
                     return "Sunk!"
                 return "Hit!"
 
