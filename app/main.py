@@ -17,12 +17,11 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = list()
-
-        for row in range(start[0], end[0] + 1):
-            for column in range(start[1], end[1] + 1):
-                new_deck = Deck(row, column)
-                self.decks.append(new_deck)
+        self.decks = [
+            Deck(row, column)
+            for row in range(start[0], end[0] + 1)
+            for column in range(start[1], end[1] + 1)
+        ]
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
