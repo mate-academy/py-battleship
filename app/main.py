@@ -36,13 +36,13 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
-        self.ships = [Ship(deck[0], deck[1]) for deck in ships]
+        self.ships = []
         self.field = {}
+        for deck in ships:
+            self.ships.append(Ship(deck[0], deck[1]))
         for ship in self.ships:
-            for row in range(10):
-                for column in range(10):
-                    if ship.get_deck(row, column):
-                        self.field[(row, column)] = ship
+            for deck in ship.decks:
+                self.field[(deck.row, deck.column)] = ship
 
     def fire(self, location: tuple) -> str:
         for coordinates in self.field:
