@@ -55,5 +55,4 @@ class Battleship:
     def fire(self, location: tuple) -> str:
         if location in self.field.keys():
             return self.field[location].fire(location[0], location[1])
-        else:
-            return "Miss!"
+        return "Miss!"
