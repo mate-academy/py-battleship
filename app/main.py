@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional
 
 
 class Deck:
@@ -17,21 +17,16 @@ class Ship:
     ) -> None:
         self.is_drowned = is_drowned
         self.decks = []
-        if start == end:
-            self.decks.append(Deck(start[0], start[1]))
-        elif start[0] == end[0]:
-            current_column = start[1]
-            while current_column != end[1] + 1:
-                self.decks.append(Deck(start[0], current_column))
-                current_column += 1
-        elif start[1] == end[1]:
-            current_row = start[0]
-            while current_row != end[0] + 1:
-                self.decks.append(Deck(current_row, start[1]))
-                current_row += 1
-        print(self.decks)
+        current_point = [start[0], start[1]]
+        while current_point[0] != end[0]:
+            self.decks.append(Deck(current_point[0], current_point[1]))
+            current_point[0] += 1
+        while current_point[1] != end[1]:
+            self.decks.append(Deck(current_point[0], current_point[1]))
+            current_point[1] += 1
+        self.decks.append(Deck(current_point[0], current_point[1]))
 
-    def get_deck(self, row: int, column: int) -> Union[Deck | None]:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if (row, column) == (deck.row, deck.column):
                 return deck
@@ -40,9 +35,8 @@ class Ship:
         current_deck = self.get_deck(row, column)
         if current_deck.is_alive:
             current_deck.is_alive = False
-            if not self.is_drowned:
-                self.is_drowned = True
-            if not any(deck.is_alive for deck in self.decks):
+            self.is_drowned = not any(deck.is_alive for deck in self.decks)
+            if self.is_drowned:
                 return "Sunk!"
             else:
                 return "Hit!"
