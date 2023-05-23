@@ -30,30 +30,14 @@ class Ship:
         self.end = end
         self.is_drowned = is_drowned
 
-        if ((self.start[0] == self.end[0])
-                and (self.start[1] == self.end[1])):
-            # it means 1 - size ship
-            self.decks = [Deck(row=self.start[0],
-                               column=self.start[1])]
-            # COULD BE A MISTAKE
-        elif self.start[0] == self.end[0]:
-            # horizontal ship
-            self.decks = [
-                Deck(
-                    row=self.start[0],
-                    column=column
-                )
-                for column in range(self.start[1], self.end[1] + 1)
-            ]
-            # + 1 to include the last coordinate (3)
-        elif self.start[1] == self.end[1]:
-            self.decks = [
-                Deck(
-                    row=row,
-                    column=self.start[1]
-                )
-                for row in range(self.start[0], self.end[0] + 1)
-            ]
+        self.decks = [
+            Deck(
+                row=row_index,
+                column=column_index
+            )
+            for row_index in range(self.start[0], self.end[0] + 1)
+            for column_index in range(self.start[1], self.end[1] + 1)
+        ]
 
     def __repr__(self) -> str:
         if len(self.decks) == 4:
@@ -76,8 +60,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-        if not any([deck.is_alive for deck in self.decks]):
-            self.is_drowned = True
+        self.is_drowned = not any([deck.is_alive for deck in self.decks])
 
 
 class Battleship:
