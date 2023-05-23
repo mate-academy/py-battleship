@@ -28,20 +28,19 @@ class Ship:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        self.get_deck(row, column).is_alive = False
-        for deck in self.decks:
+        check_deck_on_fire = self.get_deck(row, column)
+        if check_deck_on_fire:
+            check_deck_on_fire.is_alive = False
+        if any([deck.is_alive for deck in self.decks]):
+            self.is_drowned = False
+        else:
             self.is_drowned = True
-            if deck.is_alive:
-                self.is_drowned = False
-                break
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
 
 
 class Battleship:
     def __init__(
             self,
-            ships: list[tuple[tuple[int, int], tuple[int, int]]]
+            ships: list[tuple]
     ) -> None:
         self.ships = ships
         self.field = {}
@@ -56,9 +55,10 @@ class Battleship:
         # which is located in it
 
     def fire(self, location: tuple) -> str:
-        if self.field.get(location):
-            self.field.get(location).fire(location[0], location[1])
-            if self.field.get(location).is_drowned:
+        deck_on_fire = self.field.get(location)
+        if deck_on_fire:
+            deck_on_fire.fire(location[0], location[1])
+            if deck_on_fire.is_drowned:
                 return "Sunk!"
             return "Hit!"
         return "Miss!"
@@ -104,34 +104,23 @@ class Battleship:
 
     def check_quantity_each_ship(self) -> None:
         check_number_of_ships = {
-            "single_deck_4": 0,
-            "double_deck_3": 0,
-            "three_deck": 0,
-            "four_deck": 0
+            1: ["single_deck", 4, 0],
+            2: ["double_deck", 3, 0],
+            3: ["three_deck", 2, 0],
+            4: ["four_deck", 1, 0]
         }
-        for ship in self.field.values():
-            print(ship)
-            if len(ship.decks) == 1:
-                check_number_of_ships["single_deck_4"] += 1
-            elif len(ship.decks) == 2:
-                check_number_of_ships["double_deck_3"] += 1
-            elif len(ship.decks) == 3:
-                check_number_of_ships["three_deck"] += 1
-            elif len(ship.decks) == 4:
-                check_number_of_ships["four_deck"] += 1
-        print(check_number_of_ships)
-        if not (
-                check_number_of_ships["single_deck_4"] == 4
-                and check_number_of_ships["double_deck_3"] == 6
-                and check_number_of_ships["three_deck"] == 6
-                and check_number_of_ships["four_deck"] == 4
-        ):
-            raise ValueError(
-                "There should be 4 single deck ships, "
-                "3 double deck ships, "
-                "2 three deck ship, "
-                "1 four deck ship"
-            )
+        for ship in set(self.field.values()):
+            ship_deck = len(ship.decks)
+            check_number_of_ships[ship_deck][2] += 1
+        for key in check_number_of_ships:
+            if check_number_of_ships[key][2] != check_number_of_ships[key][1]:
+                if key != 4:
+                    raise ValueError(f"There should be "
+                                     f"{check_number_of_ships[key][1]} "
+                                     f"{check_number_of_ships[key][0]} ships")
+                raise ValueError(f"There should be "
+                                 f"{check_number_of_ships[key][1]} "
+                                 f"{check_number_of_ships[key][0]} ship")
 
     def _validate_field(self) -> None:
         if len(self.ships) != 10:
