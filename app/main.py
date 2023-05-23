@@ -9,8 +9,8 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: tuple,
-                 end: tuple,
+    def __init__(self, start: tuple[int],
+                 end: tuple[int],
                  is_drowned: bool = False) -> None:
 
         self.decks = []
@@ -53,7 +53,7 @@ class Battleship:
                 self.field[(deck.row, deck.column)] = boat
 
     def fire(self, location: tuple) -> str:
-        if location not in self.field.keys():
+        if location not in self.field:
             return "Miss!"
         self.field[location].fire(location[0], location[1])
         if self.field[location].is_drowned:
