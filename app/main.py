@@ -33,7 +33,7 @@ class Ship:
 
     def fire(self, row: int, column: int) -> str:
         current_deck = self.get_deck(row, column)
-        if current_deck.is_alive:
+        if current_deck is not None and current_deck.is_alive:
             current_deck.is_alive = False
             self.is_drowned = not any(deck.is_alive for deck in self.decks)
             if self.is_drowned:
