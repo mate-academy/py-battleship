@@ -21,9 +21,9 @@ class Ship:
                  ) -> None:
         self.decks = []
         self.is_drowned = is_drowned
-        for x in range(start[0], end[0] + 1):
-            for y in range(start[1], end[1] + 1):
-                self.decks.append(Deck(x, y))
+        for row in range(start[0], end[0] + 1):
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(row, column))
         self.length = len(self.decks)
 
     def get_deck(self, row: int, column: int) -> Deck:
@@ -61,15 +61,16 @@ class ShipCounter:
 class Battleship:
 
     def __init__(self, ships: List[tuple]) -> None:
+
         self.field = {}
         ship_counter = ShipCounter()
 
         for ship in ships:
             new_ship = Ship(ship[0], ship[1])
 
-            for x in range(ship[0][0], ship[1][0] + 1):
-                for y in range(ship[0][1], ship[1][1] + 1):
-                    self.field[(x, y)] = new_ship
+            for row in range(ship[0][0], ship[1][0] + 1):
+                for column in range(ship[0][1], ship[1][1] + 1):
+                    self.field[(row, column)] = new_ship
 
             ship_counter.count_ship(new_ship.length)
         self._validate(ship_counter, ships)
@@ -86,11 +87,11 @@ class Battleship:
         return "Miss!"
 
     def print_field(self) -> None:
-        for x in range(10):
-            for y in range(10):
-                ship = self.field.get((x, y))
+        for row in range(10):
+            for column in range(10):
+                ship = self.field.get((row, column))
                 if ship:
-                    deck = ship.get_deck(x, y)
+                    deck = ship.get_deck(row, column)
                     if ship.is_drowned:
                         print("x", end="\t")
                     elif not deck.is_alive:
@@ -105,9 +106,11 @@ class Battleship:
         start1, end1 = ship1
         start2, end2 = ship2
 
-        for x in range(start1[0] - 1, end1[0] + 2):
-            for y in range(start1[1] - 1, end1[1] + 2):
-                if start2[0] <= x <= end2[0] and start2[1] <= y <= end2[1]:
+        for row in range(start1[0] - 1, end1[0] + 2):
+            for column in range(start1[1] - 1, end1[1] + 2):
+                row_check = start2[0] <= row <= end2[0]
+                column_check = start2[1] <= column <= end2[1]
+                if row_check and column_check:
                     return True
         return False
 
@@ -128,9 +131,9 @@ there should be 2 three-deck ships
 there should be 1 four-deck ship
             """)
 
-        for i in range(len(ships)):
-            for j in range(i + 1, len(ships)):
-                if self._are_neighbor(ships[i], ships[j]):
+        for index_1 in range(len(ships)):
+            for index_2 in range(index_1 + 1, len(ships)):
+                if self._are_neighbor(ships[index_1], ships[index_2]):
                     raise ValueError(
                         "Ships shouldn't be located in the neighboring cells"
                     )
