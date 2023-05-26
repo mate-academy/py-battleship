@@ -13,35 +13,16 @@ class Ship:
         # Create decks and save them to a list `self.decks`
         self.is_drowned = is_drowned
 
-        x_start = start[0]
-        x_end = end[0]
-        y_start = start[1]
-        y_end = end[1]
+        x_start, x_end = sorted([start[0], end[0]])
+        y_start, y_end = sorted([start[1], end[1]])
 
-        if y_start != y_end:
-            if y_start - y_end < 0:
-                self.decks = [
-                    Deck(x_start, y)
-                    for y in range(y_start, y_end + 1)
-                ]
-            else:
-                self.decks = [
-                    Deck(x_start, y)
-                    for y in range(y_end, y_start + 1)
-                ]
-        else:
-            if x_start - x_end < 0:
-                self.decks = [
-                    Deck(x, y_start)
-                    for x in range(x_start, x_end + 1)
-                ]
-            else:
-                self.decks = [
-                    Deck(x, y_start)
-                    for x in range(x_end, x_start + 1)
-                ]
+        self.decks = [
+            Deck(x, y)
+            for x in range(x_start, x_end + 1)
+            for y in range(y_start, y_end + 1)
+        ]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         # Find the corresponding deck in the list
         for deck in self.decks:
             if row == deck.row and column == deck.column:
@@ -51,8 +32,7 @@ class Ship:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
         self.get_deck(row, column).is_alive = False
-        if all(deck.is_alive is False for deck in self.decks):
-            self.is_drowned = True
+        self.is_drowned = all(deck.is_alive is False for deck in self.decks)
 
 
 class Battleship:
@@ -74,13 +54,9 @@ class Battleship:
         # in the ship or not.
         if self.field.get(location):
             ship = self.field.get(location)
-            live_deck = ship.get_deck(*location).is_alive is True
-            last_live_deck = [
-                deck.is_alive
-                for deck in ship.decks
-            ].count(True) == 1
-            if live_deck and last_live_deck:
-                ship.fire(*location)
+            live_deck = ship.get_deck(*location).is_alive
+            ship.fire(*location)
+            if live_deck and ship.is_drowned:
                 return "Sunk!"
             else:
                 ship.fire(*location)
