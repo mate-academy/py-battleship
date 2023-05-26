@@ -31,8 +31,13 @@ class Ship:
     def fire(self, row: int, column: int) -> None:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
-        self.get_deck(row, column).is_alive = False
-        self.is_drowned = all(deck.is_alive is False for deck in self.decks)
+        deck = self.get_deck(row, column)
+        if deck:
+            deck.is_alive = False
+            self.is_drowned = all(
+                deck.is_alive is False
+                for deck in self.decks
+            )
 
 
 class Battleship:
@@ -52,14 +57,11 @@ class Battleship:
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        if self.field.get(location):
-            ship = self.field.get(location)
+        ship = self.field.get(location)
+        if ship:
             live_deck = ship.get_deck(*location).is_alive
             ship.fire(*location)
             if live_deck and ship.is_drowned:
                 return "Sunk!"
-            else:
-                ship.fire(*location)
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
