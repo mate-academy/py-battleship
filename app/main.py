@@ -18,16 +18,16 @@ class Ship:
             for column_index in range(start[1], end[1] + 1):
                 self.decks.append(Deck(row_index, column_index))
         self.is_drowned = is_drowned
+        print("decks: ", self.decks)
 
-    def get_deck(self, row: int, column: int) -> tuple:
-        for deck in self.decks:
-            if (row, column) in deck.cell:
-                return deck.cell
-
-    def fire(self, row: int, column: int) -> None:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if (row, column) == deck.cell:
-                deck.is_alive = False
+                return deck
+
+    def fire(self, row: int, column: int) -> None:
+        deck = self.get_deck(row, column)
+        deck.is_alive = False
         self.is_drowned = not any([deck.is_alive for deck in self.decks])
 
 
@@ -70,7 +70,7 @@ class Battleship:
         )):
             print("Field is validated")
         else:
-            print("You break the rules of battleship game")
+            raise Exception("You break the rules of battleship game")
 
     def __str__(self) -> str:
         field = []
