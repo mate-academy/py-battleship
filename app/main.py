@@ -37,8 +37,8 @@ class Ship:
     def fire(self, row: int, column: int) -> str:
         deck = self.get_deck(row, column)
         deck.is_alive = False
-        sunk_check = [deck.is_alive for deck in self.decks]
-        if any(sunk_check):
+        sunk_check_list = [deck.is_alive for deck in self.decks]
+        if any(sunk_check_list):
             return "Hit!"
         self.is_drowned = True
         return "Sunk!"
@@ -49,7 +49,7 @@ class Battleship:
         self.ships = [
             Ship(start=ship[0], end=ship[1]) for ship in ships
         ]
-        self.field = {
+        self.all_ship_decks = {
             ship.decks[i]: ship for ship in self.ships
             for i in range(len(ship.decks))
         }
@@ -73,15 +73,16 @@ class Battleship:
         if decks_number.count(4) != 1:
             raise Exception("There should be 1 four-deck ship")
 
-        for deck, ship in self.field.items():
+        for deck, ship in self.all_ship_decks.items():
             for row in range(deck.row - 1, deck.row + 2):
                 for column in range(deck.column - 1, deck.column + 2):
                     if (
                             (row, column) in
                             [(deck.row, deck.column)
-                             for deck in self.field.keys()]
+                             for deck in self.all_ship_decks.keys()]
                             and next(
-                                self.field[deck] for deck in self.field
+                                self.all_ship_decks[deck]
+                                for deck in self.all_ship_decks
                                 if (row, column) == (deck.row, deck.column)
                             ) != ship
                     ):
@@ -91,26 +92,26 @@ class Battleship:
 
     def fire(self, cell: tuple) -> str:
         if cell not in [
-            (deck.row, deck.column) for deck in self.field.keys()
+            (deck.row, deck.column) for deck in self.all_ship_decks.keys()
         ]:
             return "Miss!"
         ship = next(
-            self.field[deck] for deck in self.field
+            self.all_ship_decks[deck] for deck in self.all_ship_decks
             if cell == (deck.row, deck.column)
         )
         return ship.fire(*cell)
 
     def print_field(self) -> None:
-        field = [["~" for _ in range(10)] for _ in range(10)]
-        for ship in self.field.values():
+        field_list = [["~" for _ in range(10)] for _ in range(10)]
+        for ship in self.all_ship_decks.values():
             if ship.is_drowned:
                 for deck in ship.decks:
-                    field[deck.row][deck.column] = "x"
+                    field_list[deck.row][deck.column] = "x"
             else:
                 for deck in ship.decks:
                     if not deck.is_alive:
-                        field[deck.row][deck.column] = "*"
+                        field_list[deck.row][deck.column] = "*"
                     else:
-                        field[deck.row][deck.column] = "□"
-        for row in field:
+                        field_list[deck.row][deck.column] = "□"
+        for row in field_list:
             print(*row)
