@@ -28,27 +28,28 @@ class Ship:
         if (self.start.row == self.end.row
                 and self.start.column == self.end.column):
             self.decks.append(Deck(self.start.row, self.start.column, True))
-        elif self.start.row == self.end.row \
-                and self.start.column != self.end.column + 1:
-            self.decks.append(Deck(self.start.row, self.start.column, True))
-            for i in range(1, self.end.column - self.start.column + 1):
-                self.decks.append(
-                    Deck(self.start.row, self.start.column + i, True)
-                )
         else:
-            self.decks.append(Deck(self.start.row, self.start.column, True))
-            for i in range(1, (self.end.row - self.start.row) + 1):
-                self.decks.append(
-                    Deck(self.start.row + i, self.start.column, True)
+            if self.start.row == self.end.row:
+                start_col = self.start.column
+                end_col = self.end.column
+                self.decks.extend(
+                    [Deck(self.start.row, col, True)
+                     for col in range(start_col, end_col + 1)]
+                )
+            elif self.start.column == self.end.column:
+                start_row = self.start.row
+                end_row = self.end.row
+                self.decks.extend(
+                    [Deck(row, self.start.column, True)
+                     for row in range(start_row, end_row + 1)]
                 )
 
         return self
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        return None
 
     def fire(self, row: int, column: int) -> bool:
         deck = self.get_deck(row, column)
