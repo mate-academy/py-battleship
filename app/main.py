@@ -56,21 +56,21 @@ class Battleship:
         self._validate_field()
 
     def _validate_field(self) -> None:
-        decks_number = [len(ship.decks) for ship in self.ships]
+        decks_number_list = [len(ship.decks) for ship in self.ships]
 
-        if len(decks_number) != 10:
+        if len(decks_number_list) != 10:
             raise Exception("The total number of the ships should be 10")
 
-        if decks_number.count(1) != 4:
+        if decks_number_list.count(1) != 4:
             raise Exception("There should be 4 single-deck ships")
 
-        if decks_number.count(2) != 3:
+        if decks_number_list.count(2) != 3:
             raise Exception("There should be 3 double-deck ships")
 
-        if decks_number.count(3) != 2:
+        if decks_number_list.count(3) != 2:
             raise Exception("There should be 2 three-deck ships")
 
-        if decks_number.count(4) != 1:
+        if decks_number_list.count(4) != 1:
             raise Exception("There should be 1 four-deck ship")
 
         for deck, ship in self.all_ship_decks.items():
