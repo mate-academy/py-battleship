@@ -12,7 +12,8 @@ class Ship:
                  is_drowned: bool = False) -> None:
         # Create decks and save them to a list `self.decks`
         self.decks = [
-            Deck(row, column) for row in range(start[0], end[0] + 1)
+            Deck(row, column)
+            for row in range(start[0], end[0] + 1)
             for column in range(start[1], end[1] + 1)
         ]
         self.is_drowned = is_drowned
@@ -29,12 +30,11 @@ class Ship:
         this_deck = self.get_deck(row, column)
         if this_deck.is_alive:
             this_deck.is_alive = False
-            if not any(deck.is_alive for deck in self.decks):
-                self.is_drowned = True
+            self.is_drowned = not any(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
-    def __init__(self, ships: list[tuple]) -> None:
+    def __init__(self, ships: list[tuple[int, int]]) -> None:
         # Create a dict `self.field`.
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
