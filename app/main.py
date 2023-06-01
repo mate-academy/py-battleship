@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 
 class Deck:
@@ -20,15 +20,13 @@ class Ship:
         self.decks = self.create_decks()
 
     def create_decks(self) -> List[Deck]:
-        if self.start[0] == self.end[0]:
-            return ([Deck(self.start[0],
-                          column) for column in
-                     range(self.start[1], self.end[1] + 1)])
-        else:
-            return ([Deck(row, self.start[1]) for row in
-                     range(self.start[0], self.end[0] + 1)])
+        return [
+            Deck(row, column)
+            for row in range(self.start[0], self.end[0] + 1)
+            for column in range(self.start[1], self.end[1] + 1)
+        ]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -37,7 +35,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-            if all(not d.is_alive for d in self.decks):
+            if all(not deck.is_alive for deck in self.decks):
                 self.is_drowned = True
                 return "Sunk!"
             return "Hit!"
@@ -46,8 +44,8 @@ class Ship:
 
 class Battleship:
     def __init__(self,
-                 ships: List[Tuple[Tuple[int, int], Tuple[int, int]]])\
-            -> None:
+                 ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+                 ) -> None:
         ships_obj = [Ship(*ship) for ship in ships]
         self.field = {
             (deck.row, deck.column): ship
