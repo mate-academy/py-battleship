@@ -10,7 +10,6 @@ class Ship:
                  start: tuple,
                  end: tuple,
                  is_drowned: bool = False) -> None:
-        # Create decks and save them to a list `self.decks`
         self.decks = [
             Deck(row, column)
             for row in range(start[0], end[0] + 1)
@@ -19,26 +18,20 @@ class Ship:
         self.is_drowned = is_drowned
 
     def get_deck(self, row: int, column: int) -> Deck | None:
-        # Find the corresponding deck in the list
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
         this_deck = self.get_deck(row, column)
-        if this_deck.is_alive:
-            this_deck.is_alive = False
-            self.is_drowned = not any(deck.is_alive for deck in self.decks)
+        if this_deck:
+            if this_deck.is_alive:
+                this_deck.is_alive = False
+                self.is_drowned = not any(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
     def __init__(self, ships: list[tuple[int, int]]) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
         self.field = {
             (row, column): None for column in range(10) for row in range(10)
         }
@@ -48,10 +41,6 @@ class Battleship:
                 self.field[(deck.row, deck.column)] = current_ship
 
     def fire(self, location: tuple) -> str:
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
         if self.field[location]:
             self.field[location].fire(*location)
             if self.field[location].is_drowned:
