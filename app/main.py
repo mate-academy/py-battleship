@@ -36,23 +36,21 @@ class Ship:
 
 
 class Battleship:
+    def check_neighbor_cells(self, ship: Ship, ship_desk: tuple) -> None:
+        for row in range(ship_desk[0] - 1, ship_desk[0] + 2, 2):
+            for column in range(ship_desk[1] - 1, ship_desk[1] + 2, 2):
+                if ((row, column) in self.field) \
+                        and (self.field[(row, column)] != ship):
+                    print("ships shouldn't be located "
+                          "in the neighboring cells")
+
     def _validate_field(self) -> None:
         ships = set([ship for ship in self.field.values()])
         deck_ships = {4: 0, 3: 0, 2: 0, 1: 0}
         for ship in ships:
             deck_ships[len(ship.decks)] += 1
-            for row in range(ship.start[0] - 1, ship.start[0] + 2, 2):
-                for column in range(ship.start[1] - 1, ship.start[1] + 2, 2):
-                    if ((row, column) in self.field) \
-                            and (self.field[(row, column)] != ship):
-                        print("ships shouldn't be located "
-                              "in the neighboring cells")
-            for row in range(ship.end[0] - 1, ship.end[0] + 2, 2):
-                for column in range(ship.end[1] - 1, ship.end[1] + 2, 2):
-                    if ((row, column) in self.field) \
-                            and (self.field[(row, column)] != ship):
-                        print("ships shouldn't be located "
-                              "in the neighboring cells")
+            self.check_neighbor_cells(ship, ship.start)
+            self.check_neighbor_cells(ship, ship.end)
         if deck_ships != {4: 1, 3: 2, 2: 3, 1: 4}:
             print("the total number of the ships should be 10:\n"
                   "there should be 4 single-deck ships;\n"
