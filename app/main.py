@@ -25,9 +25,8 @@ class Ship:
     def fire(self, row: int, column: int) -> None:
         this_deck = self.get_deck(row, column)
         if this_deck:
-            if this_deck.is_alive:
-                this_deck.is_alive = False
-                self.is_drowned = not any(deck.is_alive for deck in self.decks)
+            this_deck.is_alive = False
+            self.is_drowned = not any(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
@@ -53,12 +52,12 @@ class Battleship:
             for column in range(10):
                 ship = self.field[(row, column)]
                 if ship is None:
-                    print("~", "\t", end="")
+                    print("~", end="\t")
                 elif ship.is_drowned:
-                    print("x", "\t", end="")
+                    print("x", end="\t")
                 elif (not ship.is_drowned
                       and ship.get_deck(row, column).is_alive):
-                    print("□", "\t", end="")
+                    print("□", end="\t")
                 else:
-                    print("*", "\t", end="")
+                    print("*", end="\t")
             print("")
