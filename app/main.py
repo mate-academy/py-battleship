@@ -39,17 +39,11 @@ class Ship:
     ) -> None:
         self.start = start
         self.end = end
-        self.decks: list[Deck]
-        if end[0] == start[0]:
-            self.decks = [
-                Deck(start[0], start[1] + i)
-                for i in range(end[1] - start[1] + 1)
-            ]
-        else:
-            self.decks = [
-                Deck(start[0] + i, start[1])
-                for i in range(end[0] - start[0] + 1)
-            ]
+        self.decks = [
+            Deck(row, column)
+            for row in range(start[0], end[0] + 1)
+            for column in range(start[1], end[1] + 1)
+        ]
         self.is_drowned = is_drowned
 
     def get_deck(self, row: int, column: int) -> Deck | None:
@@ -132,36 +126,37 @@ class Battleship:
                             )
 
 
-battle_ship = Battleship(
-    ships=[
-        ((0, 0), (0, 3)),
-        ((0, 5), (0, 6)),
-        ((0, 8), (0, 9)),
-        ((2, 0), (4, 0)),
-        ((2, 4), (2, 6)),
-        ((2, 8), (2, 9)),
-        ((9, 9), (9, 9)),
-        ((7, 7), (7, 7)),
-        ((7, 9), (7, 9)),
-        ((9, 7), (9, 7)),
-    ]
-)
+if "__main__" == __name__:
+    battle_ship = Battleship(
+        ships=[
+            ((0, 0), (0, 3)),
+            ((0, 5), (0, 6)),
+            ((0, 8), (0, 9)),
+            ((2, 0), (4, 0)),
+            ((2, 4), (2, 6)),
+            ((2, 8), (2, 9)),
+            ((9, 9), (9, 9)),
+            ((7, 7), (7, 7)),
+            ((7, 9), (7, 9)),
+            ((9, 7), (9, 7)),
+        ]
+    )
 
-print(battle_ship.fire((5, 5)))
-battle_ship.print_field()
-print(battle_ship.fire((7, 2)))
-battle_ship.print_field()
-print(battle_ship.fire((0, 9)))
-battle_ship.print_field()
-print(battle_ship.fire((1, 4)))
-battle_ship.print_field()
-print(battle_ship.fire((1, 1)))
-battle_ship.print_field()
-print(battle_ship.fire((0, 0)))
-battle_ship.print_field()
-print(battle_ship.fire((0, 1)))
-battle_ship.print_field()
-print(battle_ship.fire((0, 2)))
-battle_ship.print_field()
-print(battle_ship.fire((0, 3)))
-battle_ship.print_field()
+    print(battle_ship.fire((5, 5)))
+    battle_ship.print_field()
+    print(battle_ship.fire((7, 2)))
+    battle_ship.print_field()
+    print(battle_ship.fire((0, 9)))
+    battle_ship.print_field()
+    print(battle_ship.fire((1, 4)))
+    battle_ship.print_field()
+    print(battle_ship.fire((1, 1)))
+    battle_ship.print_field()
+    print(battle_ship.fire((0, 0)))
+    battle_ship.print_field()
+    print(battle_ship.fire((0, 1)))
+    battle_ship.print_field()
+    print(battle_ship.fire((0, 2)))
+    battle_ship.print_field()
+    print(battle_ship.fire((0, 3)))
+    battle_ship.print_field()
