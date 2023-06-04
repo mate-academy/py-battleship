@@ -52,7 +52,7 @@ class Ship:
             ]
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if (
                 deck.row == row
