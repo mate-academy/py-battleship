@@ -1,20 +1,8 @@
+from app import standard
 from app.custom_exceptions import (
     LocationError,
     NumberOfTypesError,
     NumberOfShipsError
-)
-from app.standard import (
-    art_deck,
-    art_field,
-    border_d,
-    border_l,
-    border_r,
-    border_u,
-    hit,
-    miss,
-    sunk,
-
-
 )
 
 
@@ -64,35 +52,34 @@ class Ship:
 class Battleship:
 
     def __init__(self, ships: list) -> None:
-        self.art_field = art_field
+        self.art_field = standard.art_field
         self.field = {}
         self.ships = []
         for ship in ships:
             new_ship = Ship(ship[0], ship[1])
             self.ships.append(new_ship)
             for deck in new_ship.decks:
-                self.art_field[deck.row][deck.column] = art_deck
+                self.art_field[deck.row][deck.column] = standard.art_deck
                 self.field[(deck.row, deck.column)] = new_ship
         self._validate_field(self.ships)
 
     def fire(self, location: tuple) -> str:
-        if location in self.field.keys():
+        if location in self.field:
             self.field[location].fire(location[0], location[1])
             if self.field[location].is_drowned:
                 for deck in self.field[location].decks:
-                    self.art_field[deck.row][deck.column] = sunk
+                    self.art_field[deck.row][deck.column] = standard.sunk
                 return "Sunk!"
-            self.art_field[location[0]][location[1]] = hit
+            self.art_field[location[0]][location[1]] = standard.hit
             return "Hit!"
-        self.art_field[location[0]][location[1]] = miss
+        self.art_field[location[0]][location[1]] = standard.miss
         return "Miss!"
 
     def print_field(self) -> None:
-        print(border_u)
+        print(standard.border_u)
         for row in self.art_field:
-            print(border_l + "".join(row) + border_r)
-        print(border_d)
-        print("\n")
+            print(standard.border_l + "".join(row) + standard.border_r)
+        print(standard.border_d + "\n")
 
     def _validate_field(self, ships: list) -> None:
         if len(ships) != 10:
@@ -111,11 +98,11 @@ class Battleship:
                     f" {i + 1}-deck ships. "
                     f"You have: {counter_deck[i]}."
                 )
-        for row, column in self.field.keys():
+        for row, column in self.field:
             check_deck = [-1, 0, 1]
             for i in check_deck:
                 for j_i in check_deck:
-                    if (row + i, column + j_i) in self.field.keys():
+                    if (row + i, column + j_i) in self.field:
                         if (
                             self.field[(row + i, column + j_i)]
                             is not self.field[(row, column)]

@@ -1,14 +1,10 @@
-class BattleShipError(Exception):
+class NumberOfShipsError(Exception):
     pass
 
 
-class NumberOfShipsError(BattleShipError):
+class NumberOfTypesError(Exception):
     pass
 
 
-class NumberOfTypesError(BattleShipError):
-    pass
-
-
-class LocationError(BattleShipError):
+class LocationError(Exception):
     pass
