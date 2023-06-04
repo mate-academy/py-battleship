@@ -1,7 +1,20 @@
 from app.custom_exceptions import (
-    NumberOfShipsError,
+    LocationError,
     NumberOfTypesError,
-    LocationError
+    NumberOfShipsError
+)
+from app.standard import (
+    art_deck,
+    art_field,
+    border_d,
+    border_l,
+    border_r,
+    border_u,
+    hit,
+    miss,
+    sunk,
+
+
 )
 
 
@@ -15,7 +28,6 @@ class Deck:
         self.row = row
         self.column = column
         self.is_alive = is_alive
-        Battleship.art_field[row][column] = "|" + u"\u25A1" + "|"
 
 
 class Ship:
@@ -39,7 +51,6 @@ class Ship:
                 for i in range(end[0] - start[0] + 1)
             ]
         self.is_drowned = is_drowned
-        # Create decks and save them to a list `self.decks`
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
@@ -48,70 +59,45 @@ class Ship:
                 and deck.column == column
             ):
                 return deck
-        # Find the corresponding deck in the list
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
         deck.is_alive = False
-        Battleship.art_field[row][column] = " ##"
         if all([not deck.is_alive for deck in self.decks]):
             self.is_drowned = True
-            for deck in self.decks:
-                Battleship.art_field[deck.row][deck.column] = "<X>"
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
 
 
 class Battleship:
 
-    art_field = [
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-        [" ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v", " ^v"],
-    ]
-
     def __init__(self, ships: list) -> None:
+        self.art_field = art_field
         self.field = {}
         self.ships = []
         for ship in ships:
             new_ship = Ship(ship[0], ship[1])
             self.ships.append(new_ship)
             for deck in new_ship.decks:
+                self.art_field[deck.row][deck.column] = art_deck
                 self.field[(deck.row, deck.column)] = new_ship
         self._validate_field(self.ships)
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
 
     def fire(self, location: tuple) -> str:
         if location in self.field.keys():
             self.field[location].fire(location[0], location[1])
             if self.field[location].is_drowned:
+                for deck in self.field[location].decks:
+                    self.art_field[deck.row][deck.column] = sunk
                 return "Sunk!"
+            self.art_field[location[0]][location[1]] = hit
             return "Hit!"
+        self.art_field[location[0]][location[1]] = miss
         return "Miss!"
 
-        #  -------------------
-        # |0 0 0 0 0 0 0 0 0 0|
-
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-
     def print_field(self) -> None:
-        print(" --------------------------------")
+        print(border_u)
         for row in self.art_field:
-            print("| " + "".join(row) + " |")
-        print(" --------------------------------")
+            print(border_l + "".join(row) + border_r)
+        print(border_d)
         print("\n")
 
     def _validate_field(self, ships: list) -> None:
@@ -161,13 +147,21 @@ battle_ship = Battleship(
     ]
 )
 
-
+print(battle_ship.fire((5, 5)))
 battle_ship.print_field()
-battle_ship.fire((0, 0))
+print(battle_ship.fire((7, 2)))
 battle_ship.print_field()
-battle_ship.fire((0, 1))
+print(battle_ship.fire((0, 9)))
 battle_ship.print_field()
-battle_ship.fire((0, 2))
+print(battle_ship.fire((1, 4)))
 battle_ship.print_field()
-battle_ship.fire((0, 3))
+print(battle_ship.fire((1, 1)))
+battle_ship.print_field()
+print(battle_ship.fire((0, 0)))
+battle_ship.print_field()
+print(battle_ship.fire((0, 1)))
+battle_ship.print_field()
+print(battle_ship.fire((0, 2)))
+battle_ship.print_field()
+print(battle_ship.fire((0, 3)))
 battle_ship.print_field()
