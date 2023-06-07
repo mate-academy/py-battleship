@@ -52,10 +52,8 @@ class Battleship:
             ship.fire(*location)
             if ship.is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
 
     def print_field(self) -> None:
         for row in range(10):
@@ -67,11 +65,8 @@ class Battleship:
 
                     if deck.is_alive:
                         print("□", end="\t")
-                    else:
-                        if ship.is_drowned:
-                            print("x", end="\t")
-                        else:
-                            print("*", end="\t")
-                else:
-                    print("~", end="\t")
+                    if ship.is_drowned:
+                        print("x", end="\t")
+                    print("*", end="\t")
+                print("~", end="\t")
             print()
