@@ -7,8 +7,8 @@ class Deck:
 
 class Ship:
     def __init__(
-            self, start: "Deck",
-            end: "Deck",
+            self, start: Deck,
+            end: Deck,
             is_drowned: bool = False
     ) -> None:
         self.start = start
@@ -18,11 +18,11 @@ class Ship:
         if start.row == end.row and start.column == end.column:
             self.decks.append(Deck(start.row, start.column))
         elif start.row == end.row:
-            for i in range(start.column, end.column + 1):
-                self.decks.append(Deck(start.row, i))
+            for column_number in range(start.column, end.column + 1):
+                self.decks.append(Deck(start.row, column_number))
         elif start.column == end.column:
-            for i in range(start.row, end.row + 1):
-                self.decks.append(Deck(i, start.column))
+            for row_number in range(start.row, end.row + 1):
+                self.decks.append(Deck(row_number, start.column))
 
     def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
@@ -53,17 +53,17 @@ class Battleship:
             for deck in new_ship.decks:
                 self.field[(deck.row, deck.column)] = new_ship
 
-    def print_field(self) -> None:
+    def print_field(self) -> list:
         matrix = []
-        for i in range(0, 10):
+        for row_number in range(0, 10):
             row = []
-            for jj in range(0, 10):
-                if (i, jj) in self.field:
-                    ship = self.field[(i, jj)]
+            for column_number in range(0, 10):
+                if (row_number, column_number) in self.field:
+                    ship = self.field[(row_number, column_number)]
                     if ship.is_drowned:
                         row.append("x")
                     else:
-                        deck = ship.get_deck(i, jj)
+                        deck = ship.get_deck(row_number, column_number)
                         row.append("o") if deck.is_alive else row.append("*")
                 else:
                     row.append("~")
