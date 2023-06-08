@@ -19,20 +19,16 @@ class Ship:
     def _create_decks(self) -> None:
         start_row, start_column = self.start
         end_row, end_column = self.end
-        if start_row == end_row:
+        for row in range(start_row, end_row + 1):
             for column in range(start_column, end_column + 1):
-                self.decks.append(Deck(start_row, column))
-        elif start_column == end_column:
-            for row in range(start_row, end_row + 1):
-                self.decks.append(Deck(row, start_column))
-        else:
+                self.decks.append(Deck(row, column))
+        if start_column != end_column and start_row != end_row:
             raise ValueError("Invalid ship position.")
 
-    def get_deck(self, row: int, column: int) -> Deck | None:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        return None
 
     def _is_sunk(self) -> bool:
         for deck in self.decks:
@@ -85,11 +81,10 @@ class Battleship:
 
         for ship1 in self._ships:
             for ship2 in self._ships:
-                if ship1 is not ship2:
-                    if self._is_adjacent(ship1, ship2):
-                        raise ValueError(
-                            "Ships should not be located in neighboring cells."
-                        )
+                if ship1 is not ship2 and self._is_adjacent(ship1, ship2):
+                    raise ValueError(
+                        "Ships should not be located in neighboring cells."
+                    )
 
     def _is_adjacent(self, first_ship: Ship, second_ship: Ship) -> bool:
         for first_ship_deck in first_ship.decks:
@@ -120,10 +115,8 @@ class Battleship:
             ship.fire(*location)
             if ship.is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
 
     def print_field(self) -> None:
         symbols = {
