@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(
             self,
@@ -10,45 +13,53 @@ class Deck:
         self.is_alive = is_alive
 
 
+class DeckNotFoundError(Exception):
+    pass
+
+
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int, int],
+            end: tuple[int, int],
             is_drowned: bool = False
     ) -> None:
         self.is_drowned = is_drowned
-        self.decks = []
-        for row in range(start[0], end[0] + 1):
-            for column in range(start[1], end[1] + 1):
-                self.decks.append(Deck(row, column))
+        self.decks = [
+            Deck(row, column)
+            for row in range(start[0], end[0] + 1)
+            for column in range(start[1], end[1] + 1)
+        ]
 
     def get_deck(
             self,
             row: int,
-            column: int
-    ) -> Deck:
+            column: int,
+            raise_error: bool = False
+    ) -> Optional[Deck]:
         for deck in self.decks:
             if (deck.row, deck.column) == (row, column):
                 return deck
 
-    def fire(
-            self,
-            row: int,
-            column: int
-    ) -> None:
-        self.get_deck(row, column).is_alive = False
-        for deck in self.decks:
-            self.is_drowned = True
-            if deck.is_alive:
-                self.is_drowned = False
-                break
+        if raise_error:
+            raise DeckNotFoundError(
+                f"No deck found at position ({row}, {column})"
+            )
+
+        return None
+
+    def fire(self, row: int, column: int) -> None:
+        deck = self.get_deck(row, column)
+        if deck is not None:
+            deck.is_alive = False
+
+        self.is_drowned = not any(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
     def __init__(
             self,
-            ships: list
+            ships: list[tuple]
     ) -> None:
         self.field = {}
         for ship in ships:
@@ -58,7 +69,7 @@ class Battleship:
 
     def fire(
             self,
-            location: tuple
+            location: tuple[int, int]
     ) -> str:
         if location not in self.field:
             return "Miss!"
