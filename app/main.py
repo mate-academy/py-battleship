@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
