@@ -18,18 +18,16 @@ class Ship:
             for column in range(start[1], end[1] + 1)
         ]
 
-    def get_deck(self, row: int, column: int) -> Deck | None:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        self.get_deck(row, column).is_alive = False
-        for deck in self.decks:
-            self.is_drowned = True
-            if deck.is_alive:
-                self.is_drowned = False
-                break
+        deck = self.get_deck(row, column)
+        if deck is not None:
+            deck.is_alive = False
+            self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
