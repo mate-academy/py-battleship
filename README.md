@@ -80,7 +80,7 @@ Example:
 ```python
 print(
     battle_ship.fire((0, 4)),  # Miss!
-    battle_ship.fire((0, 3)),  # Hit!
+    battle_ship.fire((0, 3)),  # !Hit
     battle_ship.fire((0, 2)),  # Hit!
     battle_ship.fire((0, 1)),  # Hit!
     battle_ship.fire((0, 0)),  # Sunk!
