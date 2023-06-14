@@ -123,21 +123,26 @@ class Battleship:
         )
 
     def __is_another_ship_in_neighbor_cell(self, data: set[Ship]) -> None:
+        def is_2_ships_are_the_same_ship(first: Ship, second: Ship) -> bool:
+            decks_of_first_ship = [deck.coordinates for deck in first.decks]
+            decks_of_second_ship = [deck.coordinates for deck in second.decks]
+            return decks_of_first_ship == decks_of_second_ship
+
         for ship in data:
             for ship_deck in ship.decks:
-                for deck in self.field:
-                    ship_of_the_deck = self.field.get(deck)
-                    if (
-                            abs(ship_deck.coordinates[0] - deck[0]) <= 1
-                            and abs(ship_deck.coordinates[1] - deck[1]) <= 1
-                    ):
-                        all_decks_of_ship_of_the_deck = [
-                            deck.coordinates for deck in ship_of_the_deck.decks
-                        ]
-                        all_decks_of_ship = [
-                            deck.coordinates for deck in ship.decks
-                        ]
-                        if all_decks_of_ship_of_the_deck != all_decks_of_ship:
+                for current_deck in self.field:
+                    ship_of_current_deck = self.field.get(current_deck)
+                    row_difference = abs(
+                        ship_deck.coordinates[0] - current_deck[0]
+                    )
+                    col_difference = abs(
+                        ship_deck.coordinates[1] - current_deck[1]
+                    )
+                    if row_difference <= 1 and col_difference <= 1:
+                        same_ships = is_2_ships_are_the_same_ship(
+                            ship, ship_of_current_deck
+                        )
+                        if not same_ships:
                             raise Exception(
                                 "ships shouldn't be located"
                                 " in the neighboring cells"
