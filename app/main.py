@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List
 
 
@@ -123,27 +124,21 @@ class Battleship:
 
     def __is_another_ship_in_neighbor_cell(self, data: set[Ship]) -> None:
         for ship in data:
-            for deck in ship.decks:
-                for row in range(-1, 2):
-                    for column in range(-1, 2):
-                        if row == 0 and column == 0:
-                            continue
-                        neighbor_row = deck.coordinates[0] + row
-                        neighbor_column = deck.coordinates[1] + column
-                        if neighbor_row > 9 or neighbor_column > 9:
-                            continue
-                        if (neighbor_row, neighbor_column) in self.field:
-                            current_ship = self.field.get(
-                                (neighbor_row, neighbor_column)
+            for ship_deck in ship.decks:
+                for deck in self.field:
+                    ship_of_the_deck = self.field.get(deck)
+                    if (
+                            abs(ship_deck.coordinates[0] - deck[0]) <= 1
+                            and abs(ship_deck.coordinates[1] - deck[1]) <= 1
+                    ):
+                        all_decks_of_ship_of_the_deck = [
+                            deck.coordinates for deck in ship_of_the_deck.decks
+                        ]
+                        all_decks_of_ship = [
+                            deck.coordinates for deck in ship.decks
+                        ]
+                        if all_decks_of_ship_of_the_deck != all_decks_of_ship:
+                            raise Exception(
+                                "ships shouldn't be located"
+                                " in the neighboring cells"
                             )
-                            all_decks_of_current_ship = [
-                                deck.coordinates for deck in current_ship.decks
-                            ]
-                            all_decks_of_ship = [
-                                deck.coordinates for deck in ship.decks
-                            ]
-                            if all_decks_of_current_ship != all_decks_of_ship:
-                                raise Exception(
-                                    "ships shouldn't be located"
-                                    " in the neighboring cells"
-                                )
