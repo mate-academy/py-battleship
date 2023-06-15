@@ -77,7 +77,7 @@ class Battleship:
             return "Sunk!"
         return "Miss!"
 
-    def __create_field(self) -> list:
+    def __create_field(self) -> list[list[str]]:
         field = [["~" for i in range(10)] for j in range(10)]
         for ship in self.field.values():
             for deck in ship.decks:
@@ -123,12 +123,14 @@ class Battleship:
 
     def __is_another_ship_in_neighbor_cell(self) -> None:
         for deck in self.field:
-            for row in range(-1, 2):
-                for col in range(-1, 2):
-                    neighbor = (deck[0] + row, deck[1] + col)
-                    if neighbor in self.field:
-                        if self.field.get(neighbor) != self.field.get(deck):
-                            raise Exception(
-                                "ships shouldn't be located"
-                                " in the neighboring cells"
-                            )
+            for row, col in [
+                (-1, -1), (-1, 0), (-1, 1), (0, -1),
+                (0, 1), (1, -1), (1, 0), (1, 1)
+            ]:
+                neighbor = (deck[0] + row, deck[1] + col)
+                ship_of_neighbor = self.field.get(neighbor)
+                ship_of_deck = self.field.get(deck)
+                if neighbor in self.field and ship_of_deck != ship_of_neighbor:
+                    raise Exception(
+                        "ships shouldn't be located in the neighboring cells"
+                    )
