@@ -30,14 +30,13 @@ class Ship:
     def ship_print(self, row: int, column: int) -> str:
         if self.is_drowned:
             return "x"
-        else:
-            return u"\u25A1" if self.get_deck(row, column).is_alive else "*"
+        return u"\u25A1" if self.get_deck(row, column).is_alive else "*"
 
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
         self.ships = ships
-        self.field = dict()
+        self.field = {}
 
         for ship in self.ships:
             new_ship = Ship(ship[0], ship[1])
