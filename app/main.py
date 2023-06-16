@@ -31,9 +31,10 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
-        deck.is_alive = False
-        if all([not deck.is_alive for deck in self.decks]):
-            self.is_drowned = True
+        if deck:
+            deck.is_alive = False
+            if all(not deck.is_alive for deck in self.decks):
+                self.is_drowned = True
 
 
 class Battleship:
@@ -54,3 +55,21 @@ class Battleship:
                     return "Sunk!"
                 return "Hit!"
         return "Miss!"
+
+
+if __name__ == '__main__':
+    battle_ship = Battleship(
+        ships=[
+            ((0, 0), (0, 3)),
+            ((0, 5), (0, 6)),
+            ((0, 8), (0, 9)),
+            ((2, 0), (4, 0)),
+            ((2, 4), (2, 6)),
+            ((2, 8), (2, 9)),
+            ((9, 9), (9, 9)),
+            ((7, 7), (7, 7)),
+            ((7, 9), (7, 9)),
+            ((9, 7), (9, 7)),
+        ]
+    )
+    print(battle_ship.fire((0, 4)))
