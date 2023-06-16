@@ -38,7 +38,10 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(
+            self,
+            ships: list[tuple[tuple[int, int], tuple[int, int]]]
+    ) -> None:
         self.field = {}
         for coordinates in ships:
             ship = Ship(*coordinates)
