@@ -73,7 +73,10 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: List[Tuple[Tuple[int, int]]]) -> None:
+    def __init__(
+            self,
+            ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+    ) -> None:
         self.field = self.__set_fields(ships)
 
     def fire(self, location: tuple) -> str:
@@ -82,6 +85,43 @@ class Battleship:
                 return "Sunk!" if ship.is_drowned else "Hit!"
         return "Miss!"
 
+    def __set_fields(
+            self,
+            ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+    ) -> dict:
+        field = {}
+
+        for ship in ships:
+            if not field:
+                field[ship] = Ship(*ship)
+            else:
+                if self.__validate_fields(field.keys(), ship):
+                    field[ship] = Ship(*ship)
+        return field
+
+    def __validate_fields(
+            self,
+            existed_ships: List[Tuple[Tuple[int, int], Tuple[int, int]]],
+            new_ship: Tuple[Tuple[int, int], Tuple[int, int]]
+    ) -> bool:
+        for coordinate in existed_ships:
+            all_filled = self.__generate_all_variants(coordinate)
+
+            if new_ship[0] in all_filled or new_ship[1] in all_filled:
+                raise ValueError
+        return True
+
     @staticmethod
-    def __set_fields(ships: List[Tuple[Tuple[int, int]]]) -> dict:
-        return {ship: Ship(*ship) for ship in ships}
+    def __generate_all_variants(
+            existed_location: Tuple[Tuple[int, int], Tuple[int, int]]
+    ) -> List:
+        all_variants = []
+
+        start = (existed_location[0][0] - 1, existed_location[0][1] - 1)
+        end = (existed_location[0][0] + 1, existed_location[1][1] + 1)
+
+        for row in range(start[0], end[0] + 1):
+            for col in range(start[1], end[1] + 1):
+                all_variants.append((row, col))
+
+        return all_variants
