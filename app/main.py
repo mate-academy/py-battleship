@@ -55,8 +55,6 @@ class Ship:
         deck.is_alive = False
         self.is_drowned = True
 
-        self.decks.remove(deck)
-
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
@@ -74,8 +72,9 @@ class Battleship:
             if fired_deck:
                 ship.fire(row, column)
 
-                if ship.decks:
-                    return "Hit!"
+                for deck in ship.decks:
+                    if deck.is_alive:
+                        return "Hit!"
 
                 return "Sunk!"
 
