@@ -23,15 +23,15 @@ class Ship:
             for column in range(start[1], end[1] + 1)
         ]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if row == deck.row and column == deck.column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
+        self.is_drowned = True
         for deck in self.decks:
-            self.is_drowned = True
             if deck.is_alive:
                 self.is_drowned = False
                 break
