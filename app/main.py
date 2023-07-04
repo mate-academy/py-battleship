@@ -188,7 +188,11 @@ class Battleship:
                     (-1, 0),
                 ]
                 not_allowed_cells = itertools.filterfalse(
-                    lambda x: self.check_cell(locations, location, x),
+                    lambda row_and_column: self.check_cell(
+                        locations,
+                        location,
+                        row_and_column
+                    ),
                     iter(combinations)
                 )
 
