@@ -1,3 +1,6 @@
+import itertools
+
+
 class Deck:
     def __init__(
             self,
@@ -121,12 +124,12 @@ class Battleship:
 
     def print_field(self) -> None:
         whole_field = dict()
-        for i in range(10):
-            for index in range(10):
+        for row_index in range(10):
+            for column_index in range(10):
                 symbol = "~"
-                if (i, index) in self.field:
+                if (row_index, column_index) in self.field:
                     symbol = "□"
-                whole_field[(i, index)] = symbol
+                whole_field[(row_index, column_index)] = symbol
 
         for location in whole_field:
             ship = self.field.get(location)
@@ -144,32 +147,27 @@ class Battleship:
             print(f"{whole_field.get(location)}      ", end="")
 
     def _validate_field(self) -> bool:
-        single_deck_ship = 0
-        double_deck_ship = 0
-        three_deck_ship = 0
-        four_deck_ship = 0
+        count_ships = dict()
 
-        ships = set([ship for ship in self.field.values()])
+        ships = set(self.field.values())
         for ship in ships:
             ship_length = len(ship.decks)
-            if ship_length == 1:
-                single_deck_ship += 1
-                continue
-            if ship_length == 2:
-                double_deck_ship += 1
-                continue
-            if ship_length == 3:
-                three_deck_ship += 1
-                continue
-            if ship_length == 4:
-                four_deck_ship += 1
 
-        if (
-                single_deck_ship == 4 and double_deck_ship == 3
-                and three_deck_ship == 2 and four_deck_ship == 1
-        ):
-            if self.check_neighbours_cells(ships):
-                return True
+            if count_ships.get(ship_length):
+                count_ships[ship_length] += 1
+                continue
+            count_ships[ship_length] = 1
+
+        checks = (
+            count_ships.get(1) == 4,
+            count_ships.get(2) == 3,
+            count_ships.get(3) == 2,
+            count_ships.get(4) == 1,
+            self.check_neighbours_cells(ships)
+        )
+
+        if all(checks):
+            return True
         return False
 
     def check_neighbours_cells(self, ships: set[Ship]) -> bool:
@@ -179,21 +177,22 @@ class Battleship:
                 locations.append((deck.row, deck.column))
 
             for location in locations:
-                if not self.check_cell(locations, location, 0, -1):
-                    return False
-                if not self.check_cell(locations, location, 1, -1):
-                    return False
-                if not self.check_cell(locations, location, 1, 0):
-                    return False
-                if not self.check_cell(locations, location, 1, 1):
-                    return False
-                if not self.check_cell(locations, location, 0, 1):
-                    return False
-                if not self.check_cell(locations, location, -1, 1):
-                    return False
-                if not self.check_cell(locations, location, -1, 0):
-                    return False
-                if not self.check_cell(locations, location, -1, -1):
+                combinations = [
+                    (0, 1),
+                    (0, -1),
+                    (-1, -1),
+                    (-1, 1),
+                    (1, 1),
+                    (1, -1),
+                    (1, 0),
+                    (-1, 0),
+                ]
+                not_allowed_cells = itertools.filterfalse(
+                    lambda x: self.check_cell(locations, location, x),
+                    iter(combinations)
+                )
+
+                for _ in not_allowed_cells:
                     return False
         return True
 
@@ -201,10 +200,12 @@ class Battleship:
             self,
             locations: list[tuple],
             location: tuple,
-            row: int,
-            column: int
+            row_and_column: tuple
     ) -> bool:
-        if (location[0] + row, location[1] + column) in self.field:
-            if (location[0] + row, location[1] + column) not in locations:
-                return False
-        return True
+        curr_location = (
+            location[0] + row_and_column[0],
+            location[1] + row_and_column[1]
+        )
+
+        checks = curr_location in self.field, curr_location not in locations
+        return not all(checks)
