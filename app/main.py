@@ -39,7 +39,7 @@ class Ship:
                 )
 
             if self.start[1] == self.end[1]:
-                return [(Deck(row=self.start[0], column=self.start[1]))]
+                return [Deck(row=self.start[0], column=self.start[1])]
 
             return self.create_decks_instances(
                 row=self.start[0],
@@ -70,11 +70,11 @@ class Ship:
             is_row: bool = False
     ) -> list[Deck]:
         decks = []
-        for i in range(start, end + 1):
+        for row_column_index in range(start, end + 1):
             if is_row:
-                decks.append(Deck(row=row, column=i))
+                decks.append(Deck(row=row, column=row_column_index))
                 continue
-            decks.append(Deck(row=i, column=row))
+            decks.append(Deck(row=row_column_index, column=row))
 
         return decks
 
@@ -158,45 +158,42 @@ class Battleship:
                 continue
             count_ships[ship_length] = 1
 
-        checks = (
+        return all([
             count_ships.get(1) == 4,
             count_ships.get(2) == 3,
             count_ships.get(3) == 2,
             count_ships.get(4) == 1,
             self.check_neighbours_cells(ships)
-        )
-
-        if all(checks):
-            return True
-        return False
+        ])
 
     def check_neighbours_cells(self, ships: set[Ship]) -> bool:
         for ship in ships:
             locations = []
+            combinations = [
+                (0, 1),
+                (0, -1),
+                (-1, -1),
+                (-1, 1),
+                (1, 1),
+                (1, -1),
+                (1, 0),
+                (-1, 0),
+            ]
             for deck in ship.decks:
                 locations.append((deck.row, deck.column))
 
             for location in locations:
-                combinations = [
-                    (0, 1),
-                    (0, -1),
-                    (-1, -1),
-                    (-1, 1),
-                    (1, 1),
-                    (1, -1),
-                    (1, 0),
-                    (-1, 0),
-                ]
+
                 not_allowed_cells = itertools.filterfalse(
                     lambda row_and_column: self.check_cell(
                         locations,
                         location,
                         row_and_column
                     ),
-                    iter(combinations)
+                    combinations
                 )
 
-                for _ in not_allowed_cells:
+                if any(not_allowed_cells):
                     return False
         return True
 
@@ -210,6 +207,7 @@ class Battleship:
             location[0] + row_and_column[0],
             location[1] + row_and_column[1]
         )
-
-        checks = curr_location in self.field, curr_location not in locations
-        return not all(checks)
+        return not all([
+            curr_location in self.field,
+            curr_location not in locations
+        ])
