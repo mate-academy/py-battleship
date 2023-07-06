@@ -14,9 +14,11 @@ class Deck:
         self.column = column
         self.is_alive = is_alive
 
-    def __repr__(self):
-        return (f"PART/COMPONENT ({self.row},{self.column}) | "
-                f"ALIVE: {self.is_alive}")
+    # def __repr__(self):
+    #     return (f"{self.row} | {self.column} | "
+    #             f"ALIVE | {self.is_alive} |")
+    def __str__(self):
+        return f"({self.row}, {self.column})"
 
 
 class Ship:
@@ -24,7 +26,9 @@ class Ship:
                  ) -> None:  # WHOLE SHIP
         self.start = start
         self.end = end
+
         self.is_drowned = is_drowned
+        # self.len = 1
 
         self.direction = None
         self.get_axis()
@@ -32,21 +36,28 @@ class Ship:
         self.decks: [Deck] = []  # Deck/Decks of every Ship
 
         """."""
-        if self.direction == "origin":
+        if self.direction == "single_point":
             self.decks.append(Deck(row=start[0], column=start[1]))
+            # self.len = 1
+            # print(self.len)
 
         """---->"""
         if self.direction == "x":
             self.decks = [Deck(row=self.start[0], column=coord) for coord
                           in range(self.start[1], self.end[1] + 1)]
+            # self.len = len(self.decks)
+            # print(self.len)
 
         """↓"""
         if self.direction == "y":
             self.decks = [Deck(row=coord, column=self.start[1]) for coord
                           in range(self.start[0], self.end[0] + 1)]
-    def get_axis(self):
+            # self.len = len(self.decks)
+            # print(self.len)
+
+    def get_axis(self):  # custom
         if self.start == self.end:
-            self.direction = "origin"  # □
+            self.direction = "single_point"  # □
             return
         if self.start[0] == self.end[0]:
             self.direction = "x"  # □ □ □
@@ -55,20 +66,23 @@ class Ship:
         # ______________________□
         # ______________________□
 
-    def get_deck(self, row: int, column: int) -> tuple:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
-            if deck == (row, column):
+            if deck.row == row and deck.column == column:
                 return deck
+        return None
         # Find the Deck instance by coords
 
-    def fire(self, row: int, column: int) -> None:  # TAKING DMG | DECK -> is_alive change SHIP -> is_drowned change
-        self.is_drowned = True
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    def fire(self, row: int, column: int) -> None:
+        deck = self.get_deck(row, column)
+        if deck:
+            deck.is_alive = False
+            self.decks.remove(deck)
+            if len(self.decks) == 0:
+                self.is_drowned = True
 
-    def __str__(self):
-        return f"{self.decks}"
+    def __repr__(self):
+        return tuple(self.start, self.end)
 
 
 class Battleship:
@@ -77,32 +91,42 @@ class Battleship:
         counter = 1
         for i in ships:  # debug
             ship = Ship(start=i[0], end=i[1])
-            print(f"Ship # {counter}:\n{ship}\n")  # debug
+            # print(f"Ship # {counter}:\n{ship}\n")  # debug
             counter += 1  # debug
             for deck in ship.decks:
                 self.field[deck] = ship
-        #print(self.field)
-        self.validate_input()
-        self.print_field()
+        # print(self.field)
+        # self.validate_input()
+        # self.print_field()
+        # print(self.field)
+        self.fire((7, 7))
 
-    def fire(self, location: tuple):  # CHECK + DEALING DMG
+    def fire(self, location: tuple):
+        for coord, ship in self.field.items():
+            point = (coord.row, coord.column)
+            if point == location:
+                ship.fire(*location)
+                if ship.is_drowned is True:
+                    return "Sunk!"
+                else:
+                    return "Hit!"
+        return "Miss!"
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        pass
 
-    def print_field(self):
+    def print_field(self):  # Extra
 
         self.field = [["~" for column in range(10)] for field in range(10)]
         print(tabulate(self.field, tablefmt="grid"))
 
-    def validate_input(self):
+    def validate_input(self):  # Extra
         pass
 
 
 if __name__ == '__main__':
-    print("main")
+    print("MAIN.PY -> print testing")
     battle_ship = Battleship(
         ships=[
             ((0, 0), (0, 3)),
