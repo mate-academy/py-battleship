@@ -1,12 +1,20 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
+    def __init__(self,
+                 row: int,
+                 column: int,
+                 is_alive: bool = True
+                 ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple, is_drowned=False) -> None:
+    def __init__(self,
+                 start: tuple,
+                 end: tuple,
+                 is_drowned: bool = False
+                 ) -> None:
         # Create decks and save them to a list `self.decks`
         self.decks = []
         self.is_drowned = is_drowned
@@ -23,7 +31,7 @@ class Ship:
             for row in range(start_row, end_row + 1):
                 self.decks.append(Deck(row, start_column))
 
-    def get_deck(self, row: tuple, column:tuple) -> tuple:
+    def get_deck(self, row: tuple, column: tuple) -> tuple:
         # Find the corresponding deck in the list
         for deck in self.decks:
             if deck.row == row and deck.column == column:
@@ -72,7 +80,7 @@ class Battleship:
         return "Miss!"
 
     def create_field(self) -> None:
-        field = [['~' for _ in range(10)] for _ in range(10)]
+        field = [["~" for _ in range(10)] for _ in range(10)]
         for location, ship in self.field.items():
             for deck in ship.decks:
                 if deck.is_alive:
@@ -81,4 +89,3 @@ class Battleship:
                     field[deck.row][deck.column] = "x"
         for row in field:
             print(" ".join(row))
-
