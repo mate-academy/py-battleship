@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -19,19 +22,20 @@ class Ship:
                 for row in range(self.start[0], self.end[0] + 1)
                 for column in range(self.start[1], self.end[1] + 1)]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> str:
         deck = self.get_deck(row, column)
-        deck.is_alive = False
-        alive_decks = [deck for deck in self.decks if deck.is_alive]
-        if not alive_decks:
-            self.is_drowned = True
-            return "Sunk!"
-        return "Hit!"
+        if deck:
+            deck.is_alive = False
+            alive_decks = [deck for deck in self.decks if deck.is_alive]
+            if not alive_decks:
+                self.is_drowned = True
+                return "Sunk!"
+            return "Hit!"
 
 
 class Battleship:
@@ -41,13 +45,13 @@ class Battleship:
         self.field = {}
         for start, end in ships:
             ship = Ship(start, end)
-            for row in range(start[0], end[0] + 1):
-                for col in range(start[1], end[1] + 1):
-                    self.field[(row, col)] = ship
+            for deck in ship.decks:
+                self.field[(deck.row, deck.column)] = ship
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
-            return self.field[location].fire(location[0], location[1])
+            ship = self.field[location]
+            return ship.fire(location[0], location[1])
 
         Battleship.field[location[0]][location[1]] = "*"
         return "Miss!"
