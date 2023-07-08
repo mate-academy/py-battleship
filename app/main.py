@@ -17,10 +17,11 @@ class Ship:
     ) -> None:
 
         self.is_drowned = is_drowned
-        self.decks = []
-        for row in range(start[0], end[0] + 1):
-            for column in range(start[1], end[1] + 1):
-                self.decks.append(Deck(row, column))
+        self.decks = [
+            Deck(row, column)
+            for row in range(start[0], end[0] + 1)
+            for column in range(start[1], end[1] + 1)
+        ]
         self.alive_decks = len(self.decks)
         self.start = start
         self.end = end
