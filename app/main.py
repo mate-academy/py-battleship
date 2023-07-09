@@ -24,20 +24,17 @@ class Ship:
         start_row, start_column = start
         end_row, end_column = end
 
-        if start_row == end_row:
-            for column in range(start_column, end_column + 1):
-                self.decks.append(Deck(start_row, column))
-        elif start_column == end_column:
+        for column in range(start_column, end_column + 1):
             for row in range(start_row, end_row + 1):
-                self.decks.append(Deck(row, start_column))
+                self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: tuple, column: tuple) -> tuple:
+    def get_deck(self, row: int, column: int) -> Deck:
 
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
-    def fire(self, row: tuple, column: tuple) -> None:
+    def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
@@ -57,9 +54,8 @@ class Battleship:
     def _create_field(self, ships: list) -> None:
         for ship in ships:
             new_ship = Ship(ship[0], ship[1])
-            for row in range(ship[0][0], ship[1][0] + 1):
-                for column in range(ship[0][1], ship[1][1] + 1):
-                    self.field[(row, column)] = new_ship
+            for deck in new_ship.decks:
+                self.field[(deck.row, deck.column)] = new_ship
 
     def fire(self, location: tuple) -> str:
 
