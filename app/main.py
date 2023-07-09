@@ -14,27 +14,20 @@ class Ship:
                  start: Tuple[int, int],
                  end: Tuple[int, int],
                  is_drowned: bool = False) -> None:
-        if start == end:
-            self.decks = [Deck(*start)]
-            self.len = 1
-        elif start[0] == end[0]:
-            self.decks = [Deck(start[0], _)
-                          for _ in range(start[1], end[1] + 1)]
-            self.len = end[1] - start[1] + 1
-        elif start[1] == end[1]:
-            self.decks = [Deck(_, start[1])
-                          for _ in range(start[0], end[0] + 1)]
-            self.len = end[0] - start[0] + 1
+        self.decks = [Deck(row, column) for row in range(start[0], end[0] + 1)
+                      for column in range(start[1], end[1] + 1)]
+
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        self.get_deck(row, column).is_alive = False
-        self.is_drowned = not any(deck.is_alive for deck in self.decks)
+        if self.get_deck(row, column):
+            self.get_deck(row, column).is_alive = False
+            self.is_drowned = not any(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
@@ -56,10 +49,8 @@ class Battleship:
     def fire(self, location: Tuple[int, int]) -> str:
         if location in self.field:
             if self.field[location]:
-                status_before_fire = self.field[location].is_drowned
                 self.field[location].fire(*location)
-                status_after_fire = self.field[location].is_drowned
-                if status_before_fire == status_after_fire:
+                if not self.field[location].is_drowned:
                     return "Hit!"
                 return "Sunk!"
             return "Miss!"
@@ -106,6 +97,15 @@ class Battleship:
                             "in the neighboring cells"
                         )
 
+        for ship in self.ships:
+            decks = []
+            for deck in ship.decks:
+                decks.append((deck.row, deck.column))
+            assert (len(set(deck[0] for deck in decks)) == 1
+                    or len(set(deck[1] for deck in decks)) == 1), (
+                "ships should be straight lines"
+            )
+
 
 class Japan:
     """Used to spawn Japan in the `Battleship.print_field` method."""
@@ -147,3 +147,21 @@ def get_surroundings(cell: Tuple[int, int]) -> List[Tuple[int, int]]:
         cell[1] + 1
     )
     return [(i, j) for i in rows for j in columns]
+
+
+battle_ship = Battleship(
+    ships=[
+        ((0, 0), (0, 3)),
+        ((0, 5), (0, 6)),
+        ((0, 8), (0, 9)),
+        ((2, 0), (4, 0)),
+        ((2, 4), (2, 6)),
+        ((2, 8), (2, 9)),
+        ((9, 9), (9, 9)),
+        ((7, 7), (7, 7)),
+        ((7, 9), (7, 9)),
+        ((9, 7), (9, 7)),
+    ]
+)
+
+battle_ship.print_field()
