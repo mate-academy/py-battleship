@@ -1,3 +1,5 @@
+from typing import Union
+
 from tabulate import tabulate
 
 """
@@ -7,6 +9,8 @@ from tabulate import tabulate
 x drowned
 """
 
+
+# deck+deck+deck = Ship
 
 class Deck:
     def __init__(self, row, column, is_alive=True):  # PART/COMPONENT
@@ -18,7 +22,7 @@ class Deck:
     #     return (f"{self.row} | {self.column} | "
     #             f"ALIVE | {self.is_alive} |")
     def __str__(self):
-        return f"({self.row}, {self.column})"
+        return f"({self.row}, {self.column}, {self.is_alive})"
 
 
 class Ship:
@@ -28,45 +32,28 @@ class Ship:
         self.end = end
 
         self.is_drowned = is_drowned
-        # self.len = 1
-
-        self.direction = None
-        self.get_axis()
+        # self.direction = None
 
         self.decks: [Deck] = []  # Deck/Decks of every Ship
+        self.fill_decks()
 
-        """."""
-        if self.direction == "single_point":
-            self.decks.append(Deck(row=start[0], column=start[1]))
-            # self.len = 1
-            # print(self.len)
-
-        """---->"""
-        if self.direction == "x":
+    def fill_decks(self):
+        if self.start == self.end:
+            # self.direction = "single_point"  # □
+            self.decks.append(Deck(row=self.start[0], column=self.start[1]))
+        if self.start[0] == self.end[0]:
+            # self.direction = "x"  # □ □ □
             self.decks = [Deck(row=self.start[0], column=coord) for coord
                           in range(self.start[1], self.end[1] + 1)]
-            # self.len = len(self.decks)
-            # print(self.len)
-
-        """↓"""
-        if self.direction == "y":
-            self.decks = [Deck(row=coord, column=self.start[1]) for coord
-                          in range(self.start[0], self.end[0] + 1)]
-            # self.len = len(self.decks)
-            # print(self.len)
-
-    def get_axis(self):  # custom
-        if self.start == self.end:
-            self.direction = "single_point"  # □
             return
-        if self.start[0] == self.end[0]:
-            self.direction = "x"  # □ □ □
-            return
-        self.direction = "y"  # □
-        # ______________________□
-        # ______________________□
+        # self.direction = "y"  # □
+        self.decks = [Deck(row=coord, column=self.start[1]) for coord
+                      in range(self.start[0], self.end[0] + 1)]
+        self.decks.extend([Deck(row=self.start[0], column=self.start[1])] if self.start == self.end
+                          else [Deck(row=self.start[0], column=coord) for coord in range(self.start[1], self.end[1] + 1)] if self.start[0] == self.end[0]
+                          else [Deck(row=coord, column=self.start[1]) for coord in range(self.start[0], self.end[0] + 1)])
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Union[Deck, None]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -77,23 +64,24 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-            self.decks.remove(deck)
+            self.decks.remove(deck)  # no need to remove, need to check status
             if len(self.decks) == 0:
                 self.is_drowned = True
 
     def __repr__(self):
-        return tuple(self.start, self.end)
+        return f"{self.start}{self.end}{self.is_drowned}"
 
 
 class Battleship:
     def __init__(self, ships: list[tuple]):  # Whole game
         self.field = {}  # Create a dict `self.field`. # ((), (), ... ()) : self.Ship
         counter = 1
-        for i in ships:  # debug
-            ship = Ship(start=i[0], end=i[1])
+        for coord in ships:  # debug
+            ship = Ship(start=coord[0], end=coord[1])
             # print(f"Ship # {counter}:\n{ship}\n")  # debug
             counter += 1  # debug
             for deck in ship.decks:
+                # print(deck)
                 self.field[deck] = ship
         # print(self.field)
         # self.validate_input()
@@ -101,7 +89,10 @@ class Battleship:
         # print(self.field)
         self.fire((7, 7))
 
-    def fire(self, location: tuple):
+    def fire(self, location: tuple):  # Loop is not needed. Just check:
+        # if location in self.field:
+        print(location)
+        print(self.field)
         for coord, ship in self.field.items():
             point = (coord.row, coord.column)
             if point == location:
