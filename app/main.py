@@ -25,7 +25,7 @@ class Ship:
         self.is_drowned = is_drowned
         self.decks = self.create_decks()
 
-    def create_decks(self) -> list:
+    def create_decks(self) -> list[Deck]:
         decks = list()
         for row in range(self.start[0], self.end[0] + 1):
             for column in range(self.start[1], self.end[1] + 1):
@@ -59,7 +59,7 @@ class Battleship:
     def __init__(self, ships: list) -> None:
         self.field = self.create_field(ships)
 
-    def create_field(self, ships: list) -> dict:
+    def create_field(self, ships: list[Ship]) -> dict:
         field = {}
         for ship in ships:
             start, end = ship
