@@ -130,15 +130,24 @@ class Battleship:
         print(tabulate(self.field, tablefmt="grid"))
 
     def _validate_input(self):  # Extra
-        total_number_of_the_ships = len(set( # 10
-            [ship for ship in self.field.values()]
-        ))
+        total_number_of_the_ships = 0
         single_deck_counter = 0  # 4
         double_deck_counter = 0  # 3
         three_deck_ships = 0  # 2
         four_deck_ships = 0  # 1
         placement_error = None
 
+        for i in set([ship for ship in self.field.values()]):
+            total_number_of_the_ships += 1
+            unique_ship = i
+            if len(unique_ship.decks) == 4:
+                four_deck_ships += 1
+            if len(unique_ship.decks) == 3:
+                three_deck_ships += 1
+            if len(unique_ship.decks) == 2:
+                double_deck_counter += 1
+            if len(unique_ship.decks) == 1:
+                single_deck_counter += 1
 
         print(f"The total number of the ships: {total_number_of_the_ships}")
         print(f"Single-deck ships amount: {single_deck_counter}")
@@ -146,6 +155,16 @@ class Battleship:
         print(f"Three-deck ships amount: {three_deck_ships}")
         print(f"Four-deck ships amount: {four_deck_ships}")
         print(f"Neighboring cells filled: {placement_error}")
+        # TODO: ships shouldn't be located in the neighboring cells
+        # TODO: (even if cells are neighbors by diagonal
+        if total_number_of_the_ships == 10:
+            if single_deck_counter == 4:
+                if double_deck_counter == 3:
+                    if three_deck_ships == 2:
+                        if four_deck_ships == 1:
+                            if placement_error is None:
+                                print(f"{'*' * 10}VALID{'*' * 10}")
+                                return True
 
 
 if __name__ == '__main__':
