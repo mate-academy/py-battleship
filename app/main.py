@@ -42,8 +42,7 @@ class Ship:
         if all(not deck.is_alive for deck in self.decks):
             self.is_drowned = True
             return "Sunk!"
-        else:
-            return "Hit!"
+        return "Hit!"
 
 
 class Battleship:
