@@ -21,8 +21,11 @@ class Deck:
     # def __repr__(self):
     #     return (f"{self.row} | {self.column} | "
     #             f"ALIVE | {self.is_alive} |")
-    def __repr__(self):
-        return f"({self.row}, {self.column}, {self.is_alive})"
+    # def __repr__(self):
+    #     return f"({self.row}, {self.column}, {self.is_alive})"
+    # def __hash__(self):
+    #     # print(hash((self.row, self.column, self.is_alive)))
+    #     return hash((self.row, self.column, self.is_alive))
 
 
 class Ship:
@@ -62,22 +65,22 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
-        print(self.decks)
+        # print(self.decks)
         if deck:
             damaged_decks = 0
             deck.is_alive = False
-            #self.decks.remove(deck)  # no need to remove, need to check status
+            # self.decks.remove(deck)  # no need to remove, need to check status
             for i in self.decks:
                 if not i.is_alive:
                     damaged_decks += 1
-                print(i)
-                print(i.is_alive)
-                print(type(i))
+                # print(i)
+                # print(i.is_alive)
+                # print(type(i))
             if damaged_decks == len(self.decks):
                 self.is_drowned = True
 
-    def __repr__(self):
-        return f"{self.start}, {self.end}, {self.is_drowned}"
+    # def __repr__(self):
+    #     return f"{self.start}, {self.end}, {self.is_drowned}"
 
 
 class Battleship:
@@ -95,24 +98,26 @@ class Battleship:
         # self.validate_input()
         # self.print_field()
         # print(self.field)
+        self._validate_input()
 
     def fire(self, location: tuple):  # Loop is not needed. Just check:
         # if location in self.field:
-        print(location)
-        print(self.field)
+        # print(location)
+        # deck = Deck(*location)
+        # for i in self.field.keys():
+        #     if hash(deck) == hash(i):
+        #         print("yay")
+        #
 
-
-        if location in self.field.items():
+        for coord, ship in self.field.items():
             point = (coord.row, coord.column)
 
             if point == location:
                 ship.fire(*location)
                 if ship.is_drowned is True:
                     return "Sunk!"
-
                 else:
                     return "Hit!"
-
         return "Miss!"
         # This function should check whether the location
         # is a key in the `self.field`
@@ -124,8 +129,23 @@ class Battleship:
         self.field = [["~" for column in range(10)] for field in range(10)]
         print(tabulate(self.field, tablefmt="grid"))
 
-    def validate_input(self):  # Extra
-        pass
+    def _validate_input(self):  # Extra
+        total_number_of_the_ships = len(set( # 10
+            [ship for ship in self.field.values()]
+        ))
+        single_deck_counter = 0  # 4
+        double_deck_counter = 0  # 3
+        three_deck_ships = 0  # 2
+        four_deck_ships = 0  # 1
+        placement_error = None
+
+
+        print(f"The total number of the ships: {total_number_of_the_ships}")
+        print(f"Single-deck ships amount: {single_deck_counter}")
+        print(f"Double-deck ships amount: {double_deck_counter}")
+        print(f"Three-deck ships amount: {three_deck_ships}")
+        print(f"Four-deck ships amount: {four_deck_ships}")
+        print(f"Neighboring cells filled: {placement_error}")
 
 
 if __name__ == '__main__':
@@ -133,15 +153,15 @@ if __name__ == '__main__':
     battle_ship = Battleship(
         ships=[
             ((0, 0), (0, 3)),
-            # ((0, 5), (0, 6)),
-            # ((0, 8), (0, 9)),
-            # ((2, 0), (4, 0)),
-            # ((2, 4), (2, 6)),
-            # ((2, 8), (2, 9)),
-            # ((9, 9), (9, 9)),
-            # ((7, 7), (7, 7)),
-            # ((7, 9), (7, 9)),
-            # ((9, 7), (9, 7)),
+            ((0, 5), (0, 6)),
+            ((0, 8), (0, 9)),
+            ((2, 0), (4, 0)),
+            ((2, 4), (2, 6)),
+            ((2, 8), (2, 9)),
+            ((9, 9), (9, 9)),
+            ((7, 7), (7, 7)),
+            ((7, 9), (7, 9)),
+            ((9, 7), (9, 7)),
         ]
     )
     battle_ship.fire((0, 0))
