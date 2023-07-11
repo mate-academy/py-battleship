@@ -101,7 +101,8 @@ class Battleship:
         print(location)
         print(self.field)
 
-        for coord, ship in self.field.items():
+
+        if location in self.field.items():
             point = (coord.row, coord.column)
 
             if point == location:
