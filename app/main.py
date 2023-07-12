@@ -1,3 +1,5 @@
+from typing import Union
+
 class Deck:
     def __init__(self,
                  row: int,
@@ -28,7 +30,7 @@ class Ship:
             for row in range(start_row, end_row + 1):
                 self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Union[Deck, None]:
 
         for deck in self.decks:
             if deck.row == row and deck.column == column:
