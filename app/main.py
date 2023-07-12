@@ -1,5 +1,6 @@
 from typing import Union
 
+
 class Deck:
     def __init__(self,
                  row: int,
