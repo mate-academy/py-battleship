@@ -76,7 +76,7 @@ class Ship:
         self.direction = "y"
 
     def get_neighbors(
-            self, neighboring_cells: List[Tuple[int, int], ...]
+            self, neighboring_cells: List[Tuple[int, int]]
     ) -> List:
         counter = len(self.decks)
         ship_neighbors = []
