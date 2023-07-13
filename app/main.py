@@ -1,4 +1,4 @@
-from typing import Union, Tuple
+from typing import List, Tuple, Union
 
 from tabulate import tabulate
 
@@ -29,12 +29,14 @@ class Ship:
         self.end = end
         self.is_drowned = is_drowned
         self.direction = None
+
         self.get_axis()
         self.fill_decks()
 
     def fill_decks(self) -> None:
         if self.start == self.end:
             self.decks.append(Deck(row=self.start[0], column=self.start[1]))
+
         if self.start[0] == self.end[0]:
             self.decks = [
                 Deck(row=self.start[0], column=coord)
@@ -66,19 +68,23 @@ class Ship:
         if self.start == self.end:
             self.direction = "single_point"
             return
+
         if self.start[0] == self.end[0]:
             self.direction = "x"
             return
+
         self.direction = "y"
 
-    def get_neighbors(self, neighboring_cells):
+    def get_neighbors(
+            self, neighboring_cells: List[Tuple[int, int], ...]
+    ) -> List:
         counter = len(self.decks)
         ship_neighbors = []
+
         for deck in self.decks:
             if (deck.row, deck.column) in neighboring_cells:
                 return []
             counter -= 1
-
             deck_neighbors = [(deck.row - 1, deck.column - 1),
                               (deck.row - 1, deck.column),
                               (deck.row - 1, deck.column + 1),
@@ -112,48 +118,37 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list[tuple]):
+    def __init__(self, ships: list[tuple]) -> None:
         self.field = {}
         for coord in ships:  # debug
             ship = Ship(start=coord[0], end=coord[1])
-
             for deck in ship.decks:
                 self.field[deck] = ship
 
         if self._validate_input():
             self.print_field()
 
-    def fire(self, location: tuple):  # Loop is not needed. Just check:
-        print(f"\n\n\nFIRE TO {location} location!")
+    def fire(self, location: Tuple[int, ...]) -> str:
+        print(f"\n\n\nFire at {location} coordinates!")
 
         for coord, ship in self.field.items():
             point = (coord.row, coord.column)
-
             if point == location:
                 ship.fire(*location)
                 if ship.is_drowned is True:
-
                     print("Sunk!")
                     self.print_field()
                     return "Sunk!"
                 else:
-
                     print("Hit!")
                     self.print_field()
                     return "Hit!"
-
         print("Miss!")
         self.print_field()
         return "Miss!"
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
 
-    def print_field(self):
-
+    def print_field(self) -> None:
         field = [["~" for _ in range(10)] for _ in range(10)]
-
         for ship in self.field.values():
             for deck in ship.decks:
                 if deck.is_alive:
@@ -166,7 +161,7 @@ class Battleship:
 
         print(tabulate(field, tablefmt="grid"))
 
-    def _validate_input(self):  # Extra
+    def _validate_input(self) -> Union[bool, None]:
         requirements = {"total_number_of_the_ships": 10,
                         "single_deck_counter": 4,
                         "double_deck_counter": 3,
@@ -187,8 +182,7 @@ class Battleship:
             neighboring_cells.extend(placement_check)
 
             for deck in unique_ship.decks:
-                coordinates = (deck.row, deck.column)
-                neighboring_cells.append(coordinates)
+                neighboring_cells.append((deck.row, deck.column))
 
             if len(unique_ship.decks) == 4:
                 current_session["four_deck_ships"] += 1
@@ -208,7 +202,7 @@ class Battleship:
                   f" : {result}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("Enter 'exit' to leave")
     battle_ship = Battleship(
         ships=[
@@ -226,9 +220,11 @@ if __name__ == '__main__':
     )
 
     while True:
-        user_input = input("\nCoordinates to hit:   ")
+        user_input = input("\nEnter the coordinates for the strike:   ")
+
         if "exit" in user_input.lower():
             break
+
         coordinates = []
         for num in user_input:
             if num.isnumeric():
