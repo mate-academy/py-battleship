@@ -1,10 +1,5 @@
 from typing import Union
-
 from tabulate import tabulate
-import pygame
-import os
-import subprocess
-import platform
 
 
 # deck+deck+deck = Ship
@@ -92,22 +87,39 @@ class Ship:
         # ______________________□
         # ______________________□
 
-    def get_neighbors(self):
+    def get_neighbors(self, neighboring_cells):
         print("checking neighbors", self.direction)
         counter = len(self.decks)
-
-        ban = []
-
+        ship_neighbors = []
         for deck in self.decks:
-            print(deck.row,deck.column)
-            neighbors = [(deck.row - 1, deck.column - 1), (deck.row - 1, deck.column), (deck.row - 1, deck.column + 1),
-                         (deck.row , deck.column - 1), (deck.row , deck.column), (deck.row , deck.column + 1),
-                         (deck.row + 1, deck.column - 1), (deck.row + 1, deck.column), (deck.row + 1, deck.column + 1)]
-            ban.append(neighbors)
-        print(ban)
-            # if self.direction == "single_point":
-            #     print(neighbors)
+            if (deck.row, deck.column) in neighboring_cells:
+                return False
+            counter -= 1
+            print(deck.row, deck.column)
+            deck_neighbors = [(deck.row - 1, deck.column - 1),
+                              (deck.row - 1, deck.column),
+                              (deck.row - 1, deck.column + 1),
+                              (deck.row, deck.column - 1),
+                              None, (deck.row, deck.column + 1),
+                              (deck.row + 1, deck.column - 1),
+                              (deck.row + 1, deck.column),
+                              (deck.row + 1, deck.column + 1)]
 
+            if self.direction == "single_point":
+                ship_neighbors.extend(deck_neighbors)
+
+            if self.direction == "x":
+                print("counter: ", counter)
+                if counter != 0:
+                    deck_neighbors[5] = None
+                ship_neighbors.extend(deck_neighbors)
+
+            if self.direction == "y":
+                if counter != 0:
+                    deck_neighbors[7] = None
+                ship_neighbors.extend(deck_neighbors)
+
+        return ship_neighbors
         # if self.direction == "x":
         #     print(deck.row,deck.column)
         #     left, mid, right = (deck.row-1,deck.row,)
@@ -138,7 +150,6 @@ class Battleship:
         # self.validate_input()
         # self.print_field()
         # print(self.field)
-        self.forbidden_cells = []
         # self.print_field()  # TODO: delete
         if self._validate_input():
             self.print_field()
@@ -207,15 +218,16 @@ class Battleship:
         for unique_ship in set([ship for ship in self.field.values()]):
             current_session["total_number_of_the_ships"] += 1
             print("\nSHIP: ", unique_ship.start, unique_ship.end, unique_ship.direction)
-            # neighboring_cells.extend(unique_ship.get_neighbors())
-            unique_ship.get_neighbors()
+            placement_check = unique_ship.get_neighbors(neighboring_cells)
+            if placement_check is False:
+                current_session["placement_error"] = True
+            neighboring_cells.extend(placement_check)
+
             for deck in unique_ship.decks:
                 coordinates = (deck.row, deck.column)
-                if coordinates in neighboring_cells:
-                    current_session["placement_error"] = True
                 neighboring_cells.append(coordinates)
 
-                # print("DECK: ",(deck.row, deck.column),"bans: ",["custom"] )
+            print(neighboring_cells)
 
             if len(unique_ship.decks) == 4:
                 current_session["four_deck_ships"] += 1
@@ -226,28 +238,37 @@ class Battleship:
             if len(unique_ship.decks) == 1:
                 current_session["single_deck_counter"] += 1
 
-        if current_session == requirements:
-            return True
-        print(f"{'*' * 6} VALIDATION FAILED {'*' * 6}")
         for requirements, result in current_session.items():
             print(f"{' '.join(str(requirements).split(sep='_')).capitalize()}"
                   f" : {result}")
         print(f"{'*' * 31}")
+        if current_session == requirements:
+            return True
 
 
 if __name__ == '__main__':
-    print("MAIN.PY -> print testing")
+    print("Enter 'exit' to leave")
     battle_ship = Battleship(
         ships=[
-            ((2, 7), (5, 7)),  # right -> left
-            ((7, 2), (7, 5)),
-            ((4, 4), (4, 4)),  # top -> bottom
-            ((8, 7), (8, 7))
+            ((0, 0), (0, 3)),
+            ((0, 5), (0, 6)),
+            ((0, 8), (0, 9)),
+            ((2, 0), (4, 0)),
+            ((2, 4), (2, 6)),
+            ((2, 8), (2, 9)),
+            ((9, 9), (9, 9)),
+            ((7, 7), (7, 7)),
+            ((7, 9), (7, 9)),
+            ((9, 7), (9, 7)),
         ]
     )
-    # battle_ship.fire((0, 0))
-    # battle_ship.fire((0, 1))
-    # battle_ship.fire((0, 2))
-    # battle_ship.fire((0, 3))
-    # battle_ship.fire((0, 6))
-    # battle_ship.fire((0, 7))
+    battle_ship.print_field()
+
+    while True:
+        user_input = list(input("Coordinates to hit:   "))
+        coordinates = []
+        for num in user_input:
+            if num.isnumeric():
+                coordinates.append(int(num))
+
+        battle_ship.fire(tuple(coordinates))
