@@ -92,6 +92,36 @@ class Ship:
         # ______________________□
         # ______________________□
 
+    def get_neighbors(self):
+        print("checking neighbors", self.direction)
+        counter = len(self.decks)
+
+        ban = []
+
+        for deck in self.decks:
+            print(deck.row,deck.column)
+            neighbors = [(deck.row - 1, deck.column - 1), (deck.row - 1, deck.column), (deck.row - 1, deck.column + 1),
+                         (deck.row , deck.column - 1), (deck.row , deck.column), (deck.row , deck.column + 1),
+                         (deck.row + 1, deck.column - 1), (deck.row + 1, deck.column), (deck.row + 1, deck.column + 1)]
+            ban.append(neighbors)
+        print(ban)
+            # if self.direction == "single_point":
+            #     print(neighbors)
+
+        # if self.direction == "x":
+        #     print(deck.row,deck.column)
+        #     left, mid, right = (deck.row-1,deck.row,)
+        #     neighbors = [(left, left), (left, mid), (left, right),
+        #                  (mid, left),                (mid, right),
+        #                  (right, left), (right, mid), (right, right)]
+        #     counter -= 1
+        # if self.direction == "y":
+        #     left, mid, right = (0,0,0)
+        #     neighbors = [(left, left), (left, mid), (left, right),
+        #                  (mid, left),                 (mid, right),
+        #                  (right, left), (right, mid), (right, right)]
+        print(counter)
+
 
 class Battleship:
     def __init__(self, ships: list[tuple]):  # Whole game
@@ -109,6 +139,7 @@ class Battleship:
         # self.print_field()
         # print(self.field)
         self.forbidden_cells = []
+        # self.print_field()  # TODO: delete
         if self._validate_input():
             self.print_field()
 
@@ -163,122 +194,55 @@ class Battleship:
         print(tabulate(field, tablefmt="grid"))
 
     def _validate_input(self):  # Extra
-        total_number_of_the_ships = 0
-        single_deck_counter = 0  # 4
-        double_deck_counter = 0  # 3
-        three_deck_ships = 0  # 2
-        four_deck_ships = 0  # 1
+        requirements = {"total_number_of_the_ships": 10,
+                        "single_deck_counter": 4,
+                        "double_deck_counter": 3,
+                        "three_deck_ships": 2,
+                        "four_deck_ships": 1,
+                        "placement_error": False}
+        current_session = {key: False for key in requirements}
+
         neighboring_cells = []
-        placement_error = False
 
-        for ship in set([ship for ship in self.field.values()]):
-
-            total_number_of_the_ships += 1
-            unique_ship = ship
+        for unique_ship in set([ship for ship in self.field.values()]):
+            current_session["total_number_of_the_ships"] += 1
+            print("\nSHIP: ", unique_ship.start, unique_ship.end, unique_ship.direction)
+            # neighboring_cells.extend(unique_ship.get_neighbors())
+            unique_ship.get_neighbors()
             for deck in unique_ship.decks:
-                # print(unique_ship.direction)
                 coordinates = (deck.row, deck.column)
                 if coordinates in neighboring_cells:
-                    placement_error = True
+                    current_session["placement_error"] = True
                 neighboring_cells.append(coordinates)
-                neighbors = self.get_neighbors(coordinates, unique_ship.direction)
-                neighboring_cells.extend(neighbors)
 
-                # if unique_ship.direction == "y":
-                #     neighboring_cells.append(coordinates[0], coordinates[0])
-                #
-                # if unique_ship.direction == "single_point":
-                #     neighboring_cells.append(coordinates[0], coordinates[0])
-
-                neighboring_cells.append(coordinates)
-            print(neighboring_cells)
+                # print("DECK: ",(deck.row, deck.column),"bans: ",["custom"] )
 
             if len(unique_ship.decks) == 4:
-                four_deck_ships += 1
+                current_session["four_deck_ships"] += 1
             if len(unique_ship.decks) == 3:
-                three_deck_ships += 1
+                current_session["three_deck_ships"] += 1
             if len(unique_ship.decks) == 2:
-                double_deck_counter += 1
+                current_session["double_deck_counter"] += 1
             if len(unique_ship.decks) == 1:
-                single_deck_counter += 1
+                current_session["single_deck_counter"] += 1
 
-        print(f"The total number of the ships: {total_number_of_the_ships}")
-        print(f"Single-deck ships amount: {single_deck_counter}")
-        print(f"Double-deck ships amount: {double_deck_counter}")
-        print(f"Three-deck ships amount: {three_deck_ships}")
-        print(f"Four-deck ships amount: {four_deck_ships}")
-        print(f"Neighboring cells filled: {placement_error}")
-        # TODO: ships shouldn't be located in the neighboring cells
-        # TODO: (even if cells are neighbors by diagonal
-        if total_number_of_the_ships == 10:
-            if single_deck_counter == 4:
-                if double_deck_counter == 3:
-                    if three_deck_ships == 2:
-                        if four_deck_ships == 1:
-                            if not placement_error:
-                                print(f"\n{'*' * 17} VALID {'*' * 17}\n")
-                                return True
-
-    @staticmethod
-    def get_neighbors(coordinates, direction):
-        row, column = coordinates
-        neighbors = []
-
-        if direction == "x":
-            if column - 1 >= 0:
-                neighbors.append((row, column - 1))
-                if row - 1 >= 0:
-                    neighbors.append((row - 1, column - 1))
-                if row + 1 < 10:
-                    neighbors.append((row + 1, column - 1))
-            if row - 1 >= 0:
-                neighbors.append((row - 1, column))
-            if row + 1 < 10:
-                neighbors.append((row + 1, column))
-            if column + 1 < 10 and row + 1 < 10:
-                neighbors.append((row + 1, column + 1))
-            if column - 1 >= 0 and row + 1 < 10:
-                neighbors.append((row + 1, column - 1))
-
-        if direction == "y":
-            if column - 1 >= 0:
-                neighbors.append((row, column - 1))
-                if row - 1 >= 0:
-                    neighbors.append((row - 1, column - 1))
-            if column + 1 < 10:
-                neighbors.append((row, column + 1))
-                if row - 1 >= 0:
-                    neighbors.append((row - 1, column + 1))
-            if row - 1 >= 0:
-                neighbors.append((row - 1, column))
-            if row + 1 < 10:
-                neighbors.append((row + 1, column))
-
-
-        elif direction == "single_point":
-            for i in range(row - 1, row + 2):
-                for j in range(column - 1, column + 2):
-                    if i == row and j == column:
-                        continue
-                    if 0 <= i < 10 and 0 <= j < 10:
-                        neighbors.append((i, j))
-        return neighbors
+        if current_session == requirements:
+            return True
+        print(f"{'*' * 6} VALIDATION FAILED {'*' * 6}")
+        for requirements, result in current_session.items():
+            print(f"{' '.join(str(requirements).split(sep='_')).capitalize()}"
+                  f" : {result}")
+        print(f"{'*' * 31}")
 
 
 if __name__ == '__main__':
     print("MAIN.PY -> print testing")
     battle_ship = Battleship(
         ships=[
-            ((0, 0), (0, 3)),
-            ((0, 5), (0, 6)),
-            ((0, 8), (0, 9)),
-            ((2, 0), (4, 0)),
-            ((2, 4), (2, 6)),
-            ((2, 8), (2, 9)),
-            ((9, 9), (9, 9)),
-            ((7, 7), (7, 7)),
-            ((7, 9), (7, 9)),
-            ((9, 7), (9, 7)),
+            ((2, 7), (5, 7)),  # right -> left
+            ((7, 2), (7, 5)),
+            ((4, 4), (4, 4)),  # top -> bottom
+            ((8, 7), (8, 7))
         ]
     )
     # battle_ship.fire((0, 0))
