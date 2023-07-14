@@ -37,7 +37,7 @@ For example, a ship marked with crosses has ends with coordinates
 Implement the class `Battleship` that takes a list of ships. Each ship is represented by a such tuple.
 
 Example:
-```python 
+```python
 battle_ship = Battleship(
     ships=[
         ((0, 0), (0, 3)),
