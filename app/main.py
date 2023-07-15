@@ -69,10 +69,7 @@ class Battleship:
     def generate_ships(
             ships: list[tuple[tuple[int, int], tuple[int, int]]]
     ) -> list[Ship]:
-        result = list()
-        for start, end in ships:
-            result.append(Ship(start, end))
-        return result
+        return [Ship(start, end) for start, end in ships]
 
     def generate_field(self) -> dict[tuple[int, int], Ship]:
         field = dict()
@@ -98,8 +95,8 @@ class Battleship:
     def _validate_field(self) -> None:
         assert len(self.ships) == 10
         assert sorted(map(len, self.ships)) == [1, 1, 1, 1, 2, 2, 2, 3, 3, 4]
-        for cords in self.field:
-            for row in range(cords[1] - 1, cords[1] + 2):
-                for column in range(cords[0] - 1, cords[0] + 2):
-                    if (column, row) in self.field:
-                        assert self.field[(column, row)] == self.field[cords]
+        cords_list = self.field.keys()
+        for x0, y0 in cords_list:
+            for x1, y1 in cords_list:
+                if x1 in range(x0 - 1, x0 + 2) and y1 in range(y0 - 1, y0 + 2):
+                    assert self.field[(x1, y1)] == self.field[(x0, y0)]
