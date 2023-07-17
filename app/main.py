@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 from tabulate import tabulate
 
@@ -47,15 +47,14 @@ class Ship:
         self.decks = [Deck(row=coord, column=self.start[1]) for coord
                       in range(self.start[0], self.end[0] + 1)]
 
-    def get_deck(self, row: int, column: int) -> Union[Deck, None]:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        return None
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
-        if deck:
+        if deck is not None:
             damaged_decks = 0
             deck.is_alive = False
             for deck in self.decks:
@@ -139,10 +138,11 @@ class Battleship:
                     print("Sunk!")
                     self.print_field()
                     return "Sunk!"
-                else:
-                    print("Hit!")
-                    self.print_field()
-                    return "Hit!"
+
+                print("Hit!")
+                self.print_field()
+                return "Hit!"
+
         print("Miss!")
         self.print_field()
         return "Miss!"
@@ -203,7 +203,6 @@ class Battleship:
 
 
 if __name__ == "__main__":
-    print("Enter 'exit' to leave")
     battle_ship = Battleship(
         ships=[
             ((0, 0), (0, 3)),
@@ -218,7 +217,7 @@ if __name__ == "__main__":
             ((9, 7), (9, 7)),
         ]
     )
-
+    print("Enter 'exit' to leave")
     while True:
         user_input = input("\nEnter the coordinates for the strike:   ")
 
