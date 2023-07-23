@@ -21,7 +21,7 @@ class Ship:
             for column in range(start[1], end[1] + 1)
         ]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if (deck.row, deck.column) == (row, column):
                 return deck
