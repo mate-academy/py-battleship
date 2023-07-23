@@ -6,9 +6,12 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: tuple,
-                 end: tuple,
-                 is_drowned: bool = False) -> None:
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
         self.decks = self.create(start, end)
         self.is_drowned = is_drowned
 
