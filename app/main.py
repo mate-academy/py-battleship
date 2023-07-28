@@ -19,7 +19,7 @@ class Ship:
             for column in range(start_col, end_col + 1):
                 self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if row == deck.row and column == deck.column:
                 return deck
@@ -37,9 +37,7 @@ class Battleship:
         self.missed = []
         self.field = {}
         for ship in ships:
-            start = ship[0]
-            end = ship[1]
-            ship_obj = Ship(start, end)
+            ship_obj = Ship(*ship)
             for deck in ship_obj.decks:
                 self.field[(deck.row, deck.column)] = ship_obj
 
