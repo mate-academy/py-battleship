@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List
 
 
 class Deck:
@@ -11,8 +11,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: list,
-            end: list,
+            start: List[int],
+            end: List[int],
             is_drowned: bool = False) -> None:
         self.decks = []
         self.is_drowned = is_drowned
@@ -21,11 +21,11 @@ class Ship:
             for column in range(start[1], end[1] + 1):
                 self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: int, column: int) -> Union[list, None]:
+    def get_deck(self, row: int, column: int) -> None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        return None
+        return
 
     def fire(self, row: int, column: int) -> str:
         deck = self.get_deck(row, column)
@@ -39,7 +39,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(self, ships: List[int]) -> None:
         self._validate_field(ships)
         self.field = {}
         for ship in ships:
@@ -62,18 +62,14 @@ class Battleship:
                 if location in self.field:
                     ship = self.field[location]
                     deck = ship.get_deck(row, column)
-                    if deck.is_alive:
-                        if ship.is_drowned:
-                            print("x")
-                        else:
-                            print(u"\u25A1")
-                    else:
-                        print("*")
+                    print("x"
+                          if (ship.is_drowned and deck.is_alive)
+                          else u"\u25A1" if deck.is_alive else "*")
                 else:
                     print("~")
             print()
 
-    def _validate_field(self, ships: list) -> None:
+    def _validate_field(self, ships: List[int]) -> None:
         total_ships = len(ships)
         if total_ships != 10:
             raise ValueError("There should be exactly 10 ships.")
