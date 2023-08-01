@@ -13,7 +13,8 @@ class Ship:
             self,
             start: List[int],
             end: List[int],
-            is_drowned: bool = False) -> None:
+            is_drowned: bool = False
+            ) -> None:
         self.decks = []
         self.is_drowned = is_drowned
 
