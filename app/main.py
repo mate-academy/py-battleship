@@ -44,21 +44,21 @@ class Battleship:
         # which is located in it
         self.field = {}
         for coordinates in ships:
-            self.field[coordinates] = Ship(coordinates[0], coordinates[1])
+            self.field[coordinates] = Ship(*coordinates)
 
     def fire(self, location: tuple) -> str:
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        for ship_coordinates in self.field.keys():
+        for ship_coordinates in self.field:
             if (
                 location[0] >= ship_coordinates[0][0]
                 and location[0] <= ship_coordinates[1][0]
                 and location[1] >= ship_coordinates[0][1]
                 and location[1] <= ship_coordinates[1][1]
             ):
-                self.field[ship_coordinates].fire(location[0], location[1])
+                self.field[ship_coordinates].fire(*location)
                 return (
                     "Sunk!" if self.field[ship_coordinates].is_drowned
                     else "Hit!"
