@@ -51,8 +51,7 @@ class Battleship:
             ship.fire(*location)
             if ship.is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
+            return "Hit!"
         return "Miss!"
 
     def print_field(self) -> None:
