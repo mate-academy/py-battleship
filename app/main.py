@@ -53,8 +53,7 @@ class Battleship:
                 return "Sunk!"
             else:
                 return "Hit!"
-        else:
-            return "Miss!"
+        return "Miss!"
 
     def print_field(self) -> None:
         for row in range(10):
