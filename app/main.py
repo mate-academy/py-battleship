@@ -11,18 +11,10 @@ class Deck:
 
     @classmethod
     def create_decks(cls, start: tuple, end: tuple) -> List[Deck]:
-        coordinates_len = end[0] - start[0] + end[1] - start[1] + 1
-        rows = [start[0]] * coordinates_len
-        columns = [start[1]] * coordinates_len
-
-        if start[0] != end[0]:
-            rows = [num for num in range(start[0], end[0] + 1)]
-        elif start[1] != end[1]:
-            columns = [num for num in range(start[1], end[1] + 1)]
-
         return [
             cls(row, column)
-            for row, column in zip(rows, columns)
+            for column in range(start[1], end[1] + 1)
+            for row in range(start[0], end[0] + 1)
         ]
 
 
@@ -45,8 +37,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-            if all(not deck.is_alive for deck in self.decks):
-                self.is_drowned = True
+            self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
     @classmethod
     def create_ships(cls, ships: list) -> list[Ship]:
