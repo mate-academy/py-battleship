@@ -31,20 +31,11 @@ class Ship:
         self.decks: List[Deck] = self._create_decks()
 
     def _create_decks(self) -> list:
-        if self.start[0] == self.end[0]:
-            return [
-                Deck(row=self.start[0], column=column)
-                for column in range(self.start[1], self.end[1] + 1)
-            ]
-
-        elif self.start[1] == self.end[1]:
-            return [
-                Deck(row=row, column=self.start[1])
+        return [Deck(row, column)
                 for row in range(self.start[0], self.end[0] + 1)
-            ]
-        raise ValueError("Location entered incorrectly!")
+                for column in range(self.start[1], self.end[1] + 1)]
 
-    def get_deck(self, row: int, column: int) -> Deck | str:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -96,10 +87,9 @@ class Battleship:
             self.field.update({deck.get_coord(): ship for deck in ship.decks})
 
     def fire(self, location: Tuple[int, int]) -> str:
-        try:
+        if location in self.field:
             return self.field[location].fire(*location)
-        except KeyError:
-            return "Miss!"
+        return "Miss!"
 
     def print_field(self) -> None:
         simbols: dict = {
