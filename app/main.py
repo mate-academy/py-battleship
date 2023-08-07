@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 
 
 class Deck:
@@ -30,12 +30,12 @@ class Ship:
         self.is_drowned = is_drowned
         self.decks: List[Deck] = self._create_decks()
 
-    def _create_decks(self) -> list:
+    def _create_decks(self) -> List[Deck]:
         return [Deck(row, column)
                 for row in range(self.start[0], self.end[0] + 1)
                 for column in range(self.start[1], self.end[1] + 1)]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -44,10 +44,15 @@ class Ship:
         return len(self.decks)
 
     def fire(self, row: int, column: int) -> str:
-        self.get_deck(row, column).is_alive = False
+        target_deck = self.get_deck(row, column)
+
+        if target_deck:
+            target_deck.is_alive = False
+
         if all(deck.is_alive is False for deck in self.decks):
             self.is_drowned = True
             return "Sunk!"
+
         return "Hit!"
 
 
