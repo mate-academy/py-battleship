@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class WrongInputData(Exception):
     pass
 
@@ -38,7 +41,7 @@ class Ship:
                 ]
             )
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
 
         for deck in self.decks:
             if deck.row == row and deck.column == column:
@@ -65,7 +68,7 @@ class Battleship:
         for ship in self.field.values():
             if location in [(deck.row, deck.column) for deck in ship.decks]:
                 ship.fire(location[0], location[1])
-                if ship.is_drowned is True:
+                if ship.is_drowned:
                     return "Sunk!"
                 return "Hit!"
         return "Miss!"
@@ -74,12 +77,12 @@ class Battleship:
         field = [["~"] * 10 for _ in range(10)]
 
         for ship in self.field.values():
-            if ship.is_drowned is True:
+            if ship.is_drowned:
                 for deck in ship.decks:
                     field[deck.row][deck.column] = "x"
             else:
                 for deck in ship.decks:
-                    if deck.is_alive is False:
+                    if not deck.is_alive:
                         field[deck.row][deck.column] = "*"
                     else:
                         field[deck.row][deck.column] = u"\u25A1"
