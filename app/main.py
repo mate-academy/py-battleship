@@ -6,7 +6,12 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: int, end: int, is_drowned: bool = False) -> None:
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
@@ -19,7 +24,7 @@ class Ship:
             for column in range(self.start[1], self.end[1] + 1):
                 self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck or None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -43,7 +48,7 @@ class Battleship:
             deck = ship.get_deck(*location)
             if deck.is_alive:
                 deck.is_alive = False
-                if all(not d.is_alive for d in ship.decks):
+                if all(not deck.is_alive for deck in ship.decks):
                     ship.is_drowned = True
                     return "Sunk!"
                 else:
@@ -67,4 +72,15 @@ class Battleship:
                         print("□", end="\t")
                 else:
                     print("~", end="\t")
+
             print()
+
+    def place_ship(self, ship_start: tuple, ship_end: tuple) -> None:
+        ship = Ship(ship_start, ship_end)
+        for deck in ship.decks:
+            self.field[(deck.row, deck.column)] = ship
+
+    def get_ship_at_location(self, location: tuple) -> Ship or None:
+        if location in self.field:
+            return self.field[location]
+        return None
