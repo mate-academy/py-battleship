@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict, Union
+from typing import List, Tuple, Dict, Optional
 
 
 class Deck:
@@ -19,18 +19,16 @@ class Ship:
                       for col in range(start[1], end[1] + 1)]
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> Union[Deck, None]:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        return None
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-            if all(not deck.is_alive for deck in self.decks):
-                self.is_drowned = True
+            self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
