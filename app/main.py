@@ -37,13 +37,13 @@ class Battleship:
         self.field = {}
         self._create_field(ships)
 
-    def _create_field(self, ships: list) -> None:
+    def _create_field(self, ships: list | int) -> None:
         for ship_start, ship_end in ships:
             ship = Ship(ship_start, ship_end)
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple | int) -> str:
         if location in self.field:
             ship = self.field[location]
             deck = ship.get_deck(*location)
