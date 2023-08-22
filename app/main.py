@@ -20,9 +20,11 @@ class Ship:
         self._create_decks()
 
     def _create_decks(self) -> None:
-        for row in range(self.start[0], self.end[0] + 1):
-            for column in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(row, column))
+        self.decks = [
+            Deck(row, column)
+            for row in range(self.start[0], self.end[0] + 1)
+            for column in range(self.start[1], self.end[1] + 1)
+        ]
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
@@ -54,8 +56,7 @@ class Battleship:
                     return "Hit!"
             else:
                 return "Already Hit!"
-        else:
-            return "Miss!"
+        return "Miss!"
 
     def print_field(self) -> None:
         for row in range(10):
@@ -71,5 +72,3 @@ class Battleship:
                         print("□", end="\t")
                 else:
                     print("~", end="\t")
-
-            print()
