@@ -33,8 +33,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-        check = [not deck.is_alive for deck in self.decks]
-        self.is_drowned = all(check)
+        self.is_drowned = all([not deck.is_alive for deck in self.decks])
 
 
 class Battleship:
