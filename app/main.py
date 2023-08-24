@@ -1,3 +1,6 @@
+from typing import Union
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -21,7 +24,7 @@ class Ship:
             for column in range(start[1], end[1] + 1)
         ]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Union[Deck, None]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -30,8 +33,8 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-        check = [True if not deck.is_alive else False for deck in self.decks]
-        self.is_drowned = True if all(check) else False
+        check = [not deck.is_alive for deck in self.decks]
+        self.is_drowned = all(check)
 
 
 class Battleship:
