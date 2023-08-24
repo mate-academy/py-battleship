@@ -37,10 +37,7 @@ class Ship:
              ) -> None:
         target_deck = self.get_deck(row, column)
         target_deck.is_alive = False
-        is_drowned = True
-        if any([deck.is_alive for deck in self.decks]):
-            is_drowned = False
-        self.is_drowned = is_drowned
+        self.is_drowned = not any([deck.is_alive for deck in self.decks])
 
 
 class Battleship:
