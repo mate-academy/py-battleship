@@ -11,8 +11,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple[int],
-            end: tuple[int],
+            start: tuple[int, int],
+            end: tuple[int, int],
             is_drowned: bool = False
     ) -> None:
 
@@ -48,7 +48,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list[tuple]) -> None:
+    def __init__(self, ships: list[tuple[tuple[int, int], ...]]) -> None:
 
         self.field = {}
 
@@ -71,7 +71,7 @@ class Battleship:
 
         self._validate_field()
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         for cells, ship in self.field.items():
             if location in cells:
                 row, column = location
@@ -145,8 +145,8 @@ class Battleship:
 
     @staticmethod
     def _add_new_cell(
-            cells: tuple,
-            checked_cells: list,
+            cells: tuple[tuple[int, int], ...],
+            checked_cells: list[tuple[int, int]],
             row: int,
             column: int
     ) -> None:
