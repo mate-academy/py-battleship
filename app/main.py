@@ -41,16 +41,15 @@ class Ship:
             if deck.row == row and deck.column == column:
                 return deck
 
-        return None
-
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
         if deck.is_alive:
             deck.is_alive = False
 
-        if not self.is_drowned and sum(
-                [deck.is_alive for deck in self.decks]
-        ) == 0:
+        if (
+            not self.is_drowned
+            and any(deck.is_alive for deck in self.decks) == 0
+        ):
             self.is_drowned = True
 
     def __create_decks(self) -> List:
