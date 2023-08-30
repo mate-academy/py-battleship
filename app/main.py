@@ -59,7 +59,6 @@ class Battleship:
             for deck in current_ship.decks:
                 self.field[deck.row, deck.column] = current_ship
 
-
     def fire(self, location: tuple) -> str:
         fire_result = "Miss!"
 
