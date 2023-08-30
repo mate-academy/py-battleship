@@ -29,7 +29,7 @@ class Ship:
         for deck in decks:
             self.decks.append(Deck(deck[0], deck[1]))
 
-    def get_deck(self, location: tuple) -> Union[Deck, False]:
+    def get_deck(self, location: tuple) -> Union[Deck, bool]:
         for deck in self.decks:
             if (deck.row, deck.column) == location and deck.is_alive:
                 return deck
