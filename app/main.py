@@ -45,38 +45,14 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
-        self.length = 0
         self.start = start
         self.end = end
-        self.decks = self.get_placed()
+        self.decks = []
         self.is_drowned = is_drowned
-
-    def get_placed(self) -> list:
-        x_coords = []
-        y_coords = []
-        if self.start[0] == self.end[0]:
-            x_coords = self.start[0]
-            for y_ in range(
-                    min(self.start[1], self.end[1]),
-                    max(self.start[1], self.end[1]) + 1
-            ):
-                y_coords.append(y_)
-                self.length += 1
-        if self.start[1] == self.end[1]:
-            y_coords = self.start[1]
-            for x_ in range(
-                    min(self.start[0], self.end[0]),
-                    max(self.start[0], self.end[0]) + 1
-            ):
-                if isinstance(x_coords, list):
-                    x_coords.append(x_)
-                    self.length += 1
-        if x_coords == y_coords or self.length == 1:
-            return [Deck(x_coords, y_coords, self)]
-        return [
-            Deck(x_coords, y_coords[i], self) if isinstance(x_coords, int)
-            else Deck(x_coords[i], y_coords, self) for i in range(self.length)
-        ]
+        for row in range(start[0], end[0] + 1):
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(row, column, self))
+        self.length = len(self.decks)
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
