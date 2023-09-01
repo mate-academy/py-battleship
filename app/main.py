@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List
 
 
 class Deck:
@@ -100,13 +101,13 @@ class Ship:
 class Battleship:
     def __init__(
             self,
-            ships: list
+            ships: List[Ship]
     ) -> None:
         self.field = {deck: deck.ship for deck in self.get_decks(ships)}
         self._validate_field()
 
     @staticmethod
-    def get_decks(ships: list) -> list:
+    def get_decks(ships: List[Ship]) -> list:
         if isinstance(ships[0], tuple):
             ships = [Ship(coords[0], coords[1]) for coords in ships]
         decks_nested = [ship.decks for ship in ships]
