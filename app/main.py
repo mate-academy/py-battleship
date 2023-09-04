@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 
 class Deck:
@@ -43,7 +43,7 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
-        if deck:
+        if deck is not None:
             deck.fire()
             if not self.is_drowned and all(not d.is_alive for d in self.decks):
                 self.is_drowned = True
