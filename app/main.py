@@ -7,10 +7,7 @@ class Deck:
         self.column = column
         self.is_alive = is_alive
 
-    def __sub__(
-            self,
-            other: Deck
-    ) -> list:
+    def __sub__(self, other: Deck) -> list:
         if other.row > self.row:
             return [
                 Deck(row, self.column)
