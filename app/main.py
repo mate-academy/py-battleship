@@ -20,6 +20,8 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
+        self.start = start
+        self.end = end
         self.decks = []
         self.is_drowned = is_drowned
         self.exist = False
@@ -68,9 +70,12 @@ class Battleship:
             warship = Ship(start, end)
             self.warships.append(warship)
 
-            for row in range(start[0], end[0] + 1):
-                for column in range(start[1], end[1] + 1):
-                    self.field[(row, column)] = warship
+            current_row = start[0]
+
+            for column in range(start[1], end[1] + 1):
+                self.field[(current_row, column)] = warship
+                if current_row != end[0]:
+                    current_row += 1
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
@@ -90,32 +95,3 @@ class Battleship:
 
         for row in field:
             print("".join(row))
-
-    # def _validate_field(self) -> str:
-    #     if len(self.warships) != 10:
-    #         return "The total number of the ships should be 10"
-    #
-    #     count_single_decks_ship = 0
-    #     count_double_decks_ship = 0
-    #     count_triple_deck_ship = 0
-    #     count_four_deck_ship = 0
-    #
-    #     for ship in self.warships:
-    #
-    #         if len(ship.decks) == 1:
-    #             count_single_decks_ship += 1
-    #         if len(ship.decks) == 2:
-    #             count_double_decks_ship += 1
-    #         if len(ship.decks) == 3:
-    #             count_triple_deck_ship += 1
-    #         if len(ship.decks) == 4:
-    #             count_four_deck_ship += 1
-    #
-    #     if count_single_decks_ship != 4:
-    #         return "There should be 4 single-deck ships"
-    #     if count_double_decks_ship != 3:
-    #         return "There should be 3 double-deck ships"
-    #     if count_triple_deck_ship != 2:
-    #         return "There should be 2 three-deck ships"
-    #     if count_four_deck_ship != 1:
-    #         return "There should be 1 four-deck ships"
