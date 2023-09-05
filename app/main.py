@@ -58,8 +58,8 @@ class Battleship:
 
     def fire(self, location: tuple) -> str:
         if (
-                location in self.field
-                and self.field.get(location).get_deck(*location).is_alive
+            location in self.field
+            and self.field.get(location).get_deck(*location).is_alive
         ):
             part_of_ship = self.field.get(location)
             part_of_ship.fire(*location)
