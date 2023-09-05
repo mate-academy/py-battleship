@@ -15,5 +15,5 @@ battle_ship = Battleship(
     ]
 )
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     battle_ship.print_field()
