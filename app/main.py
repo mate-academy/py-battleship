@@ -70,12 +70,12 @@ class Battleship:
             warship = Ship(start, end)
             self.warships.append(warship)
 
-            current_row = start[0]
+            cur_row = start[0]
 
             for column in range(start[1], end[1] + 1):
-                self.field[(current_row, column)] = warship
-                if current_row != end[0]:
-                    current_row += 1
+                self.field[(cur_row, column)] = warship
+                if cur_row != end[0]:
+                    cur_row += 1
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
