@@ -25,6 +25,7 @@ class Ship:
         self.decks = []
         self.is_drowned = is_drowned
         self.exist = False
+
         for row in range(start[0], end[0] + 1):
             for column in range(start[1], end[1] + 1):
                 self.decks.append(
@@ -34,9 +35,6 @@ class Ship:
                     )
                 )
 
-    def __repr__(self) -> str:
-        return "  ".join([str(deck) for deck in self.decks])
-
     def change_repr(self) -> None:
         for deck in self.decks:
             deck.is_ship_drowned = True
@@ -45,7 +43,6 @@ class Ship:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        # return f"There is not deck of this ship in ({row}, {column}) cell"
 
     def fire(self, row: int, column: int) -> None:
         alive_list = []
@@ -65,17 +62,23 @@ class Battleship:
         self.warships = []
         for ship in ships:
 
-            start = ship[0]
-            end = ship[1]
+            start, end = ship
             warship = Ship(start, end)
+
             self.warships.append(warship)
 
             cur_row = start[0]
+            cur_column = start[1]
 
-            for column in range(start[1], end[1] + 1):
-                self.field[(cur_row, column)] = warship
+            while True:
+                self.field[(cur_row, cur_column)] = warship
+
+                if cur_row == end[0] and cur_column == end[1]:
+                    break
                 if cur_row != end[0]:
                     cur_row += 1
+                if cur_column != end[1]:
+                    cur_column += 1
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
