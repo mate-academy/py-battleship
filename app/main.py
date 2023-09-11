@@ -37,15 +37,16 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list) -> None:
-        self.field = {ship: Ship(*ship) for ship in ships}
+        self.field = {
+            ship_coordinates: Ship(*ship_coordinates)
+            for ship_coordinates in ships
+        }
 
     def fire(self, location: tuple) -> str:
         for ship in self.field.values():
             for deck in ship.decks.keys():
                 if location == deck:
-                    if ship.fire(*deck):
-                        return "Sunk!"
-                    return "Hit!"
+                    return "Sunk!" if ship.fire(*deck) else "Hit!"
         return "Miss!"
 
     def print_field(self) -> None:
@@ -53,10 +54,7 @@ class Battleship:
         for ship in self.field.values():
             if not ship.is_drowned:
                 for index, deck in ship.decks.items():
-                    if deck.is_alive:
-                        field[index[0]][index[1]] = "□"
-                    else:
-                        field[index[0]][index[1]] = "*"
+                    field[index[0]][index[1]] = "□" if deck.is_alive else "*"
             else:
                 for index, deck in ship.decks.items():
                     field[index[0]][index[1]] = "x"
