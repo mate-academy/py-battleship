@@ -1,5 +1,5 @@
 import types
-from typing import List, Any
+from typing import List
 
 
 class Deck:
@@ -21,10 +21,10 @@ def generate_coordinates(point1: tuple, point2: tuple) -> List[tuple]:
     coordinates = []
 
     if x1 == x2:
-        for y in range(min(y1, y2), max(y1, y2) + 1):
+        for y in range(min(y1, y2), max(y1, y2) + 1):   # noqa: VNE001
             coordinates.append((x1, y))
     elif y1 == y2:
-        for x in range(min(x1, x2), max(x1, x2) + 1):
+        for x in range(min(x1, x2), max(x1, x2) + 1):   # noqa: VNE001
             coordinates.append((x, y1))
 
     return coordinates
