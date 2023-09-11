@@ -9,39 +9,23 @@ class Deck:
         self.is_alive = is_alive
 
     def __str__(self) -> str:
-        if self.is_alive:
-            return " \u25A1 "
-        else:
-            return " * "
+        return " \u25A1 " if self.is_alive else " * "
 
     def __repr__(self) -> str:
-        if self.is_alive:
-            return " \u25A1 "
-        else:
-            return " * "
+        return " \u25A1 " if self.is_alive else " * "
 
 
-def generate_coordinates(
-    point1: tuple, point2: tuple, step: int = 1
-) -> List[tuple]:
+def generate_coordinates(point1: tuple, point2: tuple) -> List[tuple]:
     x1, y1 = point1
     x2, y2 = point2
     coordinates = []
 
-    if x1 == x2:  # Vertical line
-        for y in range(min(y1, y2), max(y1, y2) + 1, step):  # noqa: VNE001
+    if x1 == x2:
+        for y in range(min(y1, y2), max(y1, y2) + 1):
             coordinates.append((x1, y))
-    elif y1 == y2:  # Horizontal line
-        for x in range(min(x1, x2), max(x1, x2) + 1, step):  # noqa: VNE001
+    elif y1 == y2:
+        for x in range(min(x1, x2), max(x1, x2) + 1):
             coordinates.append((x, y1))
-    else:
-        # Calculate slope and intercept of the line
-        slope = (y2 - y1) / (x2 - x1)
-        intercept = y1 - slope * x1
-
-        for x in range(min(x1, x2), max(x1, x2) + 1, step):  # noqa: VNE001
-            y = slope * x + intercept  # noqa: VNE001
-            coordinates.append((x, round(y)))
 
     return coordinates
 
@@ -63,12 +47,12 @@ class Ship:
         self.decks = create_decks(start, end)
         self.alive_decks = len(self.decks)
 
-    def get_deck(self, row: int, column: int) -> Any:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
-    def fire(self, row: int, column: int) -> None:
+    def fire(self, row: int, column: int) -> str:
         deck = self.get_deck(row, column)
 
         deck.is_alive = False
@@ -81,11 +65,8 @@ class Ship:
             return "Hit!"
 
     def change_deck_str(self) -> None:
-        def new_str(deck: Any) -> str:
-            if deck.is_alive:
-                return " \u25A1 "
-            else:
-                return " x "
+        def new_str(deck: Deck) -> str:
+            return " \u25A1 " if deck.is_alive else " x "
 
         for deck in self.decks:
             deck.__str__ = types.MethodType(new_str, deck)
@@ -112,19 +93,18 @@ class Battleship:
             raise ValueError("Invalid field!")
 
     def fire(self, location: tuple) -> str | None:
-        if location in self.field:
-            ship = self.field[location]
-            if not ship.is_drowned:
-                return ship.fire(*location)
-            return "Already sunk!"
-        return "Miss!"
+        return (
+            self.field[location].fire(*location)
+            if location in self.field and not self.field[location].is_drowned
+            else "Miss!"
+        )
 
     @staticmethod
     def print_field(field: dict) -> None:
         initial_field = [[" ~ "] * 10 for _ in range(10)]
         for coord, ship in field.items():
-            initial_field[coord[0]][coord[1]] = ship.get_deck(
-                coord[0], coord[1]
-            ).__str__()
+            initial_field[coord[0]][coord[1]] = str(
+                ship.get_deck(coord[0], coord[1])
+            )
         for row in initial_field:
             print(row)
