@@ -68,20 +68,35 @@ class Battleship:
             else:
                 if data_ship[0][0] == data_ship[1][0]:
                     # for x
-                    for work_y in range(data_ship[1][0], data_ship[1][1] + 1):
+                    for work_y in range(data_ship[0][1], data_ship[1][1] + 1):
                         self.ship_all_place.append((data_ship[0][0], work_y))
                 if data_ship[0][1] == data_ship[1][1]:
                     # for y
-                    for work_x in range(data_ship[0][1], data_ship[1][1] + 1):
-                        self.ship_all_place.append((work_x, data_ship[1][1]))
+                    for work_x in range(data_ship[0][0], data_ship[1][0] + 1):
+                        self.ship_all_place.append((work_x, data_ship[0][1]))
 
-    def fire(self, location: tuple):
+    def fire(self, location: tuple) -> str:
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        if location in self.Ships_in_battle:
-            pass
+        ooo = 0
+
+        if location not in self.ship_all_place:
+            return "Miss!"
+        for target_ship in self.Ships_in_battle:
+            # тут обработать палубы при помощи функции get_deck которая вернет статус палуб и статус самого корабля
+            for target_deck in target_ship.ship_deck:
+                yyyy = (target_deck.row, target_deck.column)
+                if location == (target_deck.row, target_deck.column):
+                    if target_deck.is_alive:
+                        # тут обработку подбитой палубы
+                        return "Hit!"
+                    else:
+                        return "Miss!"
+
+
+
 
 
 battle_ship = Battleship(
@@ -97,7 +112,15 @@ battle_ship = Battleship(
         ((7, 9), (7, 9)),
         ((9, 7), (9, 7)),
     ]
-    # [((2, 8), (2, 9)), ((2, 4), (2, 6))]
+    # [((2, 8), (2, 9)), ((2, 0), (4, 0))]
+)
+
+print(
+    battle_ship.fire((0, 4)),  # Miss!
+    battle_ship.fire((0, 3)),  # Hit!
+    battle_ship.fire((0, 2)),  # Hit!
+    battle_ship.fire((0, 1)),  # Hit!
+    battle_ship.fire((0, 0)),  # Sunk!
 )
 
 ttt = 0
