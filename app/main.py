@@ -45,8 +45,9 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck is not None:
             deck.fire()
-            if not self.is_drowned and all(not d.is_alive for d in self.decks):
-                self.is_drowned = True
+            self.is_drowned = (
+                    not self.is_drowned and all(not deck.is_alive for deck in self.decks)
+            )
 
 
 class Battleship:
@@ -56,25 +57,18 @@ class Battleship:
     ) -> None:
         self.field: Dict[Tuple[int, int], Ship] = {}
         for ship in ships:
-            (start_row, start_column), (end_row, end_column) = ship
             new_ship = Ship(*ship)
-            for row in range(start_row, end_row + 1):
-                for column in range(start_column, end_column + 1):
-                    self.field[(row, column)] = new_ship
+            for deck in new_ship.decks:
+                self.field[(deck.row, deck.column)] = new_ship
 
     def fire(self, ceil: Tuple[int, int]) -> str:
-        if ceil in self.field:
-            ship = self.field[ceil]
-            deck = ship.get_deck(*ceil)
-            deck.is_hit = True
-            if deck.is_alive:
-                deck.fire()
-                if all(not d.is_alive for d in ship.decks):
-                    ship.is_drowned = True
-                    return "Sunk!"
-                return "Hit!"
-            return "You already fired here!"
-        return "Miss!"
+        if ceil not in self.field:
+            return "Miss!"
+        ship = self.field[ceil]
+        ship.fire(*ceil)
+        if ship.is_drowned:
+            return "Sunk!"
+        return "Hit!"
 
     def print_field(self) -> None:
         table = ""
