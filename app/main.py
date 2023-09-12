@@ -108,5 +108,4 @@ class Battleship:
                 target_ship.fire(location[0], location[1])
                 if target_ship.alive_or_dead_ship():
                     return "Hit!"
-                else:
-                    return "Sunk!"
+        return "Sunk!"
