@@ -46,7 +46,8 @@ class Ship:
         if deck is not None:
             deck.fire()
             self.is_drowned = (
-                    not self.is_drowned and all(not deck.is_alive for deck in self.decks)
+                not self.is_drowned
+                and all(not deck.is_alive for deck in self.decks)
             )
 
 
