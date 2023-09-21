@@ -76,5 +76,5 @@ class Battleship:
         elif self.field[row][col] == "~":
             self.field[row][col] = "*"
             return "Miss!"
-        else:
-            return "Already fired here."
+
+        return "Already fired here."
