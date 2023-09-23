@@ -11,10 +11,9 @@ class Ship:
                  end: tuple,
                  is_drowned: bool = False
                  ) -> None:
-        self.decks = []
-        for row in range(start[0], end[0] + 1):
-            for column in range(start[1], end[1] + 1):
-                self.decks.append(Deck(row, column, is_alive=True))
+        self.decks = [Deck(row, column, is_alive=True)
+                      for row in range(start[0], end[0] + 1)
+                      for column in range(start[1], end[1] + 1)]
         self.is_drowned = is_drowned
 
     def get_deck(self, row: int, column: int) -> Deck:
@@ -33,9 +32,7 @@ class Ship:
 class Battleship:
     def __init__(self, ships: list) -> None:
         self.field = {}
-        ships_list = []
-        for start, end in ships:
-            ships_list.append(Ship(start, end))
+        ships_list = [Ship(start, end) for start, end in ships]
         for ship in ships_list:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
@@ -43,8 +40,7 @@ class Battleship:
     def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field[location]
-            row, column = location
-            deck = ship.get_deck(row, column)
+            deck = ship.get_deck(*location)
             if deck.is_alive:
                 deck.is_alive = False
                 if all(not d.is_alive for d in ship.decks):
