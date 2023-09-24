@@ -7,8 +7,8 @@ class Deck:
 
 class Ship:
     def __init__(self,
-                 start: tuple,
-                 end: tuple,
+                 start: tuple[int],
+                 end: tuple[int],
                  is_drowned: bool = False
                  ) -> None:
         self.decks = [Deck(row, column, is_alive=True)
@@ -37,7 +37,7 @@ class Battleship:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         if location in self.field:
             ship = self.field[location]
             deck = ship.get_deck(*location)
