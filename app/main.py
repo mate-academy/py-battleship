@@ -33,7 +33,7 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         deck: Deck | None = self.get_deck(row, column)
-        if deck is not None:
+        if deck:
             deck.is_alive = False
             if not any(deck.is_alive for deck in self.decks):
                 self.is_drowned = True
@@ -53,9 +53,7 @@ class Battleship:
     def fire(self, location: tuple[int, int]) -> str:
         if (ship := self.field.get(location, None)) is not None:
             ship.fire(*location)
-            if ship.is_drowned:
-                return "Sunk!"
-            return "Hit!"
+            return "Sunk!" if ship.is_drowned else "Hit!"
         return "Miss!"
 
     def print_field(self) -> None:
@@ -63,17 +61,12 @@ class Battleship:
         row: list[str] = []
         for row_coord in range(10):
             for col_coord in range(10):
-                if (
-                    ship := self.field.get((col_coord, row_coord), None)
-                ) is not None:
+                if ship := self.field.get((col_coord, row_coord)):
                     if ship.is_drowned:
                         row.append("x")
                     else:
                         deck: Deck | None = ship.get_deck(col_coord, row_coord)
-                        if deck and deck.is_alive:
-                            row.append("\u25A1")
-                        else:
-                            row.append("*")
+                        row.append("\u25A1" if deck and deck.is_alive else "*")
                 else:
                     row.append("~")
             result.append(" ".join(row))
@@ -93,4 +86,4 @@ class Battleship:
         ):
             coord[0] += dx
             coord[1] += dy
-            yield tuple(coord)
+            yield tuple(coord)  # type: ignore
