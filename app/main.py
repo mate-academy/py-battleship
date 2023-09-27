@@ -10,7 +10,7 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple,
+    def __init__(self, start: tuple[int], end: tuple[int],
                  is_drowned: bool = False) -> None:
         self.is_drowned = is_drowned
         self.decks = [Deck(x, y)
@@ -36,7 +36,7 @@ class Battleship:
             for coords in new_ship.decks:
                 self.field[coords.get_coords()] = new_ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int]) -> str:
         if location in self.field:
             damaged_ship = self.field[location]
             damaged_ship.fire(*location)
