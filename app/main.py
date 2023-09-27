@@ -36,7 +36,7 @@ class Ship:
         return False
 
     def check_for_alive(self) -> bool:
-        return True if any(deck.is_alive for deck in self.decks) else False
+        return any(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
@@ -56,7 +56,6 @@ class Battleship:
                 ship.get_deck(location).is_alive = False
                 if ship.check_for_alive():
                     return "Hit!"
-                else:
-                    return "Sunk!"
+                return "Sunk!"
 
         return "Miss!"
