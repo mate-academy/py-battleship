@@ -1,34 +1,78 @@
+from typing import List, Tuple, Union
+from app.Ship import Ship
+
+
 class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
-
-
-class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
-
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
-
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: List[Tuple]) -> None:
+        self.ships = [Ship(*ship_coordinates) for ship_coordinates in ships]
+        self.field = {}
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+        for ship in self.ships:
+            for coordinates in ship.decks:
+                self.field[coordinates] = ship
+
+    def fire(self, location: tuple) -> str:
+        if location in self.field:
+            ship = self.field[location]
+            hit = ship.fire(*location)
+            if hit:
+                if ship.is_drowned:
+                    return "Sunk!"
+                else:
+                    return "Hit!"
+        return "Miss!"
+
+    def print_field(self, field: list) -> None:
+        for row in field:
+            for column in row:
+                if isinstance(column, Deck):
+                    if column.is_alive:
+                        print(u"\u25A1", end="")
+                    else:
+                        print("*", end="")
+                elif isinstance(column, Ship):
+                    if column.is_drowned:
+                        print("x", end="")
+                    else:
+                        print(u"\u25A1", end="")
+                else:
+                    print("~", end="")
+            print()
+
+
+def test_battleship() -> None:
+    battle_ship = Battleship(
+        ships=[
+            ((2, 0), (2, 3)),
+            ((4, 5), (4, 6)),
+            ((3, 8), (3, 9)),
+            ((6, 0), (8, 0)),
+            ((6, 4), (6, 6)),
+            ((6, 8), (6, 9)),
+            ((9, 9), (9, 9)),
+            ((9, 5), (9, 5)),
+            ((9, 3), (9, 3)),
+            ((9, 7), (9, 7)),
+        ]
+    )
+
+    field: List[List[Union[Deck, None, Ship]]] = \
+        [[None for _ in range(10)] for _ in range(10)]
+
+    for ship in battle_ship.ships:
+        for deck in ship.decks:
+            field[deck[0]][deck[1]] = ship
+
+    for row in range(10):
+        for col in range(10):
+            if field[row][col] is None:
+                field[row][col] = Deck(row, col)
+
+    battle_ship.print_field(field)
