@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple
 from app.Ship import Ship
 
 
@@ -45,34 +45,3 @@ class Battleship:
                 else:
                     print("~", end="")
             print()
-
-
-def test_battleship() -> None:
-    battle_ship = Battleship(
-        ships=[
-            ((2, 0), (2, 3)),
-            ((4, 5), (4, 6)),
-            ((3, 8), (3, 9)),
-            ((6, 0), (8, 0)),
-            ((6, 4), (6, 6)),
-            ((6, 8), (6, 9)),
-            ((9, 9), (9, 9)),
-            ((9, 5), (9, 5)),
-            ((9, 3), (9, 3)),
-            ((9, 7), (9, 7)),
-        ]
-    )
-
-    field: List[List[Union[Deck, None, Ship]]] = \
-        [[None for _ in range(10)] for _ in range(10)]
-
-    for ship in battle_ship.ships:
-        for deck in ship.decks:
-            field[deck[0]][deck[1]] = ship
-
-    for row in range(10):
-        for col in range(10):
-            if field[row][col] is None:
-                field[row][col] = Deck(row, col)
-
-    battle_ship.print_field(field)
