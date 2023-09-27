@@ -37,7 +37,7 @@ class Ship:
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row=row, column=column)
 
-        if deck is not None:
+        if deck:
             deck.is_alive = False
             self.decks.remove(deck)
 
