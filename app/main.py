@@ -1,6 +1,3 @@
-from typing import Any
-
-
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -10,8 +7,8 @@ class Deck:
 
 class Ship:
     def __init__(self,
-                 start: tuple,
-                 end: tuple,
+                 start: tuple[int],
+                 end: tuple[int],
                  is_drowned: bool = False
                  ) -> None:
 
@@ -25,7 +22,7 @@ class Ship:
             for column in range(start[1], end[1] + 1)
         ]
 
-    def get_deck(self, row: int, column: int) -> Deck | Any | None:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -57,27 +54,17 @@ class Battleship:
     def _validate_field(self) -> None:
 
         all_ships = len(self.ships)
+        expected_ships = {1: 4, 2: 3, 3: 2, 4: 1}
+        count_ships_decks = [len(ship.decks) for ship in self.ships]
 
-        single_deck_ships = sum(
-            1 for ship in self.ships if len(ship.decks) == 1)
-
-        double_deck_ships = sum(
-            1 for ship in self.ships if len(ship.decks) == 2)
-
-        three_deck_ships = sum(
-            1 for ship in self.ships if len(ship.decks) == 3)
-
-        four_deck_ships = sum(
-            1 for ship in self.ships if len(ship.decks) == 4)
-
-        if (
-                all_ships != 10
-                or single_deck_ships != 4
-                or double_deck_ships != 3
-                or three_deck_ships != 2
-                or four_deck_ships != 1
-        ):
+        if all_ships != 10:
             raise ValueError("Incorrect configurations of ships")
+
+        for ship in self.ships:
+            if (len(ship.decks) not in expected_ships
+                    or expected_ships[len(ship.decks)]
+                    != count_ships_decks.count(len(ship.decks))):
+                raise ValueError("Incorrect configurations of ships")
 
         for check_ship1 in self.ships:
             for check_ship2 in self.ships:
@@ -92,7 +79,7 @@ class Battleship:
                                 raise ValueError(
                                     "Ships are located in neighboring cells")
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int]) -> str:
         if location in self.field:
             ship = self.field[location]
             ship.fire(*location)
