@@ -33,10 +33,7 @@ class Ship:
             ]
 
     def check_is_drowned(self) -> bool:
-        ship_is_drowned = all(deck.is_alive is False for deck in self.decks)
-        if ship_is_drowned:
-            return True
-        return False
+        return all(deck.is_alive is False for deck in self.decks)
 
     def get_deck(self, row: tuple, column: tuple) -> Deck:
         for deck in self.decks:
