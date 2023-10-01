@@ -10,7 +10,7 @@ class Ship:
                  ) -> None:
         self.ship = []
         if start == end:
-            self.ship.extend([Deck(start[0], start[1])])
+            self.ship.extend([Deck(*start)])
         elif start[1] != end[1]:
             self.ship.extend([Deck(start[0], deck)
                               for deck in range(start[1], end[1] + 1)])
@@ -32,13 +32,13 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
-        self.ships = [Ship(ship[0], ship[1]) for ship in ships]
+        self.ships = [Ship(*ship) for ship in ships]
 
     def fire(self, location: tuple) -> str:
         for ship in self.ships:
             for deck in ship.ship:
                 if deck.row == location[0] and deck.column == location[1]:
-                    return ship.fire(location[0], location[1])
+                    return ship.fire(*location)
         return "Miss!"
 
     def __repr__(self) -> str:
