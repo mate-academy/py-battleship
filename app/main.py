@@ -1,22 +1,25 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
+    def __init__(self, start: tuple, end: tuple, is_drowned: bool = False
+                 ) -> None:
         self.ship = []
         if start == end:
             self.ship.extend([Deck(start[0], start[1])])
         elif start[1] != end[1]:
-            self.ship.extend([Deck(start[0], deck) for deck in range(start[1], end[1] + 1)])
+            self.ship.extend([Deck(start[0], deck)
+                              for deck in range(start[1], end[1] + 1)])
         elif start[0] != end[0]:
-            self.ship.extend([Deck(deck, start[1]) for deck in range(start[0], end[0] + 1)])
+            self.ship.extend([Deck(deck, start[1])
+                              for deck in range(start[0], end[0] + 1)])
         self.is_drowned = is_drowned
 
-    def fire(self, row, column):
+    def fire(self, row: int, column: int) -> str:
         for deck in self.ship:
             if deck.row == row and deck.column == column:
                 deck.is_alive = False
@@ -25,6 +28,7 @@ class Ship:
             self.is_drowned = True
             return "Sunk!"
         return "Hit!"
+
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
