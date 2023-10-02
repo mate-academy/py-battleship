@@ -17,14 +17,14 @@ class Ship:
         elif start[0] != end[0]:
             self.ship.extend([Deck(deck, start[1])
                               for deck in range(start[0], end[0] + 1)])
+
         self.is_drowned = is_drowned
 
     def fire(self, row: int, column: int) -> str:
         for deck in self.ship:
             if deck.row == row and deck.column == column:
                 deck.is_alive = False
-                self.ship.remove(deck)
-        if len(self.ship) == 0:
+        if True not in [deck.is_alive for deck in self.ship]:
             self.is_drowned = True
             return "Sunk!"
         return "Hit!"
@@ -55,13 +55,16 @@ class Battleship:
                   ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"]]
         for ship in self.ships:
             for deck in ship.ship:
-                matrix[deck.row][deck.column] = "□"
+                if deck.is_alive is False:
+                    matrix[deck.row][deck.column] = "*"
+                else:
+                    matrix[deck.row][deck.column] = "□"
         result = ""
         for row in matrix:
             result += "  ".join(row) + "\n"
         return result
 
-    def validate_field(self) -> bool:
+    def _validate_field(self) -> bool:
         real = {4: 0, 3: 0, 2: 0, 1: 0}
         must_be = {4: 1, 3: 2, 2: 3, 1: 4}
         if len(self.ships) != 10:
@@ -70,3 +73,27 @@ class Battleship:
             print(len(ship.ship))
             real[len(ship.ship)] += 1
         return real == must_be
+
+battle_ship = Battleship(
+    ships=[
+        ((0, 0), (0, 3)),
+        ((0, 5), (0, 6)),
+        ((0, 8), (0, 9)),
+        ((2, 0), (4, 0)),
+        ((2, 4), (2, 6)),
+        ((2, 8), (2, 9)),
+        ((9, 9), (9, 9)),
+        ((7, 7), (7, 7)),
+        ((7, 9), (7, 9)),
+        ((9, 7), (9, 7)),
+    ]
+)
+print(
+    battle_ship.fire((0, 4)),  # Miss!
+    battle_ship.fire((0, 3)),  # Hit!
+    battle_ship.fire((0, 2)),  # Hit!
+    battle_ship.fire((0, 1)),  # Hit!
+    battle_ship.fire((0, 0)),  # Sunk!
+)
+
+print(battle_ship)
