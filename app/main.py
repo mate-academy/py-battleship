@@ -12,12 +12,11 @@ class Ship:
         if start == end:
             self.ship.extend([Deck(*start)])
         elif start[1] != end[1]:
-            self.ship.extend([Deck(start[0], deck)
-                              for deck in range(start[1], end[1] + 1)])
+            for deck in range(start[1], end[1] + 1):
+                self.ship.append(Deck(start[0], deck))
         elif start[0] != end[0]:
-            self.ship.extend([Deck(deck, start[1])
-                              for deck in range(start[0], end[0] + 1)])
-
+            for deck in range(start[0], end[0] + 1):
+                self.ship.append(Deck(deck, start[1]))
         self.is_drowned = is_drowned
 
     def fire(self, row: int, column: int) -> str:
