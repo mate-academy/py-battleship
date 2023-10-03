@@ -39,9 +39,8 @@ class Battleship:
 
     def fire(self, location: tuple) -> str:
         for ship in self.ships:
-            for deck in ship.decks:
-                if deck.row == location[0] and deck.column == location[1]:
-                    return ship.fire(*location)
+            if ship.fire(*location) is not None:
+                return ship.fire(*location)
         return "Miss!"
 
     def __repr__(self) -> str:
