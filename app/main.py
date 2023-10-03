@@ -8,25 +8,29 @@ class Deck:
 class Ship:
     def __init__(self, start: tuple, end: tuple, is_drowned: bool = False
                  ) -> None:
-        self.ship = []
+        self.decks = []
         if start == end:
-            self.ship.extend([Deck(*start)])
+            self.decks.extend([Deck(*start)])
         elif start[1] != end[1]:
             for deck in range(start[1], end[1] + 1):
-                self.ship.append(Deck(start[0], deck))
+                self.decks.append(Deck(start[0], deck))
         elif start[0] != end[0]:
             for deck in range(start[0], end[0] + 1):
-                self.ship.append(Deck(deck, start[1]))
+                self.decks.append(Deck(deck, start[1]))
         self.is_drowned = is_drowned
 
     def fire(self, row: int, column: int) -> str:
-        for deck in self.ship:
+        if self.get_deck(row, column) is not None:
+            self.get_deck(row, column).is_alive = False
+            if True not in [deck.is_alive for deck in self.decks]:
+                self.is_drowned = True
+                return "Sunk!"
+            return "Hit!"
+
+    def get_deck(self, row, column):
+        for deck in self.decks:
             if deck.row == row and deck.column == column:
-                deck.is_alive = False
-        if True not in [deck.is_alive for deck in self.ship]:
-            self.is_drowned = True
-            return "Sunk!"
-        return "Hit!"
+                return deck
 
 
 class Battleship:
@@ -35,7 +39,7 @@ class Battleship:
 
     def fire(self, location: tuple) -> str:
         for ship in self.ships:
-            for deck in ship.ship:
+            for deck in ship.decks:
                 if deck.row == location[0] and deck.column == location[1]:
                     return ship.fire(*location)
         return "Miss!"
@@ -53,7 +57,7 @@ class Battleship:
                   ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
                   ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"]]
         for ship in self.ships:
-            for deck in ship.ship:
+            for deck in ship.decks:
                 if deck.is_alive is False:
                     matrix[deck.row][deck.column] = "*"
                 else:
@@ -69,6 +73,6 @@ class Battleship:
         if len(self.ships) != 10:
             return False
         for ship in self.ships:
-            print(len(ship.ship))
-            real[len(ship.ship)] += 1
+            print(len(ship.decks))
+            real[len(ship.decks)] += 1
         return real == must_be
