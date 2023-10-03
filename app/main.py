@@ -27,7 +27,7 @@ class Ship:
                 return "Sunk!"
             return "Hit!"
 
-    def get_deck(self, row, column):
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
