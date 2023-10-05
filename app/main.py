@@ -19,15 +19,16 @@ class Ship:
                 self.decks.append(Deck(deck, start[1]))
         self.is_drowned = is_drowned
 
-    def fire(self, row: int, column: int) -> str:
-        if self.get_deck(row, column) is not None:
-            self.get_deck(row, column).is_alive = False
-            if True not in [deck.is_alive for deck in self.decks]:
+    def fire(self, row: int, column: int) -> (str, None):
+        result_get_deck = self.get_deck(row, column)
+        if result_get_deck is not None:
+            result_get_deck.is_alive = False
+            if not any([deck.is_alive for deck in self.decks]):
                 self.is_drowned = True
                 return "Sunk!"
             return "Hit!"
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> (Deck, None):
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
