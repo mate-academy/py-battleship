@@ -1,3 +1,5 @@
+import flake8_annotations
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -23,8 +25,8 @@ class Ship:
         result_get_deck = self.get_deck(row, column)
         if result_get_deck is not None:
             result_get_deck.is_alive = False
-            if not any([deck.is_alive for deck in self.decks]):
-                self.is_drowned = True
+            self.is_drowned = not any([deck.is_alive for deck in self.decks])
+            if self.is_drowned:
                 return "Sunk!"
             return "Hit!"
 
