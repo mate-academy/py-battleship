@@ -1,4 +1,3 @@
-import flake8_annotations
 
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
