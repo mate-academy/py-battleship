@@ -11,15 +11,14 @@ class Deck:
 class Ship:
     def __init__(self, start: tuple, end: tuple, is_drowned: bool = False
                  ) -> None:
-        self.decks = []
-        if start == end:
-            self.decks.extend([Deck(*start)])
-        elif start[1] != end[1]:
-            for deck in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], deck))
-        elif start[0] != end[0]:
-            for deck in range(start[0], end[0] + 1):
-                self.decks.append(Deck(deck, start[1]))
+        self.decks = (
+            [
+                Deck(x, y)
+                for x in range(start[0], end[0] + 1)
+                for y in range(start[1], end[1] + 1)
+            ]
+            if start != end
+            else [Deck(*start)])
         self.is_drowned = is_drowned
 
     def fire(self, row: int, column: int) -> Union[str, None]:
@@ -51,14 +50,10 @@ class Battleship:
         matrix = [["~" for _ in range(10)]for _ in range(10)]
         for ship in self.ships:
             for deck in ship.decks:
-                if deck.is_alive is False:
-                    matrix[deck.row][deck.column] = "*"
-                else:
-                    matrix[deck.row][deck.column] = "□"
-        result = ""
-        for row in matrix:
-            result += "  ".join(row) + "\n"
-        return result
+                matrix[deck.row][deck.column] = ("□"
+                                                 if deck.is_alive is True
+                                                 else "*")
+        return "".join(["  ".join(row) + "\n" for row in matrix])
 
     def _validate_field(self) -> bool:
         real = {4: 0, 3: 0, 2: 0, 1: 0}
