@@ -1,4 +1,4 @@
-
+from typing import Union
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -20,7 +20,7 @@ class Ship:
                 self.decks.append(Deck(deck, start[1]))
         self.is_drowned = is_drowned
 
-    def fire(self, row: int, column: int) -> (str, None):
+    def fire(self, row: int, column: int) -> Union[str, None]:
         result_get_deck = self.get_deck(row, column)
         if result_get_deck is not None:
             result_get_deck.is_alive = False
@@ -29,7 +29,7 @@ class Ship:
                 return "Sunk!"
             return "Hit!"
 
-    def get_deck(self, row: int, column: int) -> (Deck, None):
+    def get_deck(self, row: int, column: int) -> Union[Deck, None]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
