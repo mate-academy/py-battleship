@@ -11,12 +11,12 @@ class Deck:
 class Ship:
     def __init__(self, start: tuple, end: tuple, is_drowned: bool = False
                  ) -> None:
-        self.decks =\
+        self.decks = (
             [
                 Deck(x, y)
                 for x in range(start[0], end[0] + 1)
                 for y in range(start[1], end[1] + 1)
-            ]
+            ])
         self.is_drowned = is_drowned
 
     def fire(self, row: int, column: int) -> Union[str, None]:
