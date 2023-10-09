@@ -26,14 +26,10 @@ class Ship:
 
         if self.is_drowned:
             return "Sunk!"
-        else:
-            return "Hit!"
+        return "Hit!"
 
     def is_it_drowned(self) -> None:
-        self.is_drowned = True
-        for deck in self.decks:
-            if deck.is_alive:
-                self.is_drowned = False
+        self.is_drowned = not any([deck.is_alive for deck in self.decks])
 
     def get_length(self) -> int:
         return len(self.decks)
@@ -41,19 +37,16 @@ class Ship:
     @staticmethod
     def create_decks(ship_begin: Tuple[int, int],
                      ship_end: Tuple[int, int]) -> List:
+
         if ship_begin == ship_end:
             return [Deck(*ship_begin)]
 
-        border = 0
-        if ship_begin[1] != ship_end[1]:
-            border = 1
+        ship_decks = []
 
-        ship_decks = [Deck(ship_begin[0], ship_begin[1])]
-        blank_deck = [ship_begin[0], ship_begin[1]]
+        for row in range(ship_begin[0], ship_end[0] + 1):
+            for column in range(ship_begin[1], ship_end[1] + 1):
+                ship_decks.append(Deck(row, column))
 
-        while blank_deck[border] != ship_end[border]:
-            blank_deck[border] += 1
-            ship_decks.append(Deck(blank_deck[0], blank_deck[1]))
         return ship_decks
 
 
@@ -73,8 +66,7 @@ class Battleship:
         ship = self.field.get(location)
         if ship is not None:
             return ship.fire(*location)
-        else:
-            return "Miss!"
+        return "Miss!"
 
     def print_field(self) -> None:
         row = -1
