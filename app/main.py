@@ -22,12 +22,14 @@ class Ship:
 
     def make_decks_for_ship(self) -> list:
         decks = []
-        ship_length = self.end[0] - self.start[0] + self.end[1] - self.start[1]
-        for i in range(0, ship_length + 1):
-            if self.start[0] == self.end[0]:
-                decks.append(Deck(self.start[0], self.start[1] + i))
-            else:
-                decks.append(Deck(self.start[0] + i, self.start[1]))
+        if self.start[0] == self.end[0]:
+            # Ship is oriented horizontally
+            for column in range(self.start[1], self.end[1] + 1):
+                decks.append(Deck(self.start[0], column))
+        else:
+            # Ship is oriented vertically
+            for row in range(self.start[0], self.end[0] + 1):
+                decks.append(Deck(row, self.start[1]))
         return decks
 
     def get_deck(self, row: int, column: int) -> Deck:
@@ -36,11 +38,10 @@ class Ship:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        self.get_deck(row, column).is_alive = False
-        self.is_drowned = True
-        for deck in self.decks:
-            if deck.is_alive:
-                self.is_drowned = False
+        target_deck = self.get_deck(row, column)
+        if target_deck:
+            target_deck.is_alive = False
+            self.is_drowned = not any(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
