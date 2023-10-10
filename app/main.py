@@ -8,8 +8,8 @@ class Deck:
 class Ship:
     def __init__(
         self,
-        start: tuple,
-        end: tuple,
+        start: tuple[int, int],
+        end: tuple[int, int],
         is_drowned: bool = False
     ) -> None:
         self.is_drowned = is_drowned
@@ -47,7 +47,7 @@ class Battleship:
             else:
                 self.field[ship[0]] = boat
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
             return "Miss!"
         if location in self.field:
