@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Union
 
 
 class Deck:
@@ -15,7 +15,7 @@ class Ship:
         self.is_drowned = is_drowned
         self.decks = Ship.create_decks(start, end)
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Union[Deck, None]:
         for deck in self.decks:
             if deck.coordinate == (row, column):
                 return deck
@@ -37,9 +37,6 @@ class Ship:
     @staticmethod
     def create_decks(ship_begin: Tuple[int, int],
                      ship_end: Tuple[int, int]) -> List:
-
-        if ship_begin == ship_end:
-            return [Deck(*ship_begin)]
 
         ship_decks = []
 
