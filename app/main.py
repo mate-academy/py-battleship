@@ -22,17 +22,14 @@ class Ship:
 
     def make_decks_for_ship(self) -> list:
         decks = []
-        if self.start[0] == self.end[0]:
-            # Ship is oriented horizontally
+
+        for row in range(self.start[0], self.end[0] + 1):
             for column in range(self.start[1], self.end[1] + 1):
-                decks.append(Deck(self.start[0], column))
-        else:
-            # Ship is oriented vertically
-            for row in range(self.start[0], self.end[0] + 1):
-                decks.append(Deck(row, self.start[1]))
+                decks.append(Deck(row, column))
+
         return decks
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> None:
         for deck in self.decks:
             if row == deck.row and column == deck.column:
                 return deck
@@ -54,9 +51,9 @@ class Battleship:
     def making_ships(self) -> dict:
         field = {}
         for ship in self.ships:
-            ship1 = Ship(ship[0], ship[1])
-            for point in ship1.decks:
-                field[(point.row, point.column)] = ship1
+            ship_obj = Ship(ship[0], ship[1])
+            for point in ship_obj.decks:
+                field[(point.row, point.column)] = ship_obj
         return field
 
     def fire(self,
