@@ -20,7 +20,6 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
-        # Create decks and save them to a list `self.decks`
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
@@ -38,14 +37,11 @@ class Ship:
             raise ValueError("Wrong coordinates")
 
     def get_deck(self, row: int, column: int) -> Deck:
-        # Find the corresponding deck in the list
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
         self.get_deck(row, column).is_alive = False
         if all([not deck.is_alive for deck in self.decks]):
             self.is_drowned = True
@@ -53,10 +49,6 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
         self.field = {}
         for coordinates in ships:
             ship = Ship(coordinates[0], coordinates[1])
@@ -64,10 +56,6 @@ class Battleship:
                 self.field[(deck.row, deck.column)] = ship
 
     def fire(self, location: tuple) -> str:
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
         if location in self.field:
             self.field[location].fire(location[0], location[1])
             if self.field[location].is_drowned:
@@ -76,8 +64,6 @@ class Battleship:
         return "Miss!"
 
     def print_field(self) -> None:
-        # This function is for debugging
-        # It prints the field in the console
         for row in range(10):
             for column in range(10):
                 if (row, column) in self.field:
