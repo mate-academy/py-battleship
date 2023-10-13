@@ -54,8 +54,7 @@ class Battleship:
             if ship.is_drowned:
                 return "Sunk!"
             return "Hit!"
-        else:
-            return "Miss!"
+        return "Miss!"
 
     def print_field(self) -> None:
         for row in range(10):
@@ -72,19 +71,3 @@ class Battleship:
                 else:
                     print("~", end="  ")
             print()
-
-    def _validate_field(self) -> None:
-        n_ships = len(self.ships)
-        if n_ships != 10:
-            raise ValueError(f"Wrong number of ships: {n_ships}")
-        decks_len = [0, 0, 0, 0]
-        for ship in self.ships:
-            len_ship = len(ship.decks)
-            for i in range(1, 5):
-                if len_ship == i:
-                    decks_len[i - 1] += 1
-        for i, count in enumerate(decks_len, start=1):
-            if decks_len[i - 1] != count:
-                raise ValueError(
-                    f"Wrong number of {i}-deck ships: {decks_len[i - 1]}"
-                )
