@@ -15,18 +15,17 @@ class Ship:
         self.is_drowned = is_drowned
         length = abs(start[0] - end[0]) + abs(start[1] - end[1]) + 1
         self.decks = []
-        for i in range(length):
+        for field_square in range(length):
             if start[0] == end[0]:
-                deck = Deck(start[0], start[1] + i)
+                deck = Deck(start[0], start[1] + field_square)
             else:
-                deck = Deck(start[0] + i, start[1])
+                deck = Deck(start[0] + field_square, start[1])
             self.decks.append(deck)
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        return None
 
     def fire(self, row: int, column: int) -> None:
         for deck in self.decks:
