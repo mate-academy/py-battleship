@@ -16,9 +16,6 @@ class Ship:
         self.end = end
         self.is_drowned = is_drowned
         self.decks = []
-        self._create_decks()
-
-    def _create_decks(self) -> None:
         self.decks = [
             Deck(row, column)
             for row in range(self.start[0], self.end[0] + 1)
