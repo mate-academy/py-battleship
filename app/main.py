@@ -16,6 +16,9 @@ class Ship:
         self.end = end
         self.is_drowned = is_drowned
         self.decks = []
+        self._create_decks()
+
+    def _create_decks(self) -> None:
         self.decks = [
             Deck(row, column)
             for row in range(self.start[0], self.end[0] + 1)
@@ -33,13 +36,13 @@ class Battleship:
         self.field = {}
         self._create_field(ships)
 
-    def _create_field(self, ships: list | int) -> None:
+    def _create_field(self, ships: list[int]) -> None:
         for ship_start, ship_end in ships:
             ship = Ship(ship_start, ship_end)
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
-    def fire(self, location: tuple | int) -> str:
+    def fire(self, location: tuple[int]) -> str:
         if location in self.field:
             ship = self.field[location]
             deck = ship.get_deck(*location)
