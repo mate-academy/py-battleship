@@ -12,6 +12,7 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
+        self.field = None
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
@@ -24,6 +25,21 @@ class Ship:
             for row in range(self.start[0], self.end[0] + 1)
             for column in range(self.start[1], self.end[1] + 1)
         ]
+
+    def fire(self, location: tuple[int]) -> str:
+        if location in self.field:
+            ship = self.field[location]
+            deck = ship.get_deck(*location)
+            if deck.is_alive:
+                deck.is_alive = False
+                if all(not deck.is_alive for deck in ship.decks):
+                    ship.is_drowned = True
+                    return "Sunk!"
+                else:
+                    return "Hit!"
+            else:
+                return "Already Hit!"
+        return "Miss!"
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
