@@ -33,14 +33,14 @@ class Ship:
 class Battleship:
     def __init__(self, ships: List[tuple]) -> None:
         self.field = {}
-        for i in ships:
-            start, end = i
+        for ship_position in ships:
+            start, end = ship_position
             ship = Ship(start, end)
-            for le in ship.decks:
-                self.field.update({(le.row, le.column): ship})
+            for deck in ship.decks:
+                self.field.update({(deck.row, deck.column): ship})
 
     def fire(self, location: tuple) -> str:
-        if location in self.field.keys():
+        if location in self.field:
             self.field[location].fire(location[0], location[1])
             if self.field[location].is_drowned:
                 return "Sunk!"
