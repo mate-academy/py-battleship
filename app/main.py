@@ -33,9 +33,8 @@ class Ship:
 class Battleship:
     def __init__(self, ships: List[tuple]) -> None:
         self.field = {}
-        for ship_position in ships:
-            start, end = ship_position
-            ship = Ship(start, end)
+        for start_position, end_position in ships:
+            ship = Ship(start_position, end_position)
             for deck in ship.decks:
                 self.field.update({(deck.row, deck.column): ship})
 
