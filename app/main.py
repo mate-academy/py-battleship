@@ -28,8 +28,6 @@ class Ship:
         ):
 
             for coord_y in range(self.start[1], self.end[1] + 1):
-                # if self.end[0] - self.start[0] >= 5 or self.end[1] - self.start[1] >= 5:
-                #     raise ValueError("Invalid ship size")
                 if coord_x == self.start[0] or coord_y == self.start[1]:
                     self.deck.append(Deck(coord_x, coord_y))
 
@@ -50,6 +48,8 @@ class Battleship:
     def __init__(self, ships: List[tuple]) -> None:
         self.ships = ships
         self.field = {}
+
+        self.create_battle_field(ships)
 
     def create_battle_field(self, ships: List[tuple]) -> None:
         square = "\u25A1"
@@ -75,35 +75,7 @@ class Battleship:
             ship = self.field[location]
             ship.fire(location[0], location[1])
 
-            # Оцінюємо, чи потоплений корабель
             if ship.is_drowned:
                 return "Sunk!"
             else:
                 return "Hit!"
-
-
-battle_ship = Battleship(
-    ships=[
-        ((0, 0), (0, 3)),
-        ((0, 5), (0, 6)),
-        ((0, 8), (0, 9)),
-        ((2, 0), (4, 0)),
-        ((2, 4), (2, 6)),
-        ((2, 8), (2, 9)),
-        ((9, 9), (9, 9)),
-        ((7, 7), (7, 7)),
-        ((7, 9), (7, 9)),
-        ((9, 7), (9, 7)),
-    ]
-)
-
-battle_ship.create_battle_field(battle_ship.ships)
-
-
-print(
-    battle_ship.fire((0, 4)),  # Miss!
-    battle_ship.fire((0, 3)),  # Hit!
-    battle_ship.fire((0, 2)),  # Hit!
-    battle_ship.fire((0, 1)),  # Hit!
-    battle_ship.fire((0, 0)),  # Sunk!
-)
