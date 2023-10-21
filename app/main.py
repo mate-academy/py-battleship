@@ -20,6 +20,8 @@ class Ship:
         self.is_drowned = is_drowned
         self.deck = []
 
+        self.create_ship()
+
     def create_ship(self) -> None:
         for coord_x in range(
                 self.start[0], self.end[0] + 1
@@ -75,7 +77,7 @@ class Battleship:
 
             # Оцінюємо, чи потоплений корабель
             if ship.is_drowned:
-                return "Sunk"
+                return "Sunk!"
             else:
                 return "Hit!"
 
