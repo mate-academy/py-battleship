@@ -48,7 +48,8 @@ class Battleship:
     def __init__(self, ships: List[tuple]) -> None:
         self.ships = ships
         self.field = {}
-        self.create_battle_field(ships)
+        self.game_field = self.create_battle_field(ships)
+        self.placement_of_ships()
 
     def fire(self, location: tuple) -> str:
         if location not in self.field:
@@ -58,19 +59,20 @@ class Battleship:
             ship.fire(*location)
             return "Sunk!" if ship.is_drowned else "Hit!"
 
-    def create_battle_field(self, ships: List[tuple]) -> None:
-        square = "\u25A1"
-        game_field = [["~" for _ in range(10)] for _ in range(10)]
+    def create_battle_field(self, ships: List[tuple]) -> List[list[str]]:
+        return [["~" for _ in range(10)] for _ in range(10)]
 
-        for ship in ships:
+    def placement_of_ships(self) -> None:
+        square = "\u25A1"
+        for ship in self.ships:
 
             boat = Ship(*ship)
             (row1, column1), (row2, column2) = ship
             if row1 == row2:
                 for column in range(column1, column2 + 1):
-                    game_field[row1][column] = square
+                    self.game_field[row1][column] = square
                     self.field[(row1, column)] = boat
             else:
                 for row1 in range(row1, row2 + 1):
-                    game_field[row1][column1] = square
+                    self.game_field[row1][column1] = square
                     self.field[(row1, column1)] = boat
