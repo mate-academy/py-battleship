@@ -1,4 +1,6 @@
+from colorama import Fore, Style, init
 from typing import List
+init()
 
 
 class Deck:
@@ -48,8 +50,8 @@ class Battleship:
     def __init__(self, ships: List[tuple]) -> None:
         self.ships = ships
         self.field = {}
-        self.game_field = self.create_battle_field(ships)
-        self.placement_of_ships()
+        self.game_field = self.create_battle_dict(ships)
+        self.create_field = self.print_field()
 
     def fire(self, location: tuple) -> str:
         if location not in self.field:
@@ -59,20 +61,24 @@ class Battleship:
             ship.fire(*location)
             return "Sunk!" if ship.is_drowned else "Hit!"
 
-    def create_battle_field(self, ships: List[tuple]) -> List[list[str]]:
-        return [["~" for _ in range(10)] for _ in range(10)]
+    def create_battle_dict(self, ships: List[tuple]) -> None:
+        for start, end in ships:
+            boat = Ship(start, end)
+            for cord_x in range(start[0], end[0] + 1):
+                for cord_y in range(start[1], end[1] + 1):
+                    if (cord_x, cord_y) not in self.field:
+                        self.field[(cord_x, cord_y)] = boat
 
-    def placement_of_ships(self) -> None:
-        square = "\u25A1"
-        for ship in self.ships:
-
-            boat = Ship(*ship)
-            (row1, column1), (row2, column2) = ship
-            if row1 == row2:
-                for column in range(column1, column2 + 1):
-                    self.game_field[row1][column] = square
-                    self.field[(row1, column)] = boat
+    def print_field(self) -> str:
+        create_field = [["~" for _ in range(10)] for _ in range(10)]
+        for start, end in self.ships:
+            for cord_x in range(start[0], end[0] + 1):
+                for cord_y in range(start[1], end[1] + 1):
+                    create_field[cord_x][cord_y] = u"\u25A1"
+        for (row, col), ship in self.field.items():
+            if ship.is_drowned:
+                create_field[row][col] = Fore.RED + "X" + Style.RESET_ALL
             else:
-                for row1 in range(row1, row2 + 1):
-                    self.game_field[row1][column1] = square
-                    self.field[(row1, column1)] = boat
+                create_field[row][col] = Fore.GREEN + "*" + Style.RESET_ALL
+
+        return "\n".join(" ".join(row) for row in create_field)
