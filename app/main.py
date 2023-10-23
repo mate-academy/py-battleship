@@ -41,8 +41,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck is not None:
             deck.is_alive = False
-            if all(not deck.is_alive for deck in self.deck):
-                self.is_drowned = True
+        self.is_drowned = all(not deck.is_alive for deck in self.deck)
 
 
 class Battleship:
@@ -55,10 +54,10 @@ class Battleship:
     def fire(self, location: tuple) -> str:
         if location not in self.field:
             return "Miss!"
-        else:
-            ship = self.field[location]
-            ship.fire(*location)
-            return "Sunk!" if ship.is_drowned else "Hit!"
+
+        ship = self.field[location]
+        ship.fire(*location)
+        return "Sunk!" if ship.is_drowned else "Hit!"
 
     def create_battle_dict(self, ships: List[tuple]) -> None:
         for start, end in ships:
