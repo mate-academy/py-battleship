@@ -1,5 +1,5 @@
 from colorama import Fore, Style, init
-from typing import List
+from typing import List, Optional
 init()
 
 
@@ -28,21 +28,20 @@ class Ship:
         for coord_x in range(
                 self.start[0], self.end[0] + 1
         ):
-
             for coord_y in range(self.start[1], self.end[1] + 1):
-                if coord_x == self.start[0] or coord_y == self.start[1]:
-                    self.deck.append(Deck(coord_x, coord_y))
+                self.deck.append(Deck(coord_x, coord_y))
 
-    def get_deck(self, row: tuple, column: tuple) -> tuple:
+    def get_deck(self, row: tuple, column: tuple) -> Optional[Deck]:
         for deck in self.deck:
             if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: tuple, column: tuple) -> None:
+
         deck = self.get_deck(row, column)
         if deck is not None:
             deck.is_alive = False
-            if all(not d.is_alive for d in self.deck):
+            if all(not deck.is_alive for deck in self.deck):
                 self.is_drowned = True
 
 
@@ -56,7 +55,7 @@ class Battleship:
     def fire(self, location: tuple) -> str:
         if location not in self.field:
             return "Miss!"
-        if location in self.field:
+        else:
             ship = self.field[location]
             ship.fire(*location)
             return "Sunk!" if ship.is_drowned else "Hit!"
