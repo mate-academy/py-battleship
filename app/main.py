@@ -45,8 +45,35 @@ class Ship:
 
 
 class Battleship:
+
     def __init__(self, ships):
         self.field = self.get_field(ships)
+        self.draw_playfield()
+
+    def _validate_fields(self) -> str:
+        ships = self.field.values() 
+        if set(ships) != 10:
+            return "10 ships should be in battle"
+
+        single, double, three, four = 0, 0, 0, 0
+        for ship in set(ships):
+            if len(ship.decks) == 1:
+                single += 1
+            if len(ship.decks) == 2:
+                double += 1
+            if len(ship.decks) == 3:
+                three += 1
+            if len(ship.decks) == 4:
+                four += 1
+
+        if single != 1:
+            return "You should have 4 single-deck ships"
+        if double != 2:
+            return "You should have 3 double-deck ships"
+        if three != 3:
+            return "You should have 2 three-deck ships"
+        if four != 4:
+            return "You should have 1 four-deck ships"
 
     def fire(self, location: tuple):
         ship = self.field.get(location)
@@ -55,7 +82,10 @@ class Battleship:
             self.field.pop(location)
             row, column = location
             ship.fire(row, column)
+            self.playfield[row][column] = "*"
             if ship.is_drowned:
+                for deck in ship.decks:
+                    self.playfield[deck.row][deck.column] = "x"
                 return "Sunk!"
             return "Hit!"
         return "Miss!"
@@ -70,3 +100,11 @@ class Battleship:
                 field[deck.row, deck.column] = ship
 
         return field
+
+    def draw_playfield(self) -> None:
+        self.playfield = [["~" for _ in range(10)] for _ in range(10)]
+        for deck in self.field.keys():
+            row, column = deck
+            self.playfield[row][column] = "□"
+
+        print(self.playfield)
