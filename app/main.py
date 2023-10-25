@@ -1,11 +1,14 @@
+from typing import List
+
+
 class Deck:
     counter = 0
 
-    def __init__(self, row, column, is_alive=True):
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
-        
+
     def __repr__(self) -> str:
         return f"Deck: {self.row} : {self.column}"
 
@@ -15,7 +18,8 @@ class Deck:
 
 class Ship:
 
-    def __init__(self, start: tuple, end: tuple, is_drowned=False):
+    def __init__(self, start: tuple, end: tuple,
+                 is_drowned: bool = False) -> None:
         self.decks = self._decks_generator(start, end)
         self.is_drowned = is_drowned
 
@@ -30,8 +34,7 @@ class Ship:
             deck.is_alive = False
         decks_available = [deck for deck in self.decks if deck.is_alive]
         if not decks_available:
-            self.is_drowned = True    
-        
+            self.is_drowned = True
 
     @staticmethod
     def _decks_generator(start: tuple, end: tuple) -> list:
@@ -46,12 +49,12 @@ class Ship:
 
 class Battleship:
 
-    def __init__(self, ships):
+    def __init__(self, ships: List[Ship]) -> None:
         self.field = self.get_field(ships)
         self.draw_playfield()
 
     def _validate_fields(self) -> str:
-        ships = self.field.values() 
+        ships = self.field.values()
         if set(ships) != 10:
             return "10 ships should be in battle"
 
@@ -75,7 +78,7 @@ class Battleship:
         if four != 4:
             return "You should have 1 four-deck ships"
 
-    def fire(self, location: tuple):
+    def fire(self, location: tuple) -> str:
         ship = self.field.get(location)
 
         if ship:
@@ -91,7 +94,7 @@ class Battleship:
         return "Miss!"
 
     @staticmethod
-    def get_field(ships) -> dict:
+    def get_field(ships: List[tuple]) -> dict:
         field = {}
         ships = [Ship(start, end) for start, end in ships]
         for ship in ships:
