@@ -1,5 +1,10 @@
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(
+            self,
+            row: int,
+            column: int,
+            is_alive: bool = True
+    ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -16,7 +21,7 @@ class Ship:
             self,
             start: tuple,
             end: tuple,
-            is_drowned: bool = False
+            is_drowned: bool | None = False
     ) -> None:
         self.is_drowned = is_drowned
         self.decks = []
@@ -42,23 +47,11 @@ class Ship:
     def fire(self, row: int, column: int) -> None:
         deck = self.decks.index(self.get_deck(row, column))
         self.decks[deck].is_alive = False
-        cheker = False
-        for decks in self.decks:
-            if decks.is_alive is True:
-                cheker = True
-                break
-        if cheker is True:
-            self.is_drowned = False
-        else:
-            self.is_drowned = True
+        self.is_drowned = not any(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
     def __init__(self, ships: list[Ship]) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
         self.field = {}
         for data in ships:
             ship = Ship(data[0], data[1])
@@ -71,6 +64,5 @@ class Battleship:
                 self.field[location].fire(location[0], location[1])
                 if not self.field[location].is_drowned:
                     return "Hit!"
-                else:
-                    return "Sunk!"
+                return "Sunk!"
         return "Miss!"
