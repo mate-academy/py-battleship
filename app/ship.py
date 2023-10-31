@@ -48,7 +48,7 @@ class Ship:
             self.is_drowned = True
 
     @staticmethod
-    def create_decks(start: tuple, end: tuple) -> list:
+    def create_decks(start: tuple[int], end: tuple[int]) -> list[Deck]:
         decks = []
         for row in range(start[0], end[0] + 1):
             for column in range(start[1], end[1] + 1):
