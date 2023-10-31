@@ -8,7 +8,7 @@ class Deck:
         self.is_alive = is_alive
 
     @staticmethod
-    def validator(data: Any) -> None:
+    def validate_index(data: Any) -> None:
         if not isinstance(data, int):
             raise TypeError("Type should be 'int'")
         if not data >= 0:
@@ -20,7 +20,7 @@ class Deck:
 
     @row.setter
     def row(self, value: int) -> None:
-        self.validator(value)
+        self.validate_index(value)
         self._row = value
 
     @property
@@ -29,5 +29,5 @@ class Deck:
 
     @column.setter
     def column(self, value: int) -> None:
-        self.validator(value)
+        self.validate_index(value)
         self._column = value

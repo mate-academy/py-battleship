@@ -11,12 +11,9 @@ class Battleship:
             row, column = location
             ship.fire(row, column)
             if ship.is_drowned:
-                print("Sunk!")
                 return "Sunk!"
             else:
-                print("Hit!")
                 return "Hit!"
-        print("Miss!")
         return "Miss!"
 
     def organize_input(self, input_data: list[tuple[tuple]]) -> dict:
