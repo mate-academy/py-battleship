@@ -17,9 +17,9 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.fill_decs()
+        self.fill_decks()
 
-    def fill_decs(self) -> None:
+    def fill_decks(self) -> None:
         if self.start[0] == self.end[0]:
             self.decks = [Deck(self.start[0], i)
                           for i in range(self.start[1], self.end[1] + 1)]
@@ -34,12 +34,7 @@ class Ship:
 
     def fire(self, row: int, column: int) -> None:
         self.get_deck(row, column).is_alive = False
-
-        drowned = []
-
-        for deck in self.decks:
-            drowned.append(deck.is_alive)
-        if not any(drowned):
+        if all(not deck.is_alive for deck in self.decks):
             self.is_drowned = True
 
 
