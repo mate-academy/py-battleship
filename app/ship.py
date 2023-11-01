@@ -4,7 +4,7 @@ from app.deck import Deck
 
 class Coord:
     @staticmethod
-    def verify_coord(data: tuple) -> None:
+    def verify_coord(data: tuple[int]) -> None:
         if not isinstance(data, tuple):
             raise TypeError("Type should be 'tuple'")
         if len(data) != 2:
@@ -18,7 +18,7 @@ class Coord:
     def __get__(self, instance: Ship, owner: Ship) -> tuple:
         return instance.__dict__[self.name]
 
-    def __set__(self, instance: Ship, value: tuple) -> None:
+    def __set__(self, instance: Ship, value: tuple[int]) -> None:
         self.verify_coord(value)
         instance.__dict__[self.name] = value
 
