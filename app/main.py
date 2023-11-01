@@ -26,7 +26,9 @@ class Battleship:
         return result
 
     @staticmethod
-    def fill_the_gap(start: tuple[int], end: tuple[int]) -> list[tuple[int, int]]:
+    def fill_the_gap(
+        start: tuple[int], end: tuple[int]
+    ) -> list[tuple[int, int]]:
         if start[0] == end[0]:
             return [(start[0], i) for i in range(start[1], end[1] + 1)]
         elif start[1] == end[1]:
