@@ -28,11 +28,10 @@ class Ship:
     end = Coord()
 
     def __init__(
-        self, start: tuple, end: tuple, is_drowned: bool = False
+            self, start: tuple, end: tuple, is_drowned: bool = False
     ) -> None:
         self.is_drowned = is_drowned
         self.decks = self.create_decks(start, end)
-        self.destroyed_decks = 0
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
@@ -43,8 +42,7 @@ class Ship:
         target_deck = self.get_deck(row, column)
         if target_deck:
             target_deck.is_alive = False
-            self.destroyed_decks += 1
-        if self.destroyed_decks == len(self):
+        if all(not deck.is_alive for deck in self.decks):
             self.is_drowned = True
 
     @staticmethod
