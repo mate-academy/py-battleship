@@ -1,20 +1,22 @@
 class Deck:
-    def __init__(self,
-                 row: int,
-                 column: int,
-                 is_alive: bool = True
-                 ) -> None:
+    def __init__(
+            self,
+            row: int,
+            column: int,
+            is_alive: bool = True
+    ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self,
-                 start: tuple,
-                 end: tuple,
-                 is_drowned: bool = False
-                 ) -> None:
+    def __init__(
+            self,
+            start: tuple[int],
+            end: tuple[int],
+            is_drowned: bool = False
+    ) -> None:
         self.decks = [
             Deck(row, col)
             for col in range(start[1], end[1] + 1)
