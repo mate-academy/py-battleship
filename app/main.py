@@ -123,37 +123,3 @@ class Battleship:
                                                       None):
                         raise ValueError("Ships must not be adjacent"
                                          " to each other.")
-
-
-if __name__ == "__main__":
-    ships = [
-        ((0, 0), (0, 3)),
-        ((0, 5), (0, 6)),
-        ((0, 8), (0, 9)),
-        ((2, 0), (4, 0)),
-        ((2, 4), (2, 6)),
-        ((2, 8), (2, 9)),
-        ((9, 9), (9, 9)),
-        ((7, 7), (7, 7)),
-        ((7, 9), (7, 9)),
-        ((9, 7), (9, 7)),
-    ]
-    battleship = Battleship(ships)
-    battleship.print_field()
-
-    shots = [
-        ((9, 9), "Sunk!"),
-        ((0, 4), "Miss!"),
-        ((0, 3), "Hit!"),
-        ((9, 9), "Miss!"),
-        ((0, 2), "Hit!"),
-        ((0, 2), "Miss!"),
-        ((0, 1), "Hit!"),
-        ((0, 0), "Sunk!")
-    ]
-
-    for shot, expected in shots:
-        result = battleship.fire(shot)
-        print(f"Shot on {shot}!", "-" * 12, result)
-        assert result == expected, f"Got {result}, {expected} expected."
-        battleship.print_field()
