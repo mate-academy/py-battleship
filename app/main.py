@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List
 
 
@@ -46,23 +48,27 @@ class Battleship:
 
     def __init__(self, ships: List[tuple]) -> None:
         self.field = self.get_field(ships)
+        self.ship_count = {1: 0, 2: 0, 3: 0, 4: 0}
+        is_valid = self._validate_fields()
+        if not is_valid:
+            raise ValueError("Invalid ships input")
         self._init_play_field()
-        self.ship_count = {
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0
-        }
 
-    def _validate_fields(self) -> str:
-        ships = self.field.values()
+    def _validate_fields(self) -> bool:
+        ships = set(self.field.values())
+
+        if len(ships) != 10:
+            print("You should have 10 ships")
+            return False
 
         for ship in ships:
             self.ship_count[len(ship.decks)] += 1
 
         for i in range(1, 5):
             if self.ship_count[i] != 5 - i:
-                return f"You should have {5 - i} {i}-deck ships"
+                print(f"You should have {5 - i} {i}-deck ships")
+                return False
+        return True
 
     def fire(self, location: tuple) -> str:
         ship = self.field.get(location)
