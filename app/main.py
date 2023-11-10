@@ -24,7 +24,11 @@ class Ship:
         self.decks = [Deck(row, column) for row in range(start[0], end[0] + 1)
                       for column in range(start[1], end[1] + 1)]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(
+            self,
+            row: int,
+            column: int
+    ) -> Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -39,18 +43,20 @@ class Ship:
         if self.is_drowned:
             for deck in self.decks:
                 deck.is_alive = False
-                return "Sunk!"
-            return "Hit!"
-        return "Miss!"
+            return "Sunk!"
+        return "Hit!"
 
 
 class Battleship:
-    def __init__(self, ships: List[Ship]) -> None:
+    def __init__(
+            self,
+            ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+    ) -> None:
         self.field = {}
-        for ship in ships:
-            for row in range(ship.decks[0].row, ship.decks[-1].row + 1):
-                for column in range(ship.decks[0].column,
-                                    ship.decks[-1].column + 1):
+        for start, end in ships:
+            ship = Ship(start, end)
+            for row in range(start[0], end[0] + 1):
+                for column in range(start[1], end[1] + 1):
                     self.field[(row, column)] = ship
 
     def fire(self, location: Tuple[int, int]) -> str:
