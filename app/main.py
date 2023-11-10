@@ -9,9 +9,6 @@ class Deck:
         self.column = column
         self.is_alive = is_alive
 
-    def __repr__(self) -> str:
-        return f"Deck: {self.row} : {self.column}"
-
     def __str__(self) -> str:
         return f"Deck: {self.row} : {self.column}"
 
@@ -28,13 +25,11 @@ class Ship:
             if deck.row == row and deck.column == column:
                 return deck
 
-    def fire(self, row: int, column: int) -> bool:
+    def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
         if deck and deck.is_alive:
             deck.is_alive = False
-        decks_available = [deck for deck in self.decks if deck.is_alive]
-        if not decks_available:
-            self.is_drowned = True
+        self.is_drowned = not any(deck.is_alive for deck in self.decks)
 
     @staticmethod
     def _decks_generator(start: tuple, end: tuple) -> list:
@@ -49,46 +44,36 @@ class Ship:
 
 class Battleship:
 
-    def __init__(self, ships: List[Ship]) -> None:
+    def __init__(self, ships: List[tuple]) -> None:
         self.field = self.get_field(ships)
-        self.draw_playfield()
+        self._init_play_field()
+        self.ship_count = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0
+        }
 
     def _validate_fields(self) -> str:
         ships = self.field.values()
-        if set(ships) != 10:
-            return "10 ships should be in battle"
 
-        single, double, three, four = 0, 0, 0, 0
-        for ship in set(ships):
-            if len(ship.decks) == 1:
-                single += 1
-            if len(ship.decks) == 2:
-                double += 1
-            if len(ship.decks) == 3:
-                three += 1
-            if len(ship.decks) == 4:
-                four += 1
+        for ship in ships:
+            self.ship_count[len(ship.decks)] += 1
 
-        if single != 1:
-            return "You should have 4 single-deck ships"
-        if double != 2:
-            return "You should have 3 double-deck ships"
-        if three != 3:
-            return "You should have 2 three-deck ships"
-        if four != 4:
-            return "You should have 1 four-deck ships"
+        for i in range(1, 5):
+            if self.ship_count[i] != 5 - i:
+                return f"You should have {5 - i} {i}-deck ships"
 
     def fire(self, location: tuple) -> str:
         ship = self.field.get(location)
 
         if ship:
-            self.field.pop(location)
             row, column = location
             ship.fire(row, column)
-            self.playfield[row][column] = "*"
+            self.play_field[row][column] = "*"
             if ship.is_drowned:
                 for deck in ship.decks:
-                    self.playfield[deck.row][deck.column] = "x"
+                    self.play_field[deck.row][deck.column] = "x"
                 return "Sunk!"
             return "Hit!"
         return "Miss!"
@@ -104,10 +89,11 @@ class Battleship:
 
         return field
 
-    def draw_playfield(self) -> None:
-        self.playfield = [["~" for _ in range(10)] for _ in range(10)]
+    def draw_play_field(self) -> None:
+        print("\n".join(str(row) for row in self.play_field))
+
+    def _init_play_field(self) -> None:
+        self.play_field = [["~" for _ in range(10)] for _ in range(10)]
         for deck in self.field.keys():
             row, column = deck
-            self.playfield[row][column] = "□"
-
-        print(self.playfield)
+            self.play_field[row][column] = "□"
