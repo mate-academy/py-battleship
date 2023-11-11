@@ -63,8 +63,7 @@ class Battleship:
     def fire(self, location: Tuple[int, int]) -> str:
         if location in self.field:
             ship = self.field[location]
-            row, column = location
-            result = ship.fire(row, column)
+            result = ship.fire(*location)
             if ship.is_drowned:
                 del self.field[location]
             return result
