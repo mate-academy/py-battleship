@@ -38,7 +38,8 @@ class Ship:
             deck = self.get_deck(row, column)
             if deck:
                 deck.is_alive = False
-                if all(not d.is_alive for d in self.decks):
+                if all(not current_deck.is_alive
+                       for current_deck in self.decks):
                     self.is_drowned = True
         if self.is_drowned:
             for deck in self.decks:
