@@ -2,7 +2,12 @@ from __future__ import annotations
 
 
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(
+            self,
+            row: int,
+            column: int,
+            is_alive: bool = True
+    ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -33,8 +38,7 @@ class Ship:
         if not any(deck.is_alive for deck in self.decks):
             self.is_drowned = True
             return "Sunk!"
-        else:
-            return "Hit!"
+        return "Hit!"
 
 
 class Battleship:
@@ -76,5 +80,4 @@ class Battleship:
         loc_x, loc_y = location
         if location in self.field.keys():
             return self.field[location].fire(loc_x, loc_y)
-        else:
-            return "Miss!"
+        return "Miss!"
