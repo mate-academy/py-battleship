@@ -21,8 +21,8 @@ class Ship:
             is_drowned: bool = False
     ) -> None:
         self.is_drowned = is_drowned
-        self.decks = [Deck(i, j) for i in range(start[0], end[0] + 1)
-                      for j in range(start[1], end[1] + 1)]
+        self.decks = [Deck(row, column) for row in range(start[0], end[0] + 1)
+                      for column in range(start[1], end[1] + 1)]
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
@@ -37,16 +37,15 @@ class Ship:
             if all(not deck.is_alive for deck in self.decks):
                 self.is_drowned = True
                 return "Sunk!"
-            else:
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
 
 
 class Battleship:
-    def __init__(self,
-                 ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
-                 ) -> None:
+    def __init__(
+            self,
+            ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+    ) -> None:
         self.field = {}
         for ship_coords in ships:
             ship = Ship(*ship_coords)
@@ -57,5 +56,4 @@ class Battleship:
         if location in self.field:
             ship = self.field[location]
             return ship.fire(*location)
-        else:
-            return "Miss!"
+        return "Miss!"
