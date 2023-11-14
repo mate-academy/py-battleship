@@ -16,9 +16,9 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
-            is_drowned: bool = False
+            start: Tuple[int, int],
+            end: Tuple[int, int],
+            is_drowned: bool | None = False
     ) -> None:
         self.start = start
         self.end = end
@@ -69,8 +69,7 @@ class Battleship:
 
     def print_field(self) -> None:
         field = [["~"] * 10] * 10
-        for location, ship in self.field.items():
-            row, column = location
+        for (row, column), ship in self.field.items():
             if ship.is_drowned:
                 field[row][column] = "x"
             elif not ship.get_deck(row, column).is_alive:
