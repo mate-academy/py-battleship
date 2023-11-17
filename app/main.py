@@ -8,9 +8,6 @@ class Deck:
         self.column = column
         self.is_alive = is_alive
 
-    def __repr__(self) -> str:
-        return f"({self.row}; {self.column})"
-
 
 class Ship:
     def __init__(
@@ -30,12 +27,6 @@ class Ship:
                 for i in range(start[0], end[0] + 1)
             ]
         self.is_drowned = is_drowned
-
-    def __str__(self) -> str:
-        return f"{self.decks}"
-
-    def __repr__(self) -> str:
-        return f"{self.decks}"
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
@@ -89,9 +80,9 @@ class Battleship:
                                   )
 
     def print_field(self) -> None:
-        for i in range(0, 10):
-            for j in range(0, 10):
-                coord = (i, j)
+        for _i in range(0, 10):
+            for _k in range(0, 10):
+                coord = (_i, _k)
                 for coords, ship in self.field.items():
                     deck = ship.get_deck(*coord)
                     if deck is not None:
