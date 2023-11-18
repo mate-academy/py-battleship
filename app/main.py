@@ -12,12 +12,14 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
-        self.field = None
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = []
-        self._create_decks()
+        self.decks = [
+            Deck(row, column)
+            for row in range(self.start[0], self.end[0] + 1)
+            for column in range(self.start[1], self.end[1] + 1)
+        ]
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
@@ -25,26 +27,15 @@ class Ship:
                 return deck
 
     def fire(self, location: tuple[int]) -> str:
-        if location in self.field:
-            ship = self.field[location]
-            deck = ship.get_deck(*location)
-            if deck.is_alive:
-                deck.is_alive = False
-                if all(not deck.is_alive for deck in ship.decks):
-                    ship.is_drowned = True
-                    return "Sunk!"
-                else:
-                    return "Hit!"
+        deck = self.get_deck(*location)
+        if deck is not None:
+            deck.is_alive = False
+            if all(not d.is_alive for d in self.decks):
+                self.is_drowned = True
+                return "Sunk!"
             else:
-                return "Already Hit!"
+                return "Hit!"
         return "Miss!"
-
-    def _create_decks(self) -> None:
-        self.decks = [
-            Deck(row, column)
-            for row in range(self.start[0], self.end[0] + 1)
-            for column in range(self.start[1], self.end[1] + 1)
-        ]
 
 
 class Battleship:
@@ -52,25 +43,16 @@ class Battleship:
         self.field = {}
         self._create_field(ships)
 
-    def _create_field(self, ships: list[int]) -> None:
-        for ship_start, ship_end in ships:
-            ship = Ship(ship_start, ship_end)
-            for deck in ship.decks:
-                self.field[(deck.row, deck.column)] = ship
+    def _create_field(self, ships: list) -> None:
+        for ship in ships:
+            ship_object = Ship(*ship)
+            for deck in ship_object.decks:
+                self.field[(deck.row, deck.column)] = ship_object
 
     def fire(self, location: tuple[int]) -> str:
         if location in self.field:
             ship = self.field[location]
-            deck = ship.get_deck(*location)
-            if deck.is_alive:
-                deck.is_alive = False
-                if all(not deck.is_alive for deck in ship.decks):
-                    ship.is_drowned = True
-                    return "Sunk!"
-                else:
-                    return "Hit!"
-            else:
-                return "Already Hit!"
+            return ship.fire(location)
         return "Miss!"
 
     def print_field(self) -> None:
