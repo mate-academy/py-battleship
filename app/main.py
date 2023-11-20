@@ -21,29 +21,17 @@ class Ship:
                       for row, col in self.get_coordinates(start, end)]
         self.is_drowned = is_drowned
 
-    @classmethod
-    def get_coordinates(
-            cls,
-            start: tuple,
-            end: tuple
-    ) -> list[tuple]:
+    @staticmethod
+    def get_coordinates(start: tuple, end: tuple) -> list[tuple]:
         return [(start[0] + i, start[1] + j)
                 for i in range(end[0] - start[0] + 1)
                 for j in range(end[1] - start[1] + 1)]
 
-    def get_deck(
-            self,
-            row: int,
-            column: int
-    ) -> Deck | None:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         return next((deck for deck in self.decks if deck.row
                      == row and deck.column == column), None)
 
-    def fire(
-            self,
-            row: int,
-            column: int
-    ) -> None:
+    def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
@@ -52,20 +40,13 @@ class Ship:
 
 
 class Battleship:
-    def __init__(
-            self,
-            ships: list
-    ) -> None:
-        self.field = {}
-        for ship_start, ship_end in ships:
-            ship = Ship(ship_start, ship_end)
-            for deck in ship.decks:
-                self.field[(deck.row, deck.column)] = ship
+    def __init__(self, ships: list) -> None:
+        self.field = {(deck.row, deck.column): ship
+                      for ship_start, ship_end in ships
+                      for ship in [Ship(ship_start, ship_end)]
+                      for deck in ship.decks}
 
-    def fire(
-            self,
-            location: tuple
-    ) -> str:
+    def fire(self, location: tuple) -> str:
         if location not in self.field:
             return "Miss!"
 
