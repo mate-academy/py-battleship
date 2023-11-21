@@ -1,7 +1,7 @@
-import dataclasses
+from dataclasses import dataclass
 
 
-@dataclasses.dataclass
+@dataclass
 class Deck:
     row: int
     column: int
@@ -23,7 +23,7 @@ class Ship:
         if self.start[0] == self.end[0]:
             self.decks = [Deck(self.start[0], i)
                           for i in range(self.start[1], self.end[1] + 1)]
-        if self.start[1] == self.end[1]:
+        elif self.start[1] == self.end[1]:
             self.decks = [Deck(i, self.start[1])
                           for i in range(self.start[0], self.end[0] + 1)]
 
@@ -33,15 +33,19 @@ class Ship:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        self.get_deck(row, column).is_alive = False
-        if all(not deck.is_alive for deck in self.decks):
-            self.is_drowned = True
+        if self.get_deck(row, column):
+            self.get_deck(row, column).is_alive = False
+            if all(not deck.is_alive for deck in self.decks):
+                self.is_drowned = True
 
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
         self.ships = ships
         self.field = {}
+        self.place_ships()
+
+    def place_ships(self) -> None:
         for start, end in self.ships:
             ship = Ship(start, end)
             for deck in ship.decks:
