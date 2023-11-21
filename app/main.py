@@ -37,15 +37,18 @@ class Ship:
     def fire(self, location: tuple) -> None:
         row, column = location
         deck = self.get_deck(row, column)
-        deck.is_alive = False
 
-        if all(not deck.is_alive for deck in self.decks):
-            self.is_drowned = True
+        if deck is not None:
+            deck.is_alive = False
+            self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
     def __init__(self, ships: list) -> None:
         self.field = {}
+        self.place_ships(ships)
+
+    def place_ships(self, ships: list) -> None:
         for ship in ships:
             my_ship = Ship(ship[0], ship[1])
             for deck in my_ship.decks:
