@@ -45,7 +45,6 @@ class Ship:
 class Battleship:
     def __init__(self, ships: tuple[tuple[int]]) -> None:
         self.ships = [Ship(ship[0], ship[1]) for ship in ships]
-        self.battlefield = [["~" for _ in range(10)] for _ in range(10)]
 
     def fire(self, location: tuple[int]) -> str:
         for ship in self.ships:
