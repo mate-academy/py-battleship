@@ -53,7 +53,5 @@ class Battleship:
                 ship.fire(*location)
                 if ship.is_drowned:
                     return "Sunk!"
-                else:
-                    return "Hit!"
-        else:
-            return "Miss!"
+                return "Hit!"
+        return "Miss!"
