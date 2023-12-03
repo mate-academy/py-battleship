@@ -60,9 +60,11 @@ class Battleship:
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        if location in self.field:
-            self.field[location].fire(location[0], location[1])
-            if self.field[location].is_drowned:
-                return "Sunk!"
-            return "Hit!"
+        for key in self.field.keys():
+            if (key[0][0] <= location[0] <= key[1][0]
+                    and key[0][1] <= location[1] <= key[1][1]):
+                self.field[key].fire(location[0], location[1])
+                if self.field[key].is_drowned:
+                    return "Sunk!"
+                return "Hit!"
         return "Miss!"
