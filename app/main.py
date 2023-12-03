@@ -39,7 +39,10 @@ class Ship:
 
 class Battleship:
 
-    def create_field(self, ships: list[tuple[tuple[int, int], tuple[int, int]]]):
+    def create_field(
+            self,
+            ships: list[tuple[tuple[int, int], tuple[int, int]]]
+    ) -> None:
         for ship in ships:
             self.field[ship] = Ship(ship[0], ship[1])
 
