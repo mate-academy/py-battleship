@@ -1,5 +1,12 @@
+from typing import List, Dict
+
+
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(
+            self, row: int,
+            column: int,
+            is_alive: bool = True
+    ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -8,7 +15,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple, end: tuple,
+            start: tuple,
+            end: tuple,
             is_drowned: bool = False
     ) -> None:
         self.start = start
@@ -17,7 +25,7 @@ class Ship:
         self.decks = self.create_deck()
         self.count_hits = 0
 
-    def create_deck(self) -> list:
+    def create_deck(self) -> List[Deck]:
         decks_for_ship = []
         start_row, start_column = self.start
         end_row, end_column = self.end
@@ -58,7 +66,10 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(
+            self,
+            ships: list[tuple]
+    ) -> None:
         self.ships = ships
         self.flot = self.create_flot_ships()
         self.field = self.create_field(self.flot)
@@ -67,7 +78,7 @@ class Battleship:
         return [Ship(cell[0], cell[1]) for cell in self.ships]
 
     @staticmethod
-    def create_field(ships: list) -> dict:
+    def create_field(ships: List[Ship]) -> Dict[Deck, Ship]:
         return {
             deck: ship for ship in ships
             for deck in ship.decks
