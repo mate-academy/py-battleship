@@ -27,11 +27,11 @@ class Ship:
             decks_for_ship.append(one_deck)
             return decks_for_ship
 
-        if start_row == end_row:  # horizontal ship
+        if start_row == end_row:
             for column in range(start_column, end_column + 1):
                 decks_for_ship.append(Deck(start_row, column))
 
-        elif start_column == end_column:  # vertical ship
+        elif start_column == end_column:
             for row in range(start_row, end_row + 1):
                 decks_for_ship.append(Deck(row, start_column))
         return decks_for_ship
