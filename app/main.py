@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class Deck:
     def __init__(
             self,
@@ -17,19 +20,19 @@ class Ship:
             end: tuple[int],
             is_drowned: bool = False
     ) -> None:
-        self.decks = []
-        if start[0] == end[0]:
-            for col in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], col))
-        elif start[1] == end[1]:
-            for row in range(start[0], end[0] + 1):
-                self.decks.append(Deck(row, start[1]))
+        self.decks = [
+            Deck(start[0] if start[0] == end[0] else row,
+                 start[1] if start[1] == end[1] else col)
+            for row in range(start[0], end[0] + 1)
+            for col in range(start[1], end[1] + 1)
+        ]
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Any:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
+        return None
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
@@ -39,8 +42,7 @@ class Ship:
 
     def check_drowned(self) -> None:
         alive_decks = [deck.is_alive for deck in self.decks]
-        if not any(alive_decks):
-            self.is_drowned = True
+        self.is_drowned = not any(alive_decks)
 
 
 class Battleship:
@@ -77,7 +79,6 @@ class Battleship:
                 if ship.is_drowned:
                     return "Sunk!"
                 return "Hit!"
-            return "Miss!"
         return "Miss!"
 
     def print_field(self) -> None:
