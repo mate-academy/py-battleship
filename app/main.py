@@ -13,8 +13,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int],
+            end: tuple[int],
             is_drowned: bool = False
     ) -> None:
         self.decks = []
@@ -56,20 +56,16 @@ class Battleship:
 
     def _validate_field(self) -> None:
         ships_count = len(self.ships)
-        single_deck = double_deck = triple_deck = quadruple_deck = 0
+        counts = {1: 0, 2: 0, 3: 0, 4: 0}
 
         for ship in self.ships:
             decks_count = len(ship.decks)
-            if decks_count == 1:
-                single_deck += 1
-            elif decks_count == 2:
-                double_deck += 1
-            elif decks_count == 3:
-                triple_deck += 1
-            elif decks_count == 4:
-                quadruple_deck += 1
-        if (ships_count != 10 or single_deck != 4 or double_deck != 3
-                or triple_deck != 2 or quadruple_deck != 1):
+            if decks_count in counts:
+                counts[decks_count] += 1
+
+        expected_counts = {1: 4, 2: 3, 3: 2, 4: 1}
+
+        if ships_count != 10 or counts != expected_counts:
             raise ValueError
 
     def fire(self, location: tuple) -> str:
