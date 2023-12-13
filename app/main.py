@@ -1,3 +1,6 @@
+GRID_SIZE = 10
+
+
 class ValidationInputDataError(Exception):
     pass
 
@@ -92,31 +95,31 @@ class Battleship:
             )
 
         ship_deck_all = []
-        for ship in self.field.keys():
+        for ship in self.field:
             ship = sorted(ship)
             ship_deck = []
-            for i in range(ship[0][0], ship[1][0] + 1):
-                for k_ in range(ship[0][1], ship[1][1] + 1):
-                    spase = [i, k_]
+            for vertical in range(ship[0][0], ship[1][0] + 1):
+                for horizontal in range(ship[0][1], ship[1][1] + 1):
+                    spase = [vertical, horizontal]
                     ship_deck.append(spase)
             ship_deck_all += ship_deck
 
-        for ship in self.field.keys():
+        for ship in self.field:
             ship = sorted(ship)
             y0 = ship[0][0] - 1 if ship[0][0] - 1 >= 0 else 0
-            y1 = ship[1][0] + 1 if ship[1][0] + 1 <= 9 else 9
+            y1 = min(ship[1][0] + 1, GRID_SIZE - 1)
             x0 = ship[0][1] - 1 if ship[0][1] - 1 >= 0 else 0
-            x1 = ship[1][1] + 1 if ship[1][1] + 1 <= 9 else 9
+            x1 = min(ship[1][1] + 1, GRID_SIZE - 1)
             ship_spase = []
-            for i in range(y0, y1 + 1):
-                for k_ in range(x0, x1 + 1):
-                    spase = [i, k_]
+            for vertical in range(y0, y1 + 1):
+                for horizontal in range(x0, x1 + 1):
+                    spase = [vertical, horizontal]
                     ship_spase.append(spase)
 
             ship_deck = []
-            for i in range(ship[0][0], ship[1][0] + 1):
-                for k_ in range(ship[0][1], ship[1][1] + 1):
-                    spase = [i, k_]
+            for vertical in range(ship[0][0], ship[1][0] + 1):
+                for horizontal in range(ship[0][1], ship[1][1] + 1):
+                    spase = [vertical, horizontal]
                     ship_deck.append(spase)
 
             for deck in ship_deck:
