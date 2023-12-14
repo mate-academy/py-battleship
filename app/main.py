@@ -140,21 +140,29 @@ class Battleship:
         return "Miss!"
 
     def print_field(self) -> None:
-        for i in range(0, 10):
-            for k_ in range(0, 10):
-                coord = (i, k_)
-                for coords, ship in self.field.items():
-                    deck = ship.get_deck(*coord)
-                    if deck is not None:
-                        if ship.is_drowned:
-                            print("x ", end=" ")
-                            break
-                        if not deck.is_alive:
-                            print("* ", end=" ")
-                            break
-                        print(u"\u25A1 ", end=" ")
+        list_position = []
+        for vertical in range(GRID_SIZE):
+            for horizontal in range(GRID_SIZE):
+                coord = (vertical, horizontal)
+                list_position.append(coord)
+
+        dict_position = {}
+        for coordinate in list_position:
+            for field, ship in self.field.items():
+                deck = ship.get_deck(*coordinate)
+                if deck is not None:
+                    if ship.is_drowned:
+                        dict_position[coordinate] = "x  "
                         break
-                else:
-                    print("~ ", end=" ")
-            print()
-        print()
+                    if not deck.is_alive:
+                        dict_position[coordinate] = "*  "
+                        break
+                    dict_position[coordinate] = u"\u25A1  "
+                    break
+                dict_position[coordinate] = "~  "
+
+        for vertical in range(GRID_SIZE):
+            value_horizontal = ""
+            for horizontal in range(GRID_SIZE):
+                value_horizontal += dict_position.get((vertical, horizontal))
+            print(value_horizontal)
