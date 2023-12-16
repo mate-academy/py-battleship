@@ -7,8 +7,8 @@ class Deck:
 
 class Ship:
     def __init__(self,
-                 start: tuple,
-                 end: tuple,
+                 start: tuple[int],
+                 end: tuple[int],
                  is_drowned: bool = False) -> None:
         self.start = start
         self.end = end
@@ -30,7 +30,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(self, ships: list[tuple]) -> None:
         self.field = {}
         for ship in ships:
             my_ship = Ship(ship[0], ship[1])
