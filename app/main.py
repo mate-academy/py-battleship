@@ -1,9 +1,14 @@
-class IncorectDataInput(Exception):
+class IncorrectDataInput(Exception):
     pass
 
 
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(
+            self,
+            row: int,
+            column: int,
+            is_alive: bool = True
+    ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -14,7 +19,10 @@ class Deck:
 
 class Ship:
     def __init__(
-        self, start: tuple[int], end: tuple[int], is_drowned: bool = False
+            self,
+            start: tuple[int],
+            end: tuple[int],
+            is_drowned: bool = False
     ) -> None:
         self.start = start
         self.end = end
@@ -61,7 +69,7 @@ class Battleship:
             for deck in ship.decks:
                 if (deck.row, deck.column) in self.field:
                     self.print_field()
-                    raise IncorectDataInput(
+                    raise IncorrectDataInput(
                         f"{ship} can not be located as the cell"
                         f" {deck.row, deck.column} is allready ocupied"
                     )
@@ -76,21 +84,20 @@ class Battleship:
         return "Miss!"
 
     def print_field(self) -> None:
-        field = {row: ["~" for i in range(10)] for row in range(10)}
+        field = {row: ["~" for _ in range(10)] for row in range(10)}
         for location, ship in self.field.items():
             row, column = location
             if ship.is_drowned:
                 field[row][column] = "x"
+            elif ship.get_deck(*location).is_alive:
+                field[row][column] = "\u25A1"
             else:
-                if ship.get_deck(*location).is_alive:
-                    field[row][column] = "\u25A1"
-                else:
-                    field[row][column] = "*"
+                field[row][column] = "*"
 
         print("\n", end="")
         print("\u25A1", end="   ")
-        for i in range(10):
-            print(i, end="   ")
+        for column_number in range(10):
+            print(column_number, end="   ")
         print("\n", end="")
         for row_number, row in zip(range(10), field.values()):
             print(row_number, " ", "   ".join(row))
@@ -98,7 +105,7 @@ class Battleship:
     def _validate_ships_number(self) -> None:
         if len(self.ship_instances) != 10:
             self.print_field()
-            raise IncorectDataInput(
+            raise IncorrectDataInput(
                 "The total number of the ships should be 10"
             )
 
@@ -108,19 +115,19 @@ class Battleship:
             if len(ship.decks) in allowed_ships_quantity:
                 allowed_ships_quantity[len(ship.decks)] -= 1
             else:
-                raise IncorectDataInput(
+                raise IncorrectDataInput(
                     f"len of {ship}({len(ship.decks)} cells) is not allowed)"
                 )
         for ship_type, allowed_quantity in allowed_ships_quantity.items():
             if allowed_quantity < 0:
                 self.print_field()
-                raise IncorectDataInput(
+                raise IncorrectDataInput(
                     f"Allowed quantity for {ship_type}-decks ship is"
                     f" {list(allowed_ships_quantity.keys())[ship_type - 1]}"
                 )
             elif allowed_quantity > 0:
                 self.print_field()
-                raise IncorectDataInput(
+                raise IncorrectDataInput(
                     f"You've not located {allowed_quantity} of"
                     f" {ship_type}-decks ship"
                 )
@@ -155,8 +162,8 @@ class Battleship:
             for deck in ship.decks:
                 if (deck.row, deck.column) in set(nearby_spaces):
                     self.print_field()
-                    raise IncorectDataInput(f"{ship} located in wrong way")
-            print(nearby_spaces)
+                    raise IncorrectDataInput(f"{ship} located in wrong way")
+            # print(nearby_spaces)
 
     def _validate_field(self) -> None:
         self._validate_not_next_to_others()
