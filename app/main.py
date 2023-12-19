@@ -163,7 +163,6 @@ class Battleship:
                 if (deck.row, deck.column) in set(nearby_spaces):
                     self.print_field()
                     raise IncorrectDataInput(f"{ship} located in wrong way")
-            # print(nearby_spaces)
 
     def _validate_field(self) -> None:
         self._validate_not_next_to_others()
