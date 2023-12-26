@@ -1,3 +1,6 @@
+from typing import List, Tuple
+
+
 class Deck:
     def __init__(
             self,
@@ -13,8 +16,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: Tuple[int],
+            end: Tuple[int],
             is_drowned: bool = False
     ) -> None:
         self.start = start
@@ -52,7 +55,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(self, ships: List[tuple]) -> None:
         self.ships = []
         self.field = {}
         for ship in ships:
@@ -73,12 +76,11 @@ class Battleship:
                         deck.column == ship.decks[0].column:
                     raise ValueError("This position is wrong to create a ship")
 
-            ship_length = len(ship.decks)
-            if ship_length == 4:
+            if len(ship.decks) == 4:
                 counter[4] += 1
-            elif ship_length == 3:
+            elif len(ship.decks) == 3:
                 counter[3] += 1
-            elif ship_length == 2:
+            elif len(ship.decks) == 2:
                 counter[2] += 1
             else:
                 counter[1] += 1
@@ -88,7 +90,6 @@ class Battleship:
         print(f"we have {counter[1]} one-decks ships")
 
     def fire(self, location: tuple) -> str:
-        # decks = self.field.items()
         ships = self.ships
         for ship in ships:
             for deck in ship.decks:
