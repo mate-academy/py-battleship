@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 
 class Deck:
@@ -27,11 +27,10 @@ class Ship:
                       range(self.start[0], self.end[0] + 1)
                       for column in range(self.start[1], self.end[1] + 1)]
 
-    def get_deck(self, row: int, column: int) -> object:
+    def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        return None
 
     def generate_decks(self) -> list:
         start = self.start
@@ -48,8 +47,7 @@ class Ship:
         return ship
 
     def fire(self, row: int, column: int) -> None:
-        attacked_ship = self.generate_decks()
-        for first, last in attacked_ship:
+        for first, last in self.decks:
             if row == first[0] and column == last[1]:
                 Deck(row, column, is_alive=False)
 
