@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 
 
 class Deck:
@@ -27,11 +27,6 @@ class Ship:
                       range(self.start[0], self.end[0] + 1)
                       for column in range(self.start[1], self.end[1] + 1)]
 
-    def get_deck(self, row: int, column: int) -> Optional[Deck]:
-        for deck in self.decks:
-            if deck.row == row and deck.column == column:
-                return deck
-
     def generate_decks(self) -> list:
         start = self.start
         end = self.end
@@ -47,9 +42,12 @@ class Ship:
         return ship
 
     def fire(self, row: int, column: int) -> None:
-        for first, last in self.decks:
-            if row == first[0] and column == last[1]:
-                Deck(row, column, is_alive=False)
+        for deck in self.decks:
+            if (deck.row, deck.column) == (row, column):
+                deck.is_alive = False
+
+        if all(not d.is_alive for d in self.decks):
+            self.is_drowned = True
 
 
 class Battleship:
@@ -88,15 +86,12 @@ class Battleship:
         print(f"we have {counter[1]} one-decks ships")
 
     def fire(self, location: tuple) -> str:
-        ships = self.ships
-        for ship in ships:
-            for deck in ship.decks:
-                if deck.row == location[0] and deck.column == location[1]:
-                    deck.is_alive = False
-                    if all(not d.is_alive for d in ship.decks):
-                        ship.is_drowned = True
-                        return "Sunk!"
-                    return "Hit!"
+        if location in self.field:
+            ship = self.field[location]
+            ship.fire(location[0], location[1])
+            if ship.is_drowned:
+                return "Sunk!"
+            return "Hit!"
         return "Miss!"
 
     def __str__(self) -> str:
@@ -106,16 +101,16 @@ class Battleship:
                 location = (row, column)
                 if location in self.field:
                     ship = self.field[location]
-                    deck = ship.get_deck(location[0], location[1])
-                    if not deck.is_alive and ship.is_drowned:
-                        field_representation += "X"
-                    elif not deck.is_alive and not ship.is_drowned:
-                        field_representation += "*"
+                    for deck in ship.decks:
+                        if not deck.is_alive and ship.is_drowned:
+                            field_representation += "X"
+                        elif not deck.is_alive and not ship.is_drowned:
+                            field_representation += "*"
+                        else:
+                            field_representation += u"\u25A1"
                     else:
-                        field_representation += u"\u25A1"
-                else:
-                    field_representation += "~"
+                        field_representation += "~"
 
-            field_representation += "\n"
+                field_representation += "\n"
 
         return field_representation
