@@ -11,19 +11,21 @@ class Deck:
 
 class Ship:
     def __init__(self,
-                 start: tuple[int],
-                 end: tuple[int],
+                 start: tuple,
+                 end: tuple,
                  is_drowned: bool = False
                  ) -> None:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = []
+        self.decks = [Deck(row, column)
+                      for row in range(start[0], -~end[0])
+                      for column in range(start[1], -~end[1])]
 
     def get_deck(self,
                  row: int,
                  column: int,
-                 ) -> None:
+                 ) -> Deck | None:
         for deck in self.decks:
             if (deck.row, deck.column) == (row, column):
                 return deck
@@ -42,6 +44,27 @@ class Battleship:
         self.field = {}
         self.fill_the_field(ships)
         self._validate_field()
+
+    def fill_the_field(self, ships: list) -> None:
+        for ship, coordinates in enumerate(ships):
+            ship = Ship(*coordinates)
+            deck_count = 0
+            for deck in ship.decks:
+                deck_count += 1
+                self.field[deck.row, deck.column] = ship
+            self._validate_data[0].append(deck_count)
+            self._validate_data[1].append(ship)
+
+    def fire(self, location: tuple) -> str:
+        if location in self.field:
+            ship = self.field[location]
+            deck = ship.get_deck(*location)
+            if deck.is_alive:
+                ship.fire(*location)
+                if ship.is_drowned:
+                    return "Sunk!"
+                return "Hit!"
+        return "Miss!"
 
     def _validate_field(self) -> None:
         if [1, 1, 1, 1, 2, 2, 2, 3, 3, 4] != sorted(self._validate_data[0]):
@@ -64,40 +87,6 @@ class Battleship:
                                 and matrix[-~x_point][y_point] == "□"
                                 and (x_point, y_point) not in decks):
                             raise ValueError("Invalid ship location")
-
-    def fill_the_field(self, ships: list) -> None:
-        for ship, coordinate in enumerate(ships):
-            ship = Ship(*coordinate)
-            self._validate_data[1].append(ship)
-            (x_aft, y_aft), (x_stern, y_stern) = coordinate
-            self.field[x_stern, y_stern] = ship
-            ship.decks.append(Deck(x_stern, y_stern))
-
-            if x_aft != x_stern:
-                self._validate_data[0].append(abs(x_aft - x_stern) + 1)
-                x_aft, x_stern = sorted((x_aft, x_stern))
-                for pos in range(x_aft, x_stern):
-                    self.field[pos, y_aft] = ship
-                    ship.decks.append(Deck(pos, y_aft))
-            elif y_aft != y_stern:
-                self._validate_data[0].append(abs(y_aft - y_stern) + 1)
-                y_aft, y_stern = sorted((y_aft, y_stern))
-                for pos in range(y_aft, y_stern):
-                    self.field[x_aft, pos] = ship
-                    ship.decks.append(Deck(x_aft, pos))
-            else:
-                self._validate_data[0].append(1)
-
-    def fire(self, location: tuple) -> str:
-        if location in self.field:
-            ship = self.field[location]
-            deck = ship.get_deck(*location)
-            if deck.is_alive:
-                ship.fire(*location)
-                if ship.is_drowned:
-                    return "Sunk!"
-                return "Hit!"
-        return "Miss!"
 
     def print_field(self, get_matrix: int = 0) -> list | None:
         matrix = []
