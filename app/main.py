@@ -62,8 +62,7 @@ class Battleship:
                 ship.is_drowned = True
                 return "Sunk!"
             return "Hit!"
-        else:
-            return "Miss!"
+        return "Miss!"
 
     def print_field(self) -> None:
         for row in range(10):
@@ -91,8 +90,7 @@ class Battleship:
             size = len(ship.decks)
             if size not in number_of_ships:
                 raise ValueError
-            else:
-                number_of_ships[size] += 1
+            number_of_ships[size] += 1
 
         if number_of_ships != {1: 4, 2: 3, 3: 2, 4: 1}:
             raise ValueError
