@@ -59,17 +59,11 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list[tuple[tuple[int]]]) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
         self.ships = ships
         self.field = {}
         self.create_field()
 
     def create_field(self) -> None:
-        # Створює екземпляри класу корабля
-        # Заповнити таблицю кораблями
         instance_of_ships = [Ship(inst[0], inst[1]) for inst in self.ships]
 
         for ship in instance_of_ships:
@@ -86,13 +80,10 @@ class Battleship:
             if hit_deck and hit_deck.is_alive:
                 hit_deck.is_alive = False
 
-                # Check if all remaining decks in the ship are sunk
                 if all(not deck.is_alive for deck in fired_ship.decks):
                     fired_ship.is_drowned = True
                     return "Sunk!"
                 else:
                     return "Hit!"
-            else:
-                return "Already Hit or Invalid Location!"
         else:
             return "Miss!"
