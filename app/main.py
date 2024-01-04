@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple
 
 
 class Deck:
@@ -14,32 +14,22 @@ class Ship:
                  end: Tuple[int, int],
                  is_drowned: bool = False) -> None:
         self.decks = [
-            Deck(row, col) for row, col in self._get_coordinates(start, end)
+            Deck(row, col)
+            for row in range(start[0], end[0] + 1)
+            for col in range(start[1], end[1] + 1)
         ]
         self.is_drowned = is_drowned
-
-    def _get_coordinates(self,
-                         start: Tuple[int, int],
-                         end: Tuple[int, int]) -> List[Tuple[int, int]]:
-        if start[0] == end[0]:  # horizont
-            return [(start[0], col) for col in range(start[1], end[1] + 1)]
-        elif start[1] == end[1]:  # Vert
-            return [(row, start[1]) for row in range(start[0], end[0] + 1)]
-        else:
-            raise ValueError("Invalid ship placement")
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        return None
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-            if all(not d.is_alive for d in self.decks):
-                self.is_drowned = True
+            self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
@@ -47,19 +37,14 @@ class Battleship:
         self.field = {}
         for ship_coordinates in ships:
             ship = Ship(*ship_coordinates)
-            for coord in self._get_coordinates(ship):
-                self.field[coord] = ship
-
-    def _get_coordinates(self, ship: Ship) -> List[Tuple[int, int]]:
-        return [(deck.row, deck.column) for deck in ship.decks]
+            for deck in ship.decks:
+                self.field[(deck.row, deck.column)] = ship
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field[location]
-            deck = ship.get_deck(*location)
-            deck.is_alive = False
-            if all(not d.is_alive for d in ship.decks):
-                ship.is_drowned = True
+            ship.fire(*location)
+            if ship.is_drowned:
                 return "Sunk!"
             return "Hit!"
         return "Miss!"
