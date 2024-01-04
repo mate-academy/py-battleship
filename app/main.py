@@ -60,7 +60,7 @@ class Ship:
 
 
 class Battleship():
-    def __init__(self, ships:  list[tuple[tuple[int]]]) -> None:
+    def __init__(self, ships: list[tuple[tuple[int]]]) -> None:
         self.ships = ships
         self.field = {}
         self.create_field()
