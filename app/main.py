@@ -31,12 +31,14 @@ class Ship:
         if self.start.row == self.end.row:
             deck_coordinates = [
                 (self.start.row, col) for col in range(
-                    self.start.column, self.end.column + 1)]
+                    self.start.column, self.end.column + 1)
+            ]
 
         elif self.start.column == self.end.column:
             deck_coordinates = [
                 (row, self.start.column) for row in range(
-                    self.start.row, self.end.row + 1)]
+                    self.start.row, self.end.row + 1)
+            ]
 
         for coord in deck_coordinates:
             decks_instance = Deck(coord[0], coord[1])
@@ -58,7 +60,7 @@ class Ship:
 
 
 class Battleship():
-    def __init__(self, ships: list[tuple[tuple[int][int]]]) -> None:
+    def __init__(self, ships:  list[tuple[tuple[int]]]) -> None:
         self.ships = ships
         self.field = {}
         self.create_field()
