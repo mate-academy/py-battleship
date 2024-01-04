@@ -1,8 +1,8 @@
 class Deck:
     def __init__(
             self,
-            row: tuple,
-            column: tuple,
+            row: tuple[int],
+            column: tuple[int],
             is_alive: bool = True
     ) -> None:
 
@@ -14,8 +14,8 @@ class Deck:
 class Ship:
     def __init__(
             self,
-            start: tuple,
-            end: tuple,
+            start: tuple[int],
+            end: tuple[int],
             is_drowned: bool = False
     ) -> None:
 
@@ -58,7 +58,7 @@ class Ship:
 
 
 class Battleship():
-    def __init__(self, ships: list[tuple[tuple[int]]]) -> None:
+    def __init__(self, ships: list[tuple[tuple[int][int]]]) -> None:
         self.ships = ships
         self.field = {}
         self.create_field()
@@ -70,7 +70,7 @@ class Battleship():
             for deck in ship.decks:
                 self.field[deck.row, deck.column] = ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int]) -> str:
         row, column = location
         fired_ship = self.field.get((row, column))
 
