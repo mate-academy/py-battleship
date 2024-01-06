@@ -116,4 +116,3 @@ class Battleship:
             raise ValidationError("ships shouldn't be located "
                                   "in the neighboring cells "
                                   "(even if cells are neighbors by diagonal).")
-
