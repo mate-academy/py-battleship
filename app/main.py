@@ -39,7 +39,6 @@ class Ship:
                 current_row += 1
                 self.decks.append(Deck(current_row, start_column))
 
-
     def get_deck(
         self,
         row: int,
@@ -55,16 +54,19 @@ class Ship:
         self,
         row: int,
         column: int
-    ) -> None:
+    ) -> str:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
         deck = self.get_deck(row, column)
 
         if deck and self.is_drowned is False:
             deck.is_alive = False
-
-        if all(deck.is_alive is False for deck in self.decks):
-            self.is_drowned = True
+            if all(deck.is_alive is False for deck in self.decks):
+                self.is_drowned = True
+                return "Sunk!"
+            return "Hit!"
+        else:
+            return "Miss!"
 
 
 class Battleship:
@@ -75,10 +77,36 @@ class Battleship:
         # which is located in it
         self.field = {}
 
+        for coordinates in ships:
+            start, end = coordinates
+            ship = Ship(start, end)
+            self.field.update({deck.field: ship for deck in ship.decks})
 
-    def fire(self, location: tuple):
+    def fire(self, location: tuple) -> str:
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        pass
+        if location in self.field:
+            return self.field[location].fire(*location)
+
+
+# if __name__ == "__main__":
+#     ships = [
+#         ((2, 0), (2, 3)),
+#         ((4, 5), (4, 6)),
+#         ((3, 8), (3, 9)),
+#         ((6, 0), (8, 0)),
+#         ((6, 4), (6, 6)),
+#         ((6, 8), (6, 9)),
+#         ((9, 9), (9, 9)),
+#         ((9, 5), (9, 5)),
+#         ((9, 3), (9, 3)),
+#         ((9, 7), (9, 7)),
+#     ]
+#     field = {}
+#     for coordinates in ships:
+#         start, end = coordinates
+#         ship = Ship(start, end)
+#         field.update({deck.field: ship for deck in ship.decks})
+#         print(field)
