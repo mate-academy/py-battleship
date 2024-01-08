@@ -76,9 +76,60 @@ class Battleship:
         self.field = {}
 
         for coordinates in ships:
-            start, end = coordinates
-            ship = Ship(start, end)
+            ship = Ship(*coordinates)
+            self._validate_field(ship)
             self.field.update({deck.field: ship for deck in ship.decks})
+
+    def _validate_field(self, ship: Ship) -> None:
+        self._ships_amount = 0
+        self._one_board_ships = 0
+        self._two_board_ships = 0
+        self._three_board_ships = 0
+        self._four_board_ships = 0
+
+        for deck in ship.decks:
+            ship_row, ship_column = deck.field
+            for field in self. field:
+                field_row, field_column = field
+                if (
+                    ship_row == field_row
+                    or ship_row + 1 == field_row
+                    or ship_row == field_row + 1
+                ) and (
+                    ship_column == field_column
+                    or ship_column + 1 == field_column
+                    or ship_column == field_column + 1
+                ):
+                    raise AssertionError("Ships can't contact")
+
+        if self._ships_amount == 10:
+            raise AssertionError("Not more then 10 ships")
+
+        if len(ship.decks) == 1:
+            if self._one_board_ships == 4:
+                raise AssertionError("Not more then 4 one_board ships")
+            else:
+                self._one_board_ships += 1
+
+        if len(ship.decks) == 2:
+            if self._two_board_ships == 3:
+                raise AssertionError("Not more then 3 two_board ships")
+            else:
+                self._two_board_ships += 1
+
+        if len(ship.decks) == 3:
+            if self._three_board_ships == 2:
+                raise AssertionError("Not more then 2 three_board ships")
+            else:
+                self._three_board_ships += 1
+
+        if len(ship.decks) == 4:
+            if self._four_board_ships == 1:
+                raise AssertionError("Not more then 1 four_board ships")
+            else:
+                self._four_board_ships += 1
+
+        self._ships_amount += 1
 
     def fire(self, location: tuple) -> str:
         # This function should check whether the location
