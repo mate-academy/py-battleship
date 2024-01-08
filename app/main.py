@@ -3,7 +3,7 @@ class Deck:
         self,
         row: int,
         column: int,
-        is_alive=True
+        is_alive: bool = True
     ) -> None:
         self.field = (row, column)
         self.is_alive = is_alive
@@ -14,7 +14,7 @@ class Ship:
         self,
         start: tuple,
         end: tuple,
-        is_drowned=False
+        is_drowned: bool = False
     ) -> None:
         # Create decks and save them to a list `self.decks`
         self.decks = []
