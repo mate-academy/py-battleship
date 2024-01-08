@@ -35,7 +35,7 @@ class Ship:
         if start_column == end_column:
             current_row = start_row
 
-            while current_row != end_column:
+            while current_row != end_row:
                 current_row += 1
                 self.decks.append(Deck(current_row, start_column))
 
@@ -65,8 +65,6 @@ class Ship:
                 self.is_drowned = True
                 return "Sunk!"
             return "Hit!"
-        else:
-            return "Miss!"
 
 
 class Battleship:
@@ -89,24 +87,5 @@ class Battleship:
         # in the ship or not.
         if location in self.field:
             return self.field[location].fire(*location)
-
-
-# if __name__ == "__main__":
-#     ships = [
-#         ((2, 0), (2, 3)),
-#         ((4, 5), (4, 6)),
-#         ((3, 8), (3, 9)),
-#         ((6, 0), (8, 0)),
-#         ((6, 4), (6, 6)),
-#         ((6, 8), (6, 9)),
-#         ((9, 9), (9, 9)),
-#         ((9, 5), (9, 5)),
-#         ((9, 3), (9, 3)),
-#         ((9, 7), (9, 7)),
-#     ]
-#     field = {}
-#     for coordinates in ships:
-#         start, end = coordinates
-#         ship = Ship(start, end)
-#         field.update({deck.field: ship for deck in ship.decks})
-#         print(field)
+        else:
+            return "Miss!"
