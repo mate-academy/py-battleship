@@ -61,7 +61,9 @@ class Ship:
 
         if deck and self.is_drowned is False:
             deck.is_alive = False
-            if all(deck.is_alive is False for deck in self.decks):
+            if all(
+                deck.is_alive is False for deck in self.decks
+            ):
                 self.is_drowned = True
                 return "Sunk!"
             return "Hit!"
@@ -78,7 +80,9 @@ class Battleship:
         for coordinates in ships:
             ship = Ship(*coordinates)
             self._validate_field(ship)
-            self.field.update({deck.field: ship for deck in ship.decks})
+            self.field.update(
+                {deck.field: ship for deck in ship.decks}
+            )
 
     def _validate_field(self, ship: Ship) -> None:
         self._ships_amount = 0
