@@ -1,12 +1,15 @@
 class Deck:
-    def __init__(self, row: int, column: int, is_alive=True) -> None:
+    def __init__(self, row: int, column: int, is_alive: str = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple, is_drowned=False) -> None:
+    def __init__(
+            self, start: tuple, end: tuple,
+            is_drowned: str = False
+    ) -> None:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
