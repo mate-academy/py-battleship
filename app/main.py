@@ -20,12 +20,11 @@ class Ship:
     @staticmethod
     def get_coordinates(start: tuple, end: tuple) -> List[tuple]:
         coordinates = []
-        if start[0] == end[0]:
-            coordinates = [(start[0], column)
-                           for column in range(start[1], end[1] + 1)]
-        elif start[1] == end[1]:
-            coordinates = [(row, start[1])
-                           for row in range(start[0], end[0] + 1)]
+
+        for row in range(start[0], end[0] + 1):
+            for column in range(start[1], end[1] + 1):
+                coordinates.append((row, column))
+
         return coordinates
 
     def get_deck(self, row: int, column: int) -> Optional[Deck]:
@@ -37,8 +36,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-            if all(not d.is_alive for d in self.decks):
-                self.is_drowned = True
+            self.is_drowned = all(not d.is_alive for d in self.decks)
 
 
 class Battleship:
