@@ -14,18 +14,9 @@ class Ship:
                  end: tuple,
                  is_drowned: bool = False) -> None:
         self.decks = [Deck(row, column)
-                      for row, column in self.get_coordinates(start, end)]
+                      for row in range(start[0], end[0] + 1)
+                      for column in range(start[1], end[1] + 1)]
         self.is_drowned = is_drowned
-
-    @staticmethod
-    def get_coordinates(start: tuple, end: tuple) -> List[tuple]:
-        coordinates = []
-
-        for row in range(start[0], end[0] + 1):
-            for column in range(start[1], end[1] + 1):
-                coordinates.append((row, column))
-
-        return coordinates
 
     def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
@@ -36,7 +27,7 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck:
             deck.is_alive = False
-            self.is_drowned = all(not d.is_alive for d in self.decks)
+            self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
@@ -53,7 +44,5 @@ class Battleship:
             ship.fire(location[0], location[1])
             if ship.is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
