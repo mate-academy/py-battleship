@@ -34,14 +34,14 @@ class Battleship:
     def __init__(self, ships: List[tuple]) -> None:
         self.field = {}
         for ship in ships:
-            ship_obj = Ship(ship[0], ship[1])
+            ship_obj = Ship(*ship)
             for coordinate in ship_obj.decks:
                 self.field[coordinate.row, coordinate.column] = ship_obj
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field[location]
-            ship.fire(location[0], location[1])
+            ship.fire(*location)
             if ship.is_drowned:
                 return "Sunk!"
             return "Hit!"
