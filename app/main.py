@@ -1,91 +1,62 @@
+from __future__ import annotations
+
+from typing import List, Tuple, Dict
+
+
 class Deck:
 
-    def __init__(
-            self,
-            row: int,
-            column: int,
-            is_alive: bool = True
-    ) -> None:
-        self.row = row
-        self.column = column
-        self.is_alive = is_alive
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+        self.row: int = row
+        self.column: int = column
+        self.is_alive: bool = is_alive
+
+    def hit(self) -> bool:
+        self.is_alive = False
+        return not self.is_alive
 
 
 class Ship:
 
-    def __init__(
-            self,
-            start: tuple,
-            end: tuple,
-            is_drowned: bool = False
-    ) -> None:
-        # Create decks and save them to a list `self.decks`
+    def __init__(self, start: Tuple[int, int], end: Tuple[int, int]) -> None:
+        self.decks: List[Deck] = []
+        self.is_drowned: bool = False
 
-        self.start = start
-        self.end = end
-        self.is_drowned = is_drowned
-        self.decks = [
-            Deck(row, column)
-            for row in range(start[0], end[0] + 1)
-            for column in range(start[1], end[1] + 1)
-        ]
-        self.live_decks = len(self.decks)
+        start_row, start_col = start
+        end_row, end_col = end
 
-    def get_deck(
-            self,
-            row: int,
-            column: int
-    ) -> Deck:
+        for row in range(start_row, end_row + 1):
+            for col in range(start_col, end_col + 1):
+                self.decks.append(Deck(row, col))
+
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
-            if row == deck.row and column == deck.column:
+            if deck.row == row and deck.column == column:
                 return deck
+        return None
 
-    def fire(
-            self,
-            row: int,
-            column: int
-    ) -> None:
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-
-        wrecked_deck = self.get_deck(row, column)
-
-        if wrecked_deck is not None:
-            wrecked_deck.is_alive = False
-
-        if all(deck.is_alive for deck in self.decks):
-            self.is_drowned = True
+    def fire(self, row: int, column: int) -> str:
+        deck = self.get_deck(row, column)
+        if deck and deck.hit():
+            self.is_drowned = all(not d.is_alive for d in self.decks)
+            return "Sunk!" if self.is_drowned else "Hit!"
+        return "Miss!"
 
 
 class Battleship:
 
     def __init__(
             self,
-            ships: list
+            ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
     ) -> None:
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-
-        self.field = {ship: Ship(ship[0], ship[1]) for ship in ships}
-
-    def fire(
-            self,
-            location: tuple
-    ) -> str:
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-
-        for ship in self.field.values():
+        self.field: Dict[Tuple[int, int], Ship] = {}
+        for start, end in ships:
+            ship = Ship(start, end)
             for deck in ship.decks:
-                if (deck.row, deck.column) == location:
-                    deck.is_alive = False
-                    ship.live_decks -= 1
-                    if ship.live_decks == 0:
-                        ship.is_drowned = True
-                        return "Sunk!"
-                    return "Hit!"
-        return "Miss!"
+                self.field[(deck.row, deck.column)] = ship
+
+    def fire(self, location: Tuple[int, int]) -> str:
+        row, col = location
+        if location in self.field:
+            return self.field[location].fire(row, col)
+        else:
+            return "Miss!"
