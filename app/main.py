@@ -41,10 +41,3 @@ class Battleship:
                     return "Sunk!"
                 return "Hit!"
         return "Miss!"
-
-
-battle_ship = Battleship(
-    ships=[
-        ((9, 7), (9, 7)),
-    ]
-)
