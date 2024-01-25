@@ -32,13 +32,13 @@ class Battleship:
         self.field = {ship: Ship(*ship) for ship in ships}
 
     def fire(self, location: tuple) -> str:
-        for key in self.field:
+        for ship_scope in self.field:
             if (
-                key[0][0] <= location[0] <= key[1][0]
-                and key[0][1] <= location[1] <= key[1][1]
+                ship_scope[0][0] <= location[0] <= ship_scope[1][0]
+                and ship_scope[0][1] <= location[1] <= ship_scope[1][1]
             ):
-                self.field[key].fire(*location)
-                if self.field[key].is_drowned:
+                self.field[ship_scope].fire(*location)
+                if self.field[ship_scope].is_drowned:
                     return "Sunk!"
                 return "Hit!"
         return "Miss!"
