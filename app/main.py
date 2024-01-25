@@ -28,7 +28,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list[tuple[int]]) -> None:
+    def __init__(self, ships: list[tuple[tuple[int]]]) -> None:
         self.field = {ship: Ship(*ship) for ship in ships}
 
     def fire(self, location: tuple[int]) -> str:
