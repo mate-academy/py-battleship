@@ -55,8 +55,8 @@ class Battleship:
                 if ship := self.field.get((row, column)):
                     if ship.get_deck(row, column):
                         field_row += u"\u25A1\t"
-                        continue
-                    field_row += "x\t"
+                    else:
+                        field_row += "x\t"
                 else:
                     field_row += "~\t"
             print(field_row)
