@@ -31,13 +31,10 @@ class Ship:
             if row == deck.row and column == deck.column:
                 return deck
 
-    def fire(self, row: int, column: int) -> str:
-        if deck := self.get_deck(row, column):
-            deck.is_alive = False
-            if all(not deck.is_alive for deck in self.decks):
-                self.is_drowned = True
-                return "Sunk!"
-            return "Hit!"
+    def fire(self, row: int, column: int) -> None:
+        deck = self.get_deck(row, column)
+        deck.is_alive = False
+        self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
@@ -50,5 +47,9 @@ class Battleship:
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
-            return self.field[location].fire(*location)
+            ship = self.field[location]
+            ship.fire(*location)
+            if ship.is_drowned:
+                return "Sunk!"
+            return "Hit!"
         return "Miss!"
