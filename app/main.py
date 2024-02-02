@@ -21,16 +21,16 @@ class Ship:
         self.decks = self.create_ships()
 
     def create_ships(self) -> list[Deck]:
-        decks = [
+        return [
             Deck(row, column) for row in range(self.start[0], self.end[0] + 1)
             for column in range(self.start[1], self.end[1] + 1)
         ]
-        return decks
 
     def get_deck(self, row: int, column: int) -> Deck:
-        for deck in self.decks:
-            if deck.row == row and deck.column == column:
-                return deck
+        return next(
+            deck for deck in self.decks
+            if deck.row == row and deck.column == column
+        )
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
@@ -75,3 +75,32 @@ class Battleship:
                 else:
                     print("~", end="\t")
             print()
+
+
+if __name__ == "__main__":
+    battle_ship = Battleship(
+        ships=[
+            ((0, 0), (0, 3)),
+            ((0, 5), (0, 6)),
+            ((0, 8), (0, 9)),
+            ((2, 0), (4, 0)),
+            ((2, 4), (2, 6)),
+            ((2, 8), (2, 9)),
+            ((9, 9), (9, 9)),
+            ((7, 7), (7, 7)),
+            ((7, 9), (7, 9)),
+            ((9, 7), (9, 7)),
+        ]
+    )
+
+    printer = battle_ship
+
+    printer.print_field()
+
+    print(
+        battle_ship.fire((0, 4)),  # Miss!
+        battle_ship.fire((0, 3)),  # Hit!
+        battle_ship.fire((0, 2)),  # Hit!
+        battle_ship.fire((0, 1)),  # Hit!
+        battle_ship.fire((0, 0)),  # Sunk!
+    )
