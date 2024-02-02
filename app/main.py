@@ -55,4 +55,3 @@ class Battleship:
                     return "Sunk!"
                 return "Hit!"
         return "Miss!"
-    
