@@ -35,21 +35,10 @@ class Ship:
             is_drowned: bool = False
     ) -> None:
         self.is_drowned = is_drowned
-        self.decks = [Deck(*start)]
-        current = list(start)
-        end_list = list(end)
-        while current != end_list:
-            if current[0] != end_list[0]:
-                if current[0] < end_list[0]:
-                    current[0] += 1
-                else:
-                    current[0] -= 1
-            if current[1] != end_list[1]:
-                if current[1] < end_list[1]:
-                    current[1] += 1
-                else:
-                    current[1] -= 1
-            self.decks.append(Deck(*current))
+        self.decks = [
+            Deck(row, column) for row in range(start[0], end[0] + 1)
+            for column in range(start[1], end[1] + 1)
+        ]
         self.ships_amount[len(self.decks)] += 1
 
     def get_deck(self, row: int, column: int) -> Deck:
