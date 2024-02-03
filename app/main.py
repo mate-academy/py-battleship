@@ -1,3 +1,6 @@
+from itertools import product
+
+
 class LocationError(Exception):
     pass
 
@@ -55,11 +58,10 @@ class Ship:
         self.is_drowned = True
 
     @classmethod
-    def validate_amount_of_ships(cls) -> bool:
+    def validate_amount_of_ships(cls) -> None:
         for ship_size, count in cls.ships_amount.items():
             if ship_size + count != 5:
                 raise ShipAmountError("The number of ships is incorrect")
-        return True
 
 
 class Battleship:
@@ -67,7 +69,7 @@ class Battleship:
         self.field = {}
         for ship in ships:
             self._validate_ship_diagonal(ship)
-            new_ship = Ship(ship[0], ship[1])
+            new_ship = Ship(*ship)
             for deck in new_ship.decks:
                 self.field[(deck.row, deck.column)] = new_ship
         Ship.validate_amount_of_ships()
@@ -100,36 +102,34 @@ class Battleship:
                 row_str += "~"
             print(row_str)
 
-    def _validate_location(self, location: tuple) -> bool:
-        if location[0] in range(10) and location[1] in range(10):
-            return True
-        raise LocationError(f"Provided location {location} is "
-                            "out of available range")
+    def _validate_location(self, location: tuple) -> None:
+        if location[0] not in range(10) or location[1] not in range(10):
+            raise LocationError(f"Provided location {location} is "
+                                "out of available range")
 
-    def _validate_ship_diagonal(self, ship_location: tuple) -> bool:
+    def _validate_ship_diagonal(self, ship_location: tuple) -> None:
         ship_start = ship_location[0]
         ship_end = ship_location[1]
         self._validate_location(ship_start)
         self._validate_location(ship_end)
         if ship_start[0] != ship_end[0] and ship_start[1] != ship_end[1]:
             raise ShipPlacementError("Ships can't be placed on a diagonal")
-        return True
 
-    def _validate_ship_collision(self, ships: list[tuple]) -> bool:
-        for index, ship in enumerate(ships):
-            for current_point in ship:
-                for compare_ship_index in range(index + 1, 10):
-                    for check_ship_point in ships[compare_ship_index]:
-                        first_diff = abs(
-                            current_point[0] - check_ship_point[0]
-                        )
-                        second_diff = abs(
-                            current_point[1] - check_ship_point[1]
-                        )
-                        diff_sum = sum((first_diff, second_diff))
-                        if diff_sum < 2:
-                            raise ShipCollisionError("Ship collision detected")
-                        if diff_sum == 2:
-                            if first_diff == 1 or second_diff == 1:
-                                raise ShipCollisionError("Ship collision "
-                                                         "detected")
+    def _validate_ship_collision(self, ships: list[tuple]) -> None:
+        for first_ship, second_ship in product(ships, repeat=2):
+            print(first_ship, second_ship)
+            if first_ship is not second_ship:
+                if any(self.__collision_detected(first_point, second_point)
+                       for first_point in first_ship
+                       for second_point in second_ship):
+                    raise ShipCollisionError("Ship collision detected")
+
+    def __collision_detected(
+            self,
+            first_point: tuple,
+            second_point: tuple
+    ) -> bool:
+        first_diff = abs(first_point[0] - second_point[0])
+        second_diff = abs(first_point[1] - second_point[1])
+        return (first_diff + second_diff < 2
+                or (first_diff == 1 and second_diff == 1))
