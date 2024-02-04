@@ -37,7 +37,6 @@ class Ship:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        return None
 
     def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
