@@ -1,4 +1,4 @@
-from typing import Union
+from __future__ import annotations
 
 
 class Deck:
@@ -33,7 +33,7 @@ class Ship:
             for column in col_range:
                 self.decks.append(Deck(row, column))
 
-    def get_deck(self, row: int, column: int) -> Union[Deck, None]:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -80,8 +80,8 @@ class Battleship:
 
         if ship.is_drowned:
             return "Sunk!"
-        else:
-            return "Hit!"
+
+        return "Hit!"
 
     def print_field(self) -> None:
         for row in range(10):
