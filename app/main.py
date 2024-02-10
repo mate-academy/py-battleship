@@ -47,24 +47,23 @@ class Battleship:
             ships: list
     ) -> None:
         self.field = {}
+        self.ships = {}
         for ship in ships:
             my_ship = Ship(ship[0], ship[1])
+            self.ships[len(my_ship)] = self.ships.get(len(my_ship), 0) + 1
             for deck in my_ship.decks:
                 self.field[(deck.row, deck.column)] = my_ship
-        self.ships = [
-            Ship(ship[0], ship[-1])
-            for ship in ships
-        ]
         self._validate_field()
 
     def _validate_field(self) -> None:
         conditions = [
-            len(self.ships) == 10,
-            len([ship for ship in self.ships if len(ship) == 1]) == 4,
-            len([ship for ship in self.ships if len(ship) == 2]) == 3,
-            len([ship for ship in self.ships if len(ship) == 3]) == 2,
-            len([ship for ship in self.ships if len(ship) == 4]) == 1
+            sum(self.ships) == 10,
+            self.ships[1] == 4,
+            self.ships[2] == 3,
+            self.ships[3] == 2,
+            self.ships[4] == 1
         ]
+        self.print_field()
         if not all(conditions):
             raise ValueError("There should be total of 10 ships:\n"
                              "4 single-deck ships;"
