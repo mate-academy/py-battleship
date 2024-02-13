@@ -1,3 +1,6 @@
+from typing import List, Tuple
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -6,10 +9,15 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: tuple,
-                 end: tuple, is_drowned: bool = False) -> None:
+    def __init__(
+        self,
+        start: Tuple[int, int],
+        end: Tuple[int, int],
+        is_drowned: bool = False
+    ) -> None:
         self.decks = [
-            Deck(i, j) for i in range(start[0], end[0] + 1)
+            Deck(i, j)
+            for i in range(start[0], end[0] + 1)
             for j in range(start[1], end[1] + 1)
         ]
         self.is_drowned = is_drowned
@@ -34,14 +42,17 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list) -> None:
+    def __init__(
+        self,
+        ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+    ) -> None:
         self.field = {}
         for ship_coords in ships:
             ship = Ship(*ship_coords)
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: Tuple[int, int]) -> str:
         ship = self.field.get(location)
         if ship:
             return ship.fire(*location)
