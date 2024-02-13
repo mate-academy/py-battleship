@@ -37,7 +37,7 @@ class Battleship:
             line = "   ".join(element)
             print(line)
 
-    def fire(self, location: tuple) -> str:
+    def fire(self, location: tuple[int, int]) -> str:
         """This function should check whether the location
         is a key in the `self.field`
         If it is, then it should check if this cell

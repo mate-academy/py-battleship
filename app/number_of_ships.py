@@ -1,5 +1,7 @@
-def check_number_of_ships(fleet: list) -> None:
+from app.ship import Ship
 
+
+def check_number_of_ships(fleet: list[Ship]) -> None:
     number_of_ships = {"4-decks": 0, "3-decks": 0, "2-decks": 0, "1-deck": 0}
     for ship in fleet:
         if len(ship.decks) == 4:
