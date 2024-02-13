@@ -1,16 +1,22 @@
+import numpy as np
+
+
 class Deck:
     def __init__(self, row, column, is_alive=True):
-        pass
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    def __init__(self, start: tuple, end: tuple, is_drowned: bool = False) -> None:
+        self.start = start
+        self.end = end
+        self.is_drowned = is_drowned
+        self.is_alive = []
 
     def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+        return
 
     def fire(self, row, column):
         # Change the `is_alive` status of the deck
@@ -19,12 +25,10 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: list) -> None:
+        self.ships = ships
+        self.field = [["~"] * 10] * 10
+
 
     def fire(self, location: tuple):
         # This function should check whether the location
@@ -32,3 +36,6 @@ class Battleship:
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
         pass
+
+    def print_field(self) -> None:
+        print(np.array(self.field))
