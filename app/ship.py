@@ -3,15 +3,15 @@ from app.deck import Deck
 
 
 class Ship:
+    """Create decks and save them to a list `self.decks`"""
     def __init__(self,
-                 start: tuple,
-                 end: tuple,
+                 start: tuple[int, int],
+                 end: tuple[int, int],
                  is_drowned: bool = False
                  ) -> None:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        # Create decks and save them to a list `self.decks`
         self.decks = build_decks(start, end)
 
     def get_deck(self, row: int, column: int) -> Deck | None:
@@ -22,10 +22,10 @@ class Ship:
         return None
 
     def fire(self, row: int, column: int) -> None:
+        """Change the `is_alive` status of the deck
+        And update the `is_drowned` value if it's needed"""
         target_deck = self.get_deck(row, column)
         if target_deck is not None:
             target_deck.is_alive = False
         if all(deck.is_alive is False for deck in self.decks):
             self.is_drowned = True
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed

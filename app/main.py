@@ -6,15 +6,14 @@ from app.bounding_ships_and_decks import create_field
 
 
 class Battleship:
+    """# Create a dict `self.field`.
+    Its keys are tuples - the coordinates of the non-empty cells,
+    A value for each cell is a reference to the ship which is located in it"""
     def __init__(self, ships: list[tuple]) -> None:
         self.ships = ships
         self.battle_field = NavalBattlefield()
         self.fleet = build_battleships(self.ships)
         self.field = create_field(self.fleet)
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
 
     def _validate_field(self) -> None:
         if len(self.ships) != 10:
@@ -39,6 +38,10 @@ class Battleship:
             print(line)
 
     def fire(self, location: tuple) -> str:
+        """This function should check whether the location
+        is a key in the `self.field`
+        If it is, then it should check if this cell
+        is the last alive in the ship or not."""
         if location not in self.field:
             return "Miss!"
         elif location in self.field:
@@ -47,7 +50,3 @@ class Battleship:
             if not self.field[location].is_drowned:
                 return "Hit!"
             return "Sunk!"
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
