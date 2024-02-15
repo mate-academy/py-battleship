@@ -28,30 +28,33 @@ class Ship:
 
 
 class Battleship:
-    field = [["~" for _ in range(10)] for _ in range(10)]
 
     def __init__(self, ships: list[tuple]) -> None:
         self.ships = [Ship(start, end) for start, end in ships]
+        self.field = [["~" for _ in range(10)] for _ in range(10)]
         self.ships_on_the_field()
+
+    def __str__(self) -> str:
+        result = ""
+        for row in self.field:
+            for item in row:
+                if item == "~":
+                    result += item + "  "
+                else:
+                    result += u"\u25A1  "
+            result += "\n"
+        return result
 
     def ships_on_the_field(self) -> None:
         for ship in self.ships:
             for deck in ship.decks:
                 x1, y1 = deck
-                Battleship.field[x1][y1] = u"\u25A1"
-                # print(f"{deck}")
+                self.field[x1][y1] = ship
 
-    def fire(self: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def fire(self, location: tuple) -> None:
+        if location in self.field:
 
-    @staticmethod
-    def print_field() -> None:
-        for row in Battleship.field:
-            print("  ".join(row))
+            ...
 
 
 battle_ship = Battleship(
@@ -68,4 +71,5 @@ battle_ship = Battleship(
             ((9, 7), (9, 7)),
         ]
     )
-print(battle_ship.print_field())
+battle_ship.fire((0, 4))
+print(battle_ship)
