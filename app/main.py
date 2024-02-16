@@ -16,23 +16,23 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
-        self.decks = self.ship(start, end)
+        self.decks = self.generate_decks(start, end)
         self.is_drowned = is_drowned
 
     def __len__(self) -> int:
         return len(self.decks)
 
     @staticmethod
-    def ship(start: tuple, end: tuple) -> list:
+    def generate_decks(start: tuple, end: tuple) -> list:
         if start[0] == end[0]:
             return [
-                Deck(start[0], start[1] + i)
-                for i in range(end[1] - start[1] + 1)
+                Deck(start[0], start[1] + offset)
+                for offset in range(end[1] - start[1] + 1)
             ]
         if start[1] == end[1]:
             return [
-                Deck(start[0] + i, start[1])
-                for i in range(end[0] - start[0] + 1)
+                Deck(start[0] + offset, start[1])
+                for offset in range(end[0] - start[0] + 1)
             ]
 
     def get_deck(self, row: int, column: int) -> Deck:
