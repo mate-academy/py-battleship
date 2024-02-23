@@ -1,9 +1,9 @@
 class Deck:
     def __init__(
-            self,
-            row: int,
-            column: int,
-            is_alive: bool = True
+        self,
+        row: int,
+        column: int,
+        is_alive: bool = True
     ) -> None:
         self.row = row
         self.column = column
@@ -12,36 +12,43 @@ class Deck:
 
 class Ship:
     def __init__(
-            self,
-            start: tuple,
-            end: tuple,
-            is_drowned: bool = False
+        self,
+        start: tuple,
+        end: tuple,
+        is_drowned: bool = False
     ) -> None:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
         self.decks = []
+        st = self.start[0]
+        fix_pos = self.end[1]
+        iter_pos = self.end[0]
+        row = True
         if self.start[0] == self.end[0]:
-            for deck in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(self.start[0], deck))
-        else:
-            for deck in range(self.start[0], self.end[0] + 1):
-                self.decks.append(Deck(deck, self.start[1]))
+            row = False
+            fix_pos = self.end[0]
+            iter_pos = self.end[1]
+            st = self.start[1]
+        for deck in range(st, iter_pos + 1):
+            if not row:
+                self.decks.append(Deck(fix_pos, deck))
+            else:
+                self.decks.append(Deck(deck, fix_pos))
 
     def get_deck(
-            self,
-            row: int,
-            column: int
+        self,
+        row: int,
+        column: int
     ) -> Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
-        # Find the corresponding deck in the list
 
     def fire(
-            self,
-            row: int,
-            column: int
+        self,
+        row: int,
+        column: int
     ) -> None:
         deck = self.get_deck(row, column)
         deck.is_alive = False
@@ -51,7 +58,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list[Ship]) -> None:
+    def __init__(self, ships: list) -> None:
         self.ships = ships
         self.field = [[None for _ in range(10)] for _ in range(10)]
         self.ships = [Ship(value[0], value[1]) for value in self.ships]
