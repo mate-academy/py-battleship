@@ -64,36 +64,31 @@ class Battleship:
         self.ships = [Ship(value[0], value[1]) for value in self.ships]
         for ship in self.ships:
             for cell in ship.decks:
-                self.field[cell.row][cell.column] = cell
+                self.field[cell.row][cell.column] = ship
 
     def fire(self, location: tuple) -> str:
         field_loc = self.field[location[0]][location[1]]
         if field_loc is None:
             return "Miss!"
-        for ship in self.ships:
-            if field_loc in ship.decks:
-                ship.fire(location[0], location[1])
-                if ship.is_drowned:
-                    return "Sunk!"
-                return "Hit!"
+        field_loc.fire(location[0], location[1])
+        if field_loc.is_drowned:
+            return "Sunk!"
+        return "Hit!"
 
     def print_field(self) -> None:
-        for index, deck in enumerate(self.field):
-            for count, cell in enumerate(deck):
-                if cell is None:
-                    self.field[index][count] = "~"
-        for ship in self.ships:
-            if ship.is_drowned:
-                for cell in ship.decks:
-                    self.field[cell.row][cell.column] = "x"
-            else:
-                for cell in ship.decks:
-                    if cell.is_alive:
-                        self.field[cell.row][cell.column] = u"\u25A1"
+        for index, row in enumerate(self.field):
+            for pos, column in enumerate(row):
+                if column is None:
+                    self.field[index][pos] = "~"
+                else:
+                    if column.is_drowned:
+                        self.field[index][pos] = "x"
+                    elif column.get_deck(index, pos).is_alive:
+                        self.field[index][pos] = u"\u25A1"
                     else:
-                        self.field[cell.row][cell.column] = "*"
+                        self.field[index][pos] = "*"
         for row in self.field:
             for column in row:
                 space = 6 * " "
-                print(f"{column + space}", end="")
+                print(f"{column}{space}", end="")
             print("\n")
