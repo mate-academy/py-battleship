@@ -1,5 +1,5 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -7,18 +7,23 @@ class Deck:
 
 class Ship:
 
-    def __init__(self, start: tuple, end: tuple, is_drowned=False) -> None:
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
         self.decks = []
         if start == end:
-            self.decks = Deck(start, end)
+            self.decks = [Deck(start[0], start[1])]
         if start[0] == end[0]:
-            self.decks = [Deck(start[0], end[0] + i)
+            self.decks = [Deck(start[0], start[1] + i)
                           for i in range(abs(start[1] - end[1]) + 1)]
         if start[1] == end[1]:
-            self.decks = [Deck(start[1] + i, end[1])
+            self.decks = [Deck(start[0] + i, end[1])
                           for i in range(abs(start[0] - end[0]) + 1)]
 
     def get_deck(self, row: int, column: int) -> Deck | None:
@@ -26,12 +31,12 @@ class Ship:
             if deck.row == row and deck.column == column and deck.is_alive:
                 return deck
 
-    def fire(self, row, column):
+    def fire(self, row: int, column: int) -> int:
         attacked_deck = self.get_deck(row, column)
-        if attacked_deck is not None:
-            attacked_deck.is_alive = False
-            if not all(self.decks):
-                self.is_drowned = True
+        attacked_deck.is_alive = False
+        if not all(self.decks):
+            self.is_drowned = True
+        return sum(deck.is_alive for deck in self.decks)
 
 
 class Battleship:
@@ -71,18 +76,19 @@ class Battleship:
         for coordinates_ship in ships:
             ship = Ship(coordinates_ship[0], coordinates_ship[1])
             for deck in ship.decks:
-                self.field[deck.row, deck.column] = ship
+                self.field[(deck.row, deck.column)] = ship
 
-    # def __str__(self):
-    #     return '\n'.join([' '.join(['~' for _ in range(10)])
-    #                       for _ in range(10)])
-
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def fire(self, location: tuple[int, int]) -> str:
+        if location not in self.field:
+            return "Miss!"
+        else:
+            ship = self.field[location]
+            fire = ship.fire(location[0], location[1])
+            if ship.is_drowned:
+                return "Drowned!"
+            if fire == 0:
+                return "Sunk!"
+            return "Hit!"
 
 
 battle_ship = Battleship(
@@ -99,4 +105,12 @@ battle_ship = Battleship(
         ((9, 7), (9, 7)),
     ]
 )
-print(battle_ship.field)
+print(
+    battle_ship.fire((0, 4)),  # Miss!
+    battle_ship.fire((0, 3)),  # Hit!
+    battle_ship.fire((0, 2)),  # Hit!
+    battle_ship.fire((0, 1)),  # Hit!
+    battle_ship.fire((0, 0)),  # Sunk!
+)
+# # print(battle_ship.field)
+# print(battle_ship.fire((0, 0)))
