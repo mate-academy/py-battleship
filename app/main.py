@@ -80,7 +80,6 @@ class Battleship:
         for cells, ship in decs_and_ships.items():
             if location in cells:
                 return ship
-        return None
 
     def fire(self, location: tuple) -> str:
         ship = Battleship.get_ship(self.field, location)
@@ -124,7 +123,8 @@ class Battleship:
 
     @staticmethod
     def check_if_ship_located_in_neighboring_cells(
-            ships: dict[tuple], ship_to_check: tuple
+            ships: dict[tuple],
+            ship_to_check: tuple
     ) -> bool:
         for location in ship_to_check:
             for row in range(-1, 2):
