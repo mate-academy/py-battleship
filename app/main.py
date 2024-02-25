@@ -41,39 +41,41 @@ class Ship:
 
 class Battleship:
 
-    @staticmethod
-    def _validate_field(ships: list[tuple]) -> bool:
-        if len(ships) != 10:
+    def _validate_field(self, ship: tuple[tuple, tuple]) -> bool:
+        if sum(self.fleet.values()) > 10:
             raise ValueError("The total number of the ships should be 10")
-        fleet = {
+        count_deck = abs((ship[1][0] - ship[0][0]) - (ship[1][1] - ship[0][1])) + 1
+        if count_deck == 1:
+            self.fleet["single_deck"] += 1
+        elif count_deck == 2:
+            self.fleet["double_deck"] += 1
+        elif count_deck == 3:
+            self.fleet["three_deck"] += 1
+        elif count_deck == 4:
+            self.fleet["four_deck"] += 1
+        if self.fleet["single_deck"] > 4:
+            raise ValueError("there should be 4 single-deck ships")
+        if self.fleet["double_deck"] > 3:
+            raise ValueError("there should be 3 double-deck ships")
+        if self.fleet["three_deck"] > 2:
+            raise ValueError("there should be 2 three-deck ships")
+        if self.fleet["four_deck"] > 1:
+            raise ValueError("there should be 1 four-deck ship")
+        for row in range(ship[0][0] - 1, ship[1][0] + 2):
+            for column in range(ship[0][1] - 1, ship[1][1] + 2):
+                if (row, column) in self.field:
+                    raise ValueError("Ships should not be located in "
+                                     "neighboring cells")
+        # TODO: need TESTING check locate ships
+
+    def __init__(self, ships: list[tuple[tuple, tuple]]) -> None:
+        self.fleet = {
             "single_deck": 0, "double_deck": 0, "three_deck": 0,
             "four_deck": 0
         }
-        for ship in ships:
-            count_deck = abs((ship[1][0] - ship[0][0])
-                             - (ship[1][1] - ship[0][1])) + 1
-            if count_deck == 1:
-                fleet["single_deck"] += 1
-            elif count_deck == 2:
-                fleet["double_deck"] += 1
-            elif count_deck == 3:
-                fleet["three_deck"] += 1
-            elif count_deck == 4:
-                fleet["four_deck"] += 1
-        if fleet["single_deck"] != 4:
-            raise ValueError("there should be 4 single-deck ships")
-        if fleet["double_deck"] != 3:
-            raise ValueError("there should be 3 double-deck ships")
-        if fleet["three_deck"] != 2:
-            raise ValueError("there should be 2 three-deck ships")
-        if fleet["four_deck"] != 1:
-            raise ValueError("there should be 1 four-deck ship")
-        # TODO: need add check locate ships
-
-    def __init__(self, ships: list[tuple[tuple, tuple]]) -> None:
         self.field = {}
-        self._validate_field(ships)
         for coordinates_ship in ships:
+            self._validate_field(coordinates_ship)
             ship = Ship(coordinates_ship[0], coordinates_ship[1])
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
@@ -95,8 +97,10 @@ class Battleship:
     def print_field(self):
         game_field = [["\U0001F7E6"] * 10 for _ in range(10)]
         for ceil in self.field:
-            if self.field[ceil] == "X" or self.field[ceil] == "Miss!":
+            if self.field[ceil] == "Miss!":
                 game_field[ceil[0]][ceil[1]] = "\u274C"
+            elif self.field[ceil] == "X":
+                game_field[ceil[0]][ceil[1]] = "\U0001F525"
             else:
                 game_field[ceil[0]][ceil[1]] = "\u26F5"
         for row in game_field:
