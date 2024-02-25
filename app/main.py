@@ -80,6 +80,7 @@ class Battleship:
 
     def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
+            self.field[location] = "Miss!"
             return "Miss!"
         else:
             ship = self.field[location]
@@ -88,7 +89,19 @@ class Battleship:
                 return "Drowned!"
             if fire == 0:
                 return "Sunk!"
+            self.field[location] = "X"
             return "Hit!"
+
+    def print_field(self):
+        game_field = [["\U0001F7E6"] * 10 for _ in range(10)]
+        for ceil in self.field:
+            if self.field[ceil] == "X" or self.field[ceil] == "Miss!":
+                game_field[ceil[0]][ceil[1]] = "\u274C"
+            else:
+                game_field[ceil[0]][ceil[1]] = "\u26F5"
+        for row in game_field:
+            print(*row)
+        print("-" * 32)
 
 
 battle_ship = Battleship(
@@ -105,12 +118,13 @@ battle_ship = Battleship(
         ((9, 7), (9, 7)),
     ]
 )
-print(
-    battle_ship.fire((0, 4)),  # Miss!
-    battle_ship.fire((0, 3)),  # Hit!
-    battle_ship.fire((0, 2)),  # Hit!
-    battle_ship.fire((0, 1)),  # Hit!
-    battle_ship.fire((0, 0)),  # Sunk!
-)
-# # print(battle_ship.field)
-# print(battle_ship.fire((0, 0)))
+battle_ship.fire((0, 4)),  # Miss!
+battle_ship.print_field()
+battle_ship.fire((0, 3)),  # Hit!
+battle_ship.print_field()
+battle_ship.fire((0, 2)),  # Hit!
+battle_ship.print_field()
+battle_ship.fire((0, 1)),  # Hit!
+battle_ship.print_field()
+battle_ship.fire((0, 0)),  # Sunk!
+battle_ship.print_field()
