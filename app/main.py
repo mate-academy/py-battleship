@@ -41,10 +41,11 @@ class Ship:
 
 class Battleship:
 
-    def _validate_field(self, ship: tuple[tuple, tuple]) -> bool:
+    def _validate_field(self, ship: tuple[tuple, tuple]) -> None:
         if sum(self.fleet.values()) > 10:
             raise ValueError("The total number of the ships should be 10")
-        count_deck = abs((ship[1][0] - ship[0][0]) - (ship[1][1] - ship[0][1])) + 1
+        count_deck = abs(
+            (ship[1][0] - ship[0][0]) - (ship[1][1] - ship[0][1])) + 1
         if count_deck == 1:
             self.fleet["single_deck"] += 1
         elif count_deck == 2:
@@ -66,19 +67,19 @@ class Battleship:
                 if (row, column) in self.field:
                     raise ValueError("Ships should not be located in "
                                      "neighboring cells")
-        # TODO: need TESTING check locate ships
 
-    def __init__(self, ships: list[tuple[tuple, tuple]]) -> None:
+    def __init__(self, ships: list[tuple[tuple, tuple]] | None = None) -> None:
         self.fleet = {
             "single_deck": 0, "double_deck": 0, "three_deck": 0,
             "four_deck": 0
         }
         self.field = {}
-        for coordinates_ship in ships:
-            self._validate_field(coordinates_ship)
-            ship = Ship(coordinates_ship[0], coordinates_ship[1])
-            for deck in ship.decks:
-                self.field[(deck.row, deck.column)] = ship
+        if ships is not None:
+            for coordinates_ship in ships:
+                self._validate_field(coordinates_ship)
+                ship = Ship(coordinates_ship[0], coordinates_ship[1])
+                for deck in ship.decks:
+                    self.field[(deck.row, deck.column)] = ship
 
     def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
@@ -108,27 +109,27 @@ class Battleship:
         print("-" * 32)
 
 
-battle_ship = Battleship(
-    ships=[
-        ((0, 0), (0, 3)),
-        ((0, 5), (0, 6)),
-        ((0, 8), (0, 9)),
-        ((2, 0), (4, 0)),
-        ((2, 4), (2, 6)),
-        ((2, 8), (2, 9)),
-        ((9, 9), (9, 9)),
-        ((7, 7), (7, 7)),
-        ((7, 9), (7, 9)),
-        ((9, 7), (9, 7)),
-    ]
-)
-battle_ship.fire((0, 4)),  # Miss!
-battle_ship.print_field()
-battle_ship.fire((0, 3)),  # Hit!
-battle_ship.print_field()
-battle_ship.fire((0, 2)),  # Hit!
-battle_ship.print_field()
-battle_ship.fire((0, 1)),  # Hit!
-battle_ship.print_field()
-battle_ship.fire((0, 0)),  # Sunk!
-battle_ship.print_field()
+# battle_ship = Battleship(
+#     ships=[
+#         ((0, 0), (0, 3)),
+#         ((0, 5), (0, 6)),
+#         ((0, 8), (0, 9)),
+#         ((2, 0), (4, 0)),
+#         ((2, 4), (2, 6)),
+#         ((2, 8), (2, 9)),
+#         ((9, 9), (9, 9)),
+#         ((7, 7), (7, 7)),
+#         ((7, 9), (7, 9)),
+#         ((9, 7), (9, 7)),
+#     ]
+# )
+# battle_ship.fire((0, 4)),  # Miss!
+# battle_ship.print_field()
+# battle_ship.fire((0, 3)),  # Hit!
+# battle_ship.print_field()
+# battle_ship.fire((0, 2)),  # Hit!
+# battle_ship.print_field()
+# battle_ship.fire((0, 1)),  # Hit!
+# battle_ship.print_field()
+# battle_ship.fire((0, 0)),  # Sunk!
+# battle_ship.print_field()
