@@ -77,7 +77,7 @@ class Game:
                 for i in range(abs(start[1] - end[1]) + 1):
                     game_field[start[0]][start[1] + i] = "\u26F5"
             if start[1] == end[1]:
-                for i in range(abs(start[1] - end[1]) + 1):
+                for i in range(abs(start[0] - end[0]) + 1):
                     game_field[start[0] + i][end[1]] = "\u26F5"
         for row in game_field:
             print(*row)
@@ -99,7 +99,7 @@ class Game:
               "The lower-right has coordinates `(9, 9)`.\n"
               "\033[1mYou must enter coordinates in the format: "
               "0.0-0.0\033[0m\n")
-        while len(self.coordinate_of_ship) <= 10:
+        while len(self.coordinate_of_ship.values()) < 10:
             try:
                 coordinate = input("Enter ship coordinates: ").split("-")
                 ship = tuple(tuple(map(int, point.split(".")))
@@ -176,9 +176,9 @@ class Game:
         Player(name, fleet)
 
 
-# game = Game()
-#
-# game.add_ships()
+game = Game()
+
+game.add_ships()
 
 # a = (((0,0), (1, 1)), ((2,2), (3, 3)))
 # print([(0, 0) in i for i in a])
