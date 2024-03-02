@@ -1,13 +1,12 @@
+import random
 from itertools import chain
-from app.exceptions import NumberOfDecks
-from app.exceptions import NumberOfShips
-from app.exceptions import TotalNumberOfShips
-from app.exceptions import CloseShips
-from app.player import Player
+
+from app.exceptions import ShipPlacementExeption
+from app.exceptions import TotalShipsInFleet
 
 
 class Game:
-    def __init__(self):
+    def __init__(self) -> None:
         self.coordinate_of_ship = {1: [], 2: [], 3: [], 4: []}
 
     @staticmethod
@@ -42,18 +41,19 @@ class Game:
     def _validate_field(self, ship: tuple, count_deck: int,
                         fleet: list[tuple]) -> None:
         if len(self.coordinate_of_ship) == 10:
-            raise TotalNumberOfShips("The total number "
-                                     "of the ships should be 10")
+            raise TotalShipsInFleet("The total number "
+                                    "of the ships should be 10")
         if count_deck > 4 or count_deck < 1:
-            raise NumberOfDecks("The number of decks can be from 1 to 4")
+            raise ShipPlacementExeption("The number of decks can "
+                                        "be from 1 to 4")
         if count_deck == 1 and len(self.coordinate_of_ship[count_deck]) == 4:
-            raise NumberOfShips("There should be 4 single-deck ships")
+            raise ShipPlacementExeption("There should be 4 single-deck ships")
         if count_deck == 2 and len(self.coordinate_of_ship[count_deck]) == 3:
-            raise NumberOfShips("There should be 3 double-deck ships")
+            raise ShipPlacementExeption("There should be 3 double-deck ships")
         if count_deck == 3 and len(self.coordinate_of_ship[count_deck]) == 2:
-            raise NumberOfShips("There should be 2 three-deck ships")
+            raise ShipPlacementExeption("There should be 2 three-deck ships")
         if count_deck == 4 and len(self.coordinate_of_ship[count_deck]) == 1:
-            raise NumberOfShips("There should be 1 four-deck ship")
+            raise ShipPlacementExeption("There should be 1 four-deck ship")
 
         fleet_coordinates = set()
         for ship_coords in fleet:
@@ -63,8 +63,8 @@ class Game:
         for row in range(ship[0][0] - 1, ship[1][0] + 2):
             for column in range(ship[0][1] - 1, ship[1][1] + 2):
                 if (row, column) in fleet_coordinates:
-                    raise CloseShips("Ships should not be located in "
-                                     "neighboring cells")
+                    raise ShipPlacementExeption("Ships should not be located "
+                                                "in neighboring cells")
 
     @staticmethod
     def print_game_field(field: list[tuple]) -> None:
@@ -83,12 +83,6 @@ class Game:
             print(*row)
         print("-" * 32)
 
-    @staticmethod
-    def _print_exceptions(e: Exception) -> None:
-        print(f"{"-" * 65}\n"
-              f"{e}\n"
-              f"{"-" * 65}")
-
     def add_manual_ship(self) -> list:
         fleet = []
         print("Greate!\n"
@@ -99,7 +93,7 @@ class Game:
               "The lower-right has coordinates `(9, 9)`.\n"
               "\033[1mYou must enter coordinates in the format: "
               "0.0-0.0\033[0m\n")
-        while len(self.coordinate_of_ship.values()) < 10:
+        while True:
             try:
                 coordinate = input("Enter ship coordinates: ").split("-")
                 ship = tuple(tuple(map(int, point.split(".")))
@@ -112,15 +106,14 @@ class Game:
                         self.coordinate_of_ship[count_deck].append(ship)
                         fleet = list(chain(*self.coordinate_of_ship.values()))
                         self.print_game_field(fleet)
-                    except TotalNumberOfShips as e:
-                        self._print_exceptions(e)
-                        break
-                    except NumberOfDecks as e:
-                        self._print_exceptions(e)
-                    except NumberOfShips as e:
-                        self._print_exceptions(e)
-                    except CloseShips as e:
-                        self._print_exceptions(e)
+                        if len(fleet) == 10:
+                            print("You have placed all your ships.\n"
+                                  "It's time to start the battle!")
+                            break
+                    except ShipPlacementExeption as e:
+                        print(f"{"-" * 65}\n"
+                              f"{e}\n"
+                              f"{"-" * 65}")
                 except IndexError:
                     print("-" * 65)
                     print("\033[1;31mInvalid coordinate format!\033[0m\n"
@@ -135,8 +128,48 @@ class Game:
                 print("-" * 65)
         return fleet
 
-    def add_auto_ship(self) -> None:
-        pass
+    def _add_ship_direction(
+            self,
+            all_cells: list[tuple],
+            direction: str,
+            start_cell: tuple,
+            count_deck: int,
+            fleet: list[tuple]
+    ) -> bool:
+        if direction == "row":
+            end_cell = (start_cell[0] + (count_deck - 1), start_cell[1])
+        elif direction == "column":
+            end_cell = (start_cell[0], start_cell[1] + (count_deck - 1))
+
+        if end_cell not in all_cells:
+            return False
+        ship = (start_cell, end_cell)
+        try:
+            self._validate_field(ship, count_deck, fleet)
+            self.coordinate_of_ship[count_deck].append(ship)
+            return True
+        except ShipPlacementExeption:
+            return False
+
+    def add_auto_ship(self) -> list:
+        fleet = []
+        all_cells = [(row, column) for row in range(10)
+                     for column in range(10)]
+        available_decks = [1, 2, 3, 4]
+
+        while True:
+            row_or_column = ["row", "column"]
+
+            start_cell = random.choice(all_cells)
+            count_deck = random.choice(available_decks)
+
+            move_from_row_or_column = random.choice(row_or_column)
+
+            self._add_ship_direction(all_cells, move_from_row_or_column,
+                                     start_cell, count_deck, fleet)
+            fleet = list(chain(*self.coordinate_of_ship.values()))
+            if len(fleet) == 10:
+                return fleet
 
     @staticmethod
     def exit() -> None:
@@ -149,7 +182,6 @@ class Game:
         print("You need to place your fleet.")
         print("You can place each ship independently or they can choose their "
               "own place.")
-        how_add_ships = ""
         while True:
             how_add_ships = input("How do you want to do it? (M / A) ").lower()
             if how_add_ships == "m":
@@ -159,6 +191,7 @@ class Game:
             elif how_add_ships == "a":
                 print("-" * 65)
                 fleet = self.add_auto_ship()
+                self.print_game_field(fleet)
                 break
             elif how_add_ships == "e":
                 self.exit()
@@ -170,15 +203,3 @@ class Game:
                 print("Or 'E' for exit from game")
                 print("-" * 65)
         return fleet
-
-    @staticmethod
-    def greate_player(name: str, fleet: list[tuple[tuple, tuple]]) -> None:
-        Player(name, fleet)
-
-
-game = Game()
-
-game.add_ships()
-
-# a = (((0,0), (1, 1)), ((2,2), (3, 3)))
-# print([(0, 0) in i for i in a])

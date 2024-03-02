@@ -1,4 +1,5 @@
 from app.main import Battleship
+import random
 
 
 class Player:
@@ -6,11 +7,11 @@ class Player:
         self.name = name
         self.battleship = Battleship(fleet)
 
-    def my_fleet(self) -> None:
-        self.fleet = {
-            "single_deck": 0, "double_deck": 0, "three_deck": 0,
-            "four_deck": 0
-        }
-
-    def add_ship(self, ship_coordinates: tuple[tuple, tuple]) -> None:
+    def fire_to_pirate(self) -> None:
         pass
+
+
+class Pirate(Player):
+    def __init__(self, fleet: list[tuple[tuple, tuple]]) -> None:
+        super().__init__(self.name, fleet)
+        self.battleship = Battleship(fleet)

@@ -1,17 +1,17 @@
 class BattleshipException(Exception):
-    def __init__(self, message="Battleship exception") -> None:
+    def __init__(self, message: str = "Battleship exception") -> None:
         self.message = message
         super().__init__(self.message)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.message
 
 
-class TotalNumberOfShips(BattleshipException):
+class ShipPlacementExeption(BattleshipException):
     pass
 
 
-class NumberOfDecks(BattleshipException):
+class TotalShipsInFleet(BattleshipException):
     pass
 
 
