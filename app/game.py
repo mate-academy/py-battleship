@@ -192,7 +192,6 @@ class Game:
                 print("-" * 65)
                 fleet = self.add_auto_ship()
                 self.print_game_field(fleet)
-                print("-" * 65)
                 break
             elif how_add_ships == "e":
                 self.exit()

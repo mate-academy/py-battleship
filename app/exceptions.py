@@ -15,7 +15,7 @@ class TotalShipsInFleet(BattleshipException):
     pass
 
 
-class NumberOfShips(BattleshipException):
+class ShotInSamePlaceException(BattleshipException):
     pass
 
 
