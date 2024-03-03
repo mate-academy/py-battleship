@@ -192,6 +192,7 @@ class Game:
                 print("-" * 65)
                 fleet = self.add_auto_ship()
                 self.print_game_field(fleet)
+                print("-" * 65)
                 break
             elif how_add_ships == "e":
                 self.exit()
@@ -203,3 +204,6 @@ class Game:
                 print("Or 'E' for exit from game")
                 print("-" * 65)
         return fleet
+
+    def clear_fleet(self) -> None:
+        self.coordinate_of_ship = {1: [], 2: [], 3: [], 4: []}

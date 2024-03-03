@@ -1,6 +1,6 @@
 from app.game import Game
 from app.player import Player
-import random
+from app.player import Pirate
 
 if __name__ == "__main__":
     game = Game()
@@ -11,14 +11,14 @@ if __name__ == "__main__":
     game.print_description_fleet(captain_name)
 
     player_1 = Player(captain_name, game.add_ships())
+    game.clear_fleet()
 
-    pirate_names = [
-        "Captain Jack Sparrow", "Captain Hector Barbossa",
-        "Davy Jones", "Captain Edward Teague"
-    ]
-    pirate_name = random.choice(pirate_names)
-    pirate = Player(pirate_name, game.add_auto_ship())
+    pirate = Pirate(game.add_auto_ship())
+    game.clear_fleet()
 
-    print(player_1.name)
-    print("-"*30)
-    print(pirate.name)
+    print(list(pirate.battleship.field.values()))
+    # while True:
+    #     fire = input("Enter coordinates for the shot: ")
+    #     fire_tuple = tuple(int(i) for i in fire.split("."))
+    #     player_1.fire_to_pirate(fire_tuple, pirate)
+    #     break
