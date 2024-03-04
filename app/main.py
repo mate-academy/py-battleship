@@ -92,7 +92,7 @@ class Battleship:
             deck = ship.get_deck(*location)
             if deck.is_alive:
                 deck.is_alive = False
-                if all(not d.is_alive for d in ship.decks):
+                if all(not deck.is_alive for deck in ship.decks):
                     ship.is_drowned = True
                     return "Sunk!"
                 return "Hit!"
