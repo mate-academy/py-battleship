@@ -17,10 +17,11 @@ if __name__ == "__main__":
     pirate = Pirate(game.add_auto_ship())
     game.clear_fleet()
 
-    print()
     while True:
-        fire = input("Enter coordinates for the shot (format: 0.0): ")
+        player_ship = set(player_1.battleship.field.values())
+        pirate_ships = set(pirate.battleship.field.values())
         try:
+            fire = input("Enter coordinates for the shot (format: 0.0): ")
             fire_tuple = tuple(int(i) for i in fire.split("."))
             try:
                 player_1.fire_to_enemy(fire_tuple, pirate)
@@ -32,4 +33,12 @@ if __name__ == "__main__":
                   "You must enter coordinates in the format: "
                   "\033[1m0.0\033[0m")
             print("-" * 65)
-        print(all(ship.is_drowned for ship in list(pirate.battleship.field.values())))
+        if all(ship.is_drowned for ship in pirate_ships):
+            print("-" * 65)
+            print("\033[1;31;40m" + "Victory" + "\033[0m")
+            break
+
+        if all(ship.is_drowned for ship in player_ship):
+            print("-" * 65)
+            print("\033[1;31;40m" + "You are defeated!" + "\033[0m")
+            break

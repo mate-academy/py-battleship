@@ -1,5 +1,10 @@
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(
+            self,
+            row: int,
+            column: int,
+            is_alive: bool = True
+    ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -34,7 +39,7 @@ class Ship:
     def fire(self, row: int, column: int) -> int:
         attacked_deck = self.get_deck(row, column)
         attacked_deck.is_alive = False
-        if not all(self.decks):
+        if not all(deck.is_alive for deck in self.decks):
             self.is_drowned = True
         return sum(deck.is_alive for deck in self.decks)
 
@@ -51,7 +56,6 @@ class Battleship:
 
     def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
-            self.field[location] = "Miss!"
             return "Miss!"
         else:
             ship = self.field[location]
@@ -60,7 +64,6 @@ class Battleship:
                 return "Drowned!"
             if fire == 0:
                 return "Sunk!"
-            self.field[location] = "X"
             return "Hit!"
 
     def print_field(self) -> None:
@@ -68,7 +71,7 @@ class Battleship:
         for ceil in self.field:
             if self.field[ceil] == "Miss!":
                 game_field[ceil[0]][ceil[1]] = "\u274C"
-            elif self.field[ceil] == "X":
+            elif self.field[ceil].get_deck(ceil[0], ceil[1]):
                 game_field[ceil[0]][ceil[1]] = "\U0001F525"
             else:
                 game_field[ceil[0]][ceil[1]] = "\u26F5"
