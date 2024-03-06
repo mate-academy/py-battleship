@@ -16,8 +16,8 @@ if __name__ == "__main__":
     pirate = Pirate(game.choose_pirate_name(), game.add_auto_ship())
     game.clear_fleet()
 
-    print(f"{"-" * 65}\n"
-          f"Your enemy is \U0001F3F4{pirate.name}\U0001F3F4\n"
-          f"{"-" * 65}")
+    print("-" * 65)
+    print(f"Your enemy is \U0001F3F4{pirate.name}\U0001F3F4")
+    print("-" * 65)
 
     game.play_game(player_1, pirate)

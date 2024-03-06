@@ -15,8 +15,8 @@ class Game:
     @staticmethod
     def print_introduce() -> None:
         name_of_game = "Sea Battle: Pirate Battles"
-        print(f"\033[1m{name_of_game.center(65)}\033[0m\n"
-              f"{"-" * 65}")
+        print(f"\033[1m{name_of_game.center(65)}\033[0m\n")
+        print("-" * 35)
         print("Welcome to the world of adventure and naval battles!\n"
               "You find yourself in the waters of the Caribbean Sea,\n"
               "where thrilling encounters with ruthless pirates await you.\n"

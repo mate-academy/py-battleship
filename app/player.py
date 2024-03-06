@@ -24,7 +24,8 @@ class Player:
         if fire == "Miss!":
             self.list_of_fire["miss"].append(location)
         else:
-            print(f"{"-" * 32}\n{fire}")
+            print("-" * 32)
+            print(f"{fire}")
             self.list_of_fire["hit"].append(location)
 
     def print_field_fires(self) -> None:
