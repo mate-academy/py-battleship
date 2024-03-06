@@ -121,9 +121,9 @@ class Game:
                                   "It's time to start the battle!")
                             break
                     except ShipPlacementExeption as e:
-                        print(f"{"-" * 65}\n"
-                              f"{e}\n"
-                              f"{"-" * 65}")
+                        print("-" * 65)
+                        print(f"{e}")
+                        print("-" * 65)
                 except IndexError:
                     print("-" * 65)
                     print("\033[1;31mInvalid coordinate format!\033[0m\n"
