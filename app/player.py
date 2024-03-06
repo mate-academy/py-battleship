@@ -24,26 +24,27 @@ class Player:
         if fire == "Miss!":
             self.list_of_fire["miss"].append(location)
         else:
-            print(f"{"-" * 65}\n{fire}\n")
+            print(f"{"-" * 32}\n{fire}")
             self.list_of_fire["hit"].append(location)
-        self._print_field_fires(self.list_of_fire)
 
-    @staticmethod
-    def _print_field_fires(location: dict[str, list]) -> None:
+    def print_field_fires(self) -> None:
         game_field = [["\U0001F7E6"] * 10 for _ in range(10)]
-        for row, col in location["miss"]:
+        for row, col in self.list_of_fire["miss"]:
             game_field[row][col] = "\u274C"
-        for row, col in location["hit"]:
+        for row, col in self.list_of_fire["hit"]:
             game_field[row][col] = "\U0001F4A5"
         for row in game_field:
             print(*row)
 
 
 class Pirate(Player):
-    def __init__(self, fleet: list[tuple[tuple, tuple]]) -> None:
-        pirate_names = [
-            "Captain Jack Sparrow", "Captain Hector Barbossa",
-            "Davy Jones", "Captain Edward Teague"
-        ]
-        self.name = random.choice(pirate_names)
+    def __init__(self, name: str, fleet: list[tuple[tuple, tuple]]) -> None:
+        super().__init__(name, fleet)
         self.battleship = Battleship(fleet)
+        self.list_of_fire = {"miss": [], "hit": []}
+
+    @staticmethod
+    def choose_cell_for_shoot() -> tuple[int, int]:
+        all_cells = [(row, column) for row in range(10)
+                     for column in range(10)]
+        return random.choice(all_cells)

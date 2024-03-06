@@ -2,7 +2,10 @@ import random
 from itertools import chain
 
 from app.exceptions import ShipPlacementExeption
+from app.exceptions import ShotInSamePlaceException
 from app.exceptions import TotalShipsInFleet
+from app.player import Pirate
+from app.player import Player
 
 
 class Game:
@@ -25,6 +28,14 @@ class Game:
               "Get ready for exciting adventures in "
               "\033[1m'Sea Battle: Pirate Battles'\033[0m!")
         print("-" * 65)
+
+    @staticmethod
+    def choose_pirate_name() -> str:
+        pirate_names = [
+            "Captain Jack Sparrow", "Captain Hector Barbossa",
+            "Davy Jones", "Captain Edward Teague"
+        ]
+        return random.choice(pirate_names)
 
     @staticmethod
     def print_description_fleet(captain_name: str) -> None:
@@ -81,7 +92,6 @@ class Game:
                     game_field[start[0] + i][end[1]] = "\u26F5"
         for row in game_field:
             print(*row)
-        print("-" * 32)
 
     def add_manual_ship(self) -> list:
         fleet = []
@@ -191,6 +201,7 @@ class Game:
             elif how_add_ships == "a":
                 print("-" * 65)
                 fleet = self.add_auto_ship()
+                print("\033[1mYour fleet has been deployed.\033[0m")
                 self.print_game_field(fleet)
                 break
             elif how_add_ships == "e":
@@ -206,3 +217,49 @@ class Game:
 
     def clear_fleet(self) -> None:
         self.coordinate_of_ship = {1: [], 2: [], 3: [], 4: []}
+
+    @staticmethod
+    def play_game(player_1: Player, pirate: Pirate) -> None:
+        while True:
+            player_ship = set(player_1.battleship.field.values())
+            pirate_ships = set(pirate.battleship.field.values())
+            while True:
+                try:
+                    fire = input("Enter coordinates for the shot "
+                                 "(format: 0.0): ")
+                    fire_tuple = tuple(int(i) for i in fire.split("."))
+                    try:
+                        player_1.fire_to_enemy(fire_tuple, pirate)
+                        player_1.print_field_fires()
+                        break
+                    except ShotInSamePlaceException:
+                        print(
+                            "\033[1;31mYou've already shot at this "
+                            "place.\033[0m")
+                except ValueError:
+                    print("-" * 35)
+                    print("\033[1;31mInvalid coordinate format!\033[0m\n"
+                          "You must enter coordinates in the format: "
+                          "\033[1m0.0\033[0m")
+                    print("-" * 35)
+            while True:
+                print("-" * 35)
+                print(f"Now it shoots \U0001F3F4{pirate.name}\U0001F3F4")
+                print("-" * 35)
+                try:
+                    cell_to_shot = pirate.choose_cell_for_shoot()
+                    pirate.fire_to_enemy(cell_to_shot, player_1)
+                    player_1.battleship.print_field()
+                    break
+                except ShotInSamePlaceException:
+                    continue
+
+            if all(ship.is_drowned for ship in pirate_ships):
+                print("-" * 35)
+                print("\033[1;31;40m" + "Victory" + "\033[0m")
+                break
+
+            if all(ship.is_drowned for ship in player_ship):
+                print("-" * 35)
+                print("\033[1;31;40m" + "You are defeated!" + "\033[0m")
+                break

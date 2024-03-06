@@ -33,13 +33,13 @@ class Ship:
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
-            if deck.row == row and deck.column == column and deck.is_alive:
+            if deck.row == row and deck.column == column:
                 return deck
 
     def fire(self, row: int, column: int) -> int:
         attacked_deck = self.get_deck(row, column)
         attacked_deck.is_alive = False
-        if not all(deck.is_alive for deck in self.decks):
+        if all(deck.is_alive for deck in self.decks):
             self.is_drowned = True
         return sum(deck.is_alive for deck in self.decks)
 
@@ -56,8 +56,9 @@ class Battleship:
 
     def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
+            self.field[location] = "Miss!"
             return "Miss!"
-        else:
+        elif isinstance(self.field[location], Ship):
             ship = self.field[location]
             fire = ship.fire(location[0], location[1])
             if ship.is_drowned:
@@ -71,10 +72,12 @@ class Battleship:
         for ceil in self.field:
             if self.field[ceil] == "Miss!":
                 game_field[ceil[0]][ceil[1]] = "\u274C"
-            elif self.field[ceil].get_deck(ceil[0], ceil[1]):
-                game_field[ceil[0]][ceil[1]] = "\U0001F525"
             else:
-                game_field[ceil[0]][ceil[1]] = "\u26F5"
+                deck = self.field[ceil].get_deck(ceil[0], ceil[1])
+                if deck.is_alive:
+                    game_field[ceil[0]][ceil[1]] = "\u26F5"
+                else:
+                    game_field[ceil[0]][ceil[1]] = "\U0001F4A5"
         for row in game_field:
             print(*row)
         print("-" * 32)
