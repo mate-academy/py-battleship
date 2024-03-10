@@ -8,18 +8,25 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    def __init__(self,
+                 start: tuple,
+                 end: tuple,
+                 is_drowned: bool = False) -> None:
+        x_coords = [x for x in range(start[0], end[0] + 1)]
+        y_coords = [y for y in range(start[1], end[1] + 1)]
+        self.decks = [Deck(x, y) for x in x_coords for y in y_coords]
+        self.is_drowned = is_drowned
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    def get_deck(self, row: int, column: int) -> int:
+        for deck in self.decks:
+            if deck.location == (row, column):
+                return self.decks.index(deck)
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    def fire(self, row: int, column: int) -> None:
+        deck_index = self.get_deck(row, column)
+        self.decks[deck_index].is_alive = False
+        if not [1 for deck in self.decks if deck.is_alive]:
+            self.is_drowned = True
 
 
 class Battleship:
