@@ -30,16 +30,16 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: list[tuple]) -> None:
+        self.ships = [Ship(start, end) for start, end in ships]
+        self.field = {
+            deck.location: ship for ship in self.ships for deck in ship.decks
+        }
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def fire(self, location: tuple) -> str:
+        if location in self.field:
+            ship = self.field[location]
+            ship.fire(*location)
+            return "Sunk!" if ship.is_drowned else "Hit!"
+        else:
+            return "Miss!"
