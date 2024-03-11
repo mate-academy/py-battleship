@@ -23,14 +23,14 @@ class Ship:
         self.decks = [Deck(x, y) for x in x_coords for y in y_coords]
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> int:
+    def get_deck(self, row: int, column: int) -> Deck:
         for deck in self.decks:
             if deck.location == (row, column):
-                return self.decks.index(deck)
+                return deck
 
     def fire(self, row: int, column: int) -> None:
-        deck_index = self.get_deck(row, column)
-        self.decks[deck_index].is_alive = False
+        deck = self.get_deck(row, column)
+        deck.is_alive = False
         self.is_drowned = all(not deck.is_alive for deck in self.decks)
 
 
