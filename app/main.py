@@ -18,11 +18,11 @@ class Ship:
     ) -> None:
         self.decks = []
         if start[0] == end[0]:
-            for i in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], i))
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(start[0], column))
         else:
-            for i in range(start[0], end[0] + 1):
-                self.decks.append(Deck(i, end[1]))
+            for row in range(start[0], end[0] + 1):
+                self.decks.append(Deck(row, end[1]))
 
         self.is_drowned = is_drowned
 
