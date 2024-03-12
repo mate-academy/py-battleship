@@ -3,7 +3,7 @@ class Deck:
         self.row = row
         self.column = column
         self.is_alive = is_alive
-        self.image: str = f"'{u"\u25A1"}'"
+        self.image: str = u"'\u25A1'"
 
     def __repr__(self) -> str:
         return self.image
