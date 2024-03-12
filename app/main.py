@@ -46,7 +46,7 @@ class Battleship:
             coordinates = []
             for deck in ship.decks:
                 coordinates.append((deck.row, deck.column))
-            self.field[*coordinates] = ship
+            self.field[tuple(coordinates)] = ship
         self._validate_field()
 
     def _validate_field(self) -> None:
