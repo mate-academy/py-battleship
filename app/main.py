@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 
 class Deck:
-    def __init__(self, row: int, column: int, is_alive=True) -> None:
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -13,7 +13,7 @@ class Ship:
         self,
         start: Tuple[int, int],
         end: Tuple[int, int],
-        is_drowned=False
+        is_drowned: bool = False
     ) -> None:
         self.decks = []
 
@@ -67,14 +67,14 @@ class Battleship:
                     deck = self.field[(row, column)].get_deck(row, column)
 
                     if deck.is_alive:
-                        print(u"\u25A1", end=" "*3)
+                        print(u"\u25A1", end=" " * 3)
                         continue
                     elif not self.field[(row, column)].is_drowned:
-                        print("*", end=" "*3)
+                        print("*", end=" " * 3)
                         continue
-                    print("x", end=" "*3)
+                    print("x", end=" " * 3)
                     continue
 
-                print("~", end=" "*3)
+                print("~", end=" " * 3)
 
             print("")
