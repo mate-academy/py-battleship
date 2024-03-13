@@ -23,14 +23,16 @@ class Ship:
         self.decks: List[Deck] = []
         self.is_drowned = is_drowned
         horizontal = start[0] == end[0]
-        if horizontal:
-            for column in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], column))
-        else:
-            for row in range(start[0], end[0] + 1):
-                self.decks.append(Deck(row, start[1]))
+        row_range = range(start[0], end[0] + 1) \
+            if not horizontal else [start[0]]
+        col_range = range(start[1], end[1] + 1) if horizontal else [start[1]]
 
-    def get_deck(self, row: int, column: int) -> Deck:
+        # Use nested loops to iterate over both rows and columns
+        for row in row_range:
+            for column in col_range:
+                self.decks.append(Deck(row, column))
+
+    def get_deck(self, row: int, column: int) -> None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
