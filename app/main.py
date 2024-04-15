@@ -1,34 +1,104 @@
+import dataclasses
+from typing import Callable
+from string import ascii_uppercase
+from collections import namedtuple
+
+
+class ValidationError(Exception):
+    pass
+
+
+@dataclasses.dataclass
 class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
+    row: int
+    column: int
+    is_alive: bool = True
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    def __init__(self,
+                 start: tuple,
+                 end: tuple,
+                 is_drowned: bool = False) -> None:
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+        self.start = start
+        self.end = end
+        self.is_drowned = is_drowned
+        self.decks = []
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+        if start[0] != end[0]:
+            for row in range(start[0], end[0] + 1):
+                self.decks.append(Deck(row, start[1]))
+        else:
+            for column in range(start[1], end[1] + 1):
+                self.decks.append(Deck(start[0], column))
+
+    def get_deck(self, row: int, column: int) -> Callable:
+        for deck in self.decks:
+            if (row, column) == (deck.row, deck.column):
+                return self.fire(deck)
+
+    def fire(self, deck: Deck) -> str:
+        deck.is_alive = False
+        if all(deck.is_alive is False for deck in self.decks):
+            self.is_drowned = True
+            return "Sunk!"
+        return "Hit!"
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: list[tuple]) -> None:
+        self.ships = {coordinates: Ship(*coordinates) for coordinates in ships}
+        self.field = self.create_field(ships)
+        self._validate_field(self.ships)
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def fire(self, location: tuple) -> str:
+        for coordinates, ship in self.ships.items():
+            if coordinates[0] <= location <= coordinates[1]:
+                result = ship.get_deck(*location)
+                self.mark_the_hit_and_print_field(location, ship, result)
+                return result
+        self.mark_the_hit_and_print_field(location)
+        return "Miss!"
+
+    def mark_the_hit_and_print_field(self,
+                                     location: tuple,
+                                     ship: Ship = None,
+                                     result: str = None) -> None:
+        row, col = location
+        if result == "Hit!":
+            self.field[row][col] = "*"
+        elif result == "Sunk!":
+            self.__loop_to_fill_field(ship, self.field, "X")
+
+        print(f"    {" ".join(ascii_uppercase[:10])}")
+        print("\u2014 " * 12)
+        for index, row in enumerate(self.field):
+            print(f"{index} | {" ".join(row)}")
+
+    def create_field(self, battle_ships: list) -> list:
+        field = [["~"] * 10 for _ in range(10)]
+        ship_namedtuple = namedtuple("Ship", ["start", "end"])
+
+        for ship in battle_ships:
+            ship_named = ship_namedtuple(ship[0], ship[1])
+            self.__loop_to_fill_field(ship_named, field, u"\u25A1")
+
+        return field
+
+    def _validate_field(self, ships: dict[Ship]) -> None:
+        for ship in ships.values():
+            if not all(self.field[deck.row][deck.column]
+                       == u"\u25A1" for deck in ship.decks):
+                raise ValidationError("The field is not correctly compiled")
+
+    @staticmethod
+    def __loop_to_fill_field(ship: Ship, field: list, char: str) -> None:
+        if ship.start == ship.end:
+            field[ship.start[0]][ship.start[1]] = char
+        elif ship.start[0] != ship.end[0]:
+            for row in range(ship.start[0], ship.end[0] + 1):
+                field[row][ship.start[1]] = char
+        elif ship.start[1] != ship.end[1]:
+            for column in range(ship.start[1], ship.end[1] + 1):
+                field[ship.end[0]][column] = char
