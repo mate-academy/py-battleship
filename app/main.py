@@ -88,9 +88,26 @@ class Battleship:
 
     def _validate_field(self, ships: dict[Ship]) -> None:
         for ship in ships.values():
-            if not all(self.field[deck.row][deck.column]
-                       == u"\u25A1" for deck in ship.decks):
+            for deck in ship.decks:
+                for row in range(deck.row - 1, deck.row + 2):
+                    for column in range(deck.column - 1, deck.column + 2):
+                        if 0 <= row <= 9 and 0 <= column <= 9:
+                            if (self.field[row][column] == u"\u25A1"
+                                    and Deck(row, column) not in ship.decks):
+                                raise ValidationError(
+                                    "The field ""is not correctly compiled")
+
+        count_decks = 4
+        count_ships = 1
+        for check_ship_decks in range(4):
+            if not sum(len(ship.decks) == count_decks
+                       for ship in ships.values()) == count_ships:
                 raise ValidationError("The field is not correctly compiled")
+            count_decks -= 1
+            count_ships += 1
+
+        if len(ships) != 10:
+            ValidationError("The field is not correctly compiled")
 
     @staticmethod
     def __loop_to_fill_field(ship: Ship, field: list, char: str) -> None:
