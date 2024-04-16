@@ -71,7 +71,7 @@ class Battleship:
         elif result == "Sunk!":
             self.__loop_to_fill_field(ship, self.field, "X")
 
-        print(f"    {" ".join(ascii_uppercase[:10])}")
+        print(f"    {' '.join(ascii_uppercase[:10])}")
         print("\u2014 " * 12)
         for index, row in enumerate(self.field):
             print(f"{index} | {" ".join(row)}")
