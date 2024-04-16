@@ -20,18 +20,13 @@ class Ship:
                  start: tuple,
                  end: tuple,
                  is_drowned: bool = False) -> None:
-
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = {}
-
-        if start[0] != end[0]:
-            for row in range(start[0], end[0] + 1):
-                self.decks[(row, start[1])] = Deck(row, start[1])
-        else:
-            for column in range(start[1], end[1] + 1):
-                self.decks[(start[0], column)] = Deck(start[0], column)
+        self.decks = {(row, column): Deck(row, column)
+                      for row in range(start[0], end[0] + 1)
+                      for column in range(start[1], end[1] + 1)
+                      }
 
     def get_deck(self, row: int, column: int) -> Callable:
         return self.fire(self.decks.get((row, column)))
@@ -98,7 +93,7 @@ class Battleship:
 
         count_decks = 4
         count_ships = 1
-        for check_ship_decks in range(4):
+        for _ in range(4):
             if not sum(len(ship.decks) == count_decks
                        for ship in ships.values()) == count_ships:
                 raise ValidationError("The field is not correctly compiled")
