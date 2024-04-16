@@ -24,23 +24,21 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.decks = []
+        self.decks = {}
 
         if start[0] != end[0]:
             for row in range(start[0], end[0] + 1):
-                self.decks.append(Deck(row, start[1]))
+                self.decks[(row, start[1])] = Deck(row, start[1])
         else:
             for column in range(start[1], end[1] + 1):
-                self.decks.append(Deck(start[0], column))
+                self.decks[(start[0], column)] = Deck(start[0], column)
 
     def get_deck(self, row: int, column: int) -> Callable:
-        for deck in self.decks:
-            if (row, column) == (deck.row, deck.column):
-                return self.fire(deck)
+        return self.fire(self.decks.get((row, column)))
 
     def fire(self, deck: Deck) -> str:
         deck.is_alive = False
-        if all(deck.is_alive is False for deck in self.decks):
+        if all(deck.is_alive is False for deck in self.decks.values()):
             self.is_drowned = True
             return "Sunk!"
         return "Hit!"
@@ -88,14 +86,15 @@ class Battleship:
 
     def _validate_field(self, ships: dict[Ship]) -> None:
         for ship in ships.values():
-            for deck in ship.decks:
+            for deck in ship.decks.values():
                 for row in range(deck.row - 1, deck.row + 2):
-                    for column in range(deck.column - 1, deck.column + 2):
-                        if 0 <= row <= 9 and 0 <= column <= 9:
-                            if (self.field[row][column] == u"\u25A1"
-                                    and Deck(row, column) not in ship.decks):
+                    for col in range(deck.column - 1, deck.column + 2):
+                        if 0 <= row <= 9 and 0 <= col <= 9:
+                            if (self.field[row][col] == u"\u25A1"
+                                    and Deck(row, col)
+                                    not in ship.decks.values()):
                                 raise ValidationError(
-                                    "The field ""is not correctly compiled")
+                                    "The field is not correctly compiled")
 
         count_decks = 4
         count_ships = 1
