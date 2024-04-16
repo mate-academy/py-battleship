@@ -74,7 +74,7 @@ class Battleship:
         print(f"    {' '.join(ascii_uppercase[:10])}")
         print("\u2014 " * 12)
         for index, row in enumerate(self.field):
-            print(f"{index} | {" ".join(row)}")
+            print(f"{index} | {' '.join(row)}")
 
     def create_field(self, battle_ships: list) -> list:
         field = [["~"] * 10 for _ in range(10)]
