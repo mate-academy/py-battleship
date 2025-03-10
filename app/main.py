@@ -1,10 +1,5 @@
 class Deck:
-    def __init__(
-            self,
-            row: int,
-            column: int,
-            is_alive: bool = True
-    ) -> None:
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -14,21 +9,18 @@ class Deck:
 
 
 class Ship:
-    def __init__(
-            self,
-            start: tuple,
-            end: tuple,
-            is_drowned: bool = False
-    ) -> None:
+    def __init__(self, start: tuple, end: tuple) -> None:
         self.decks = []
-        self.is_drowned = is_drowned
+        self.is_drowned = False
 
         if start[0] == end[0]:
             for col in range(start[1], end[1] + 1):
                 self.decks.append(Deck(start[0], col))
-        else:
+        elif start[1] == end[1]:
             for row in range(start[0], end[0] + 1):
                 self.decks.append(Deck(row, start[1]))
+        else:
+            raise ValueError("Ships must be either horizontal or vertical.")
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
@@ -47,25 +39,62 @@ class Ship:
 
 
 class Battleship:
-    def __init__(
-            self,
-            ships: list
-    ) -> None:
+    def __init__(self, ships: list) -> None:
         self.ships = []
         self.field = {}
+        self.occupied_positions = set()
 
         for start, end in ships:
+            if self._is_overlap(start, end):
+                raise ValueError("Ships cannot overlap!")
+
             ship = Ship(start, end)
             self.ships.append(ship)
 
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
+                self.occupied_positions.add((deck.row, deck.column))
+
+        if not self._validate_field():
+            raise ValueError("Invalid ship configuration!")
+
+    def _is_overlap(self, start: tuple, end: tuple) -> bool:
+        if start[0] == end[0]:
+            for col in range(start[1], end[1] + 1):
+                if (start[0], col) in self.occupied_positions:
+                    return True
+        else:
+            for row in range(start[0], end[0] + 1):
+                if (row, start[1]) in self.occupied_positions:
+                    return True
+        return False
+
+    def _validate_field(self) -> bool:
+        ship_sizes = [len(ship.decks) for ship in self.ships]
+        expected_fleet = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+        if sorted(ship_sizes) != sorted(expected_fleet):
+            return False
+
+        for ship in self.ships:
+            for deck in ship.decks:
+                if self._has_adjacent_ship(deck.row, deck.column):
+                    return False
+        return True
+
+    def _has_adjacent_ship(self, row: int, col: int) -> bool:
+        directions = [
+            (-1, 0), (1, 0), (0, -1), (0, 1),
+            (-1, -1), (-1, 1), (1, -1), (1, 1)
+        ]
+        for dr, dc in directions:
+            if (row + dr, col + dc) in self.occupied_positions:
+                return True
+        return False
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field[location]
             hit = ship.fire(*location)
-
             if hit:
                 return "Sunk!" if ship.is_drowned else "Hit!"
         return "Miss!"
@@ -80,7 +109,6 @@ class Battleship:
                 else:
                     ship = self.field[cell]
                     deck = ship.get_deck(row, col)
-
                     if deck.is_alive:
                         line += "□ "
                     elif ship.is_drowned:
