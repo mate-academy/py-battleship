@@ -45,51 +45,16 @@ class Battleship:
         self.occupied_positions = set()
 
         for start, end in ships:
-            if self._is_overlap(start, end):
-                raise ValueError("Ships cannot overlap!")
-
             ship = Ship(start, end)
             self.ships.append(ship)
 
             for deck in ship.decks:
+                if (deck.row, deck.column) in self.occupied_positions:
+                    raise ValueError(f"Ship overlap at "
+                                     f"{(deck.row, deck.column)}")
+
                 self.field[(deck.row, deck.column)] = ship
                 self.occupied_positions.add((deck.row, deck.column))
-
-        if not self._validate_field():
-            raise ValueError("Invalid ship configuration!")
-
-    def _is_overlap(self, start: tuple, end: tuple) -> bool:
-        if start[0] == end[0]:
-            for col in range(start[1], end[1] + 1):
-                if (start[0], col) in self.occupied_positions:
-                    return True
-        else:
-            for row in range(start[0], end[0] + 1):
-                if (row, start[1]) in self.occupied_positions:
-                    return True
-        return False
-
-    def _validate_field(self) -> bool:
-        ship_sizes = [len(ship.decks) for ship in self.ships]
-        expected_fleet = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
-        if sorted(ship_sizes) != sorted(expected_fleet):
-            return False
-
-        for ship in self.ships:
-            for deck in ship.decks:
-                if self._has_adjacent_ship(deck.row, deck.column):
-                    return False
-        return True
-
-    def _has_adjacent_ship(self, row: int, col: int) -> bool:
-        directions = [
-            (-1, 0), (1, 0), (0, -1), (0, 1),
-            (-1, -1), (-1, 1), (1, -1), (1, 1)
-        ]
-        for dr, dc in directions:
-            if (row + dr, col + dc) in self.occupied_positions:
-                return True
-        return False
 
     def fire(self, location: tuple) -> str:
         if location in self.field:
