@@ -55,6 +55,7 @@ class Ship:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
+        return None
 
     def fire(self, row: int, column: int) -> str:
         deck = self.get_deck(row, column)
@@ -62,12 +63,11 @@ class Ship:
             return "Miss!"
         deck.is_alive = False
 
-        for status in self.decks:
-            if status.is_alive:
-                return "Hit!"
-
-        self.is_drowned = True
-        return "Sunk!"
+        if any(status.is_alive for status in self.decks):
+            return "Hit!"
+        else:
+            self.is_drowned = True
+            return "Sunk!"
 
 
 class Battleship:
