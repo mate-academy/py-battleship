@@ -78,9 +78,9 @@ class Battleship:
         ships_count = {4: 1, 3: 2, 2: 3, 1: 4}
         if len(self.ships) != 10:
             raise Exception("There should be 10 ships on the field.")
-        for ship in self.ships:
-            self._validate_distance(ship)
-            ship = Ship(*ship)
+        for ship_coord in self.ships:
+            self._validate_distance(ship_coord)
+            ship = Ship(*ship_coord)
             decks_count = len(ship.decks)
             if decks_count in ships_count.keys():
                 if ships_count[decks_count] == 0:
