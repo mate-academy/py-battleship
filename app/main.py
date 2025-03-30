@@ -17,7 +17,8 @@ class Ship:
 
     ships_created = []
 
-    def get_ship(self, two_points: tuple) -> Ship:
+    @staticmethod
+    def get_ship(two_points: tuple) -> Ship:
         nose, tail = two_points[0], two_points[1]
         for one_ship in Ship.ships_created:
             if one_ship.start == nose and one_ship.end == tail:
@@ -47,7 +48,7 @@ class Ship:
                 new_deck = Deck(i, j_index, True)
                 self.decks.append(new_deck)
 
-        Ship.ships_created.append(self)
+        self.__class__.ships_created.append(self)
 
     def get_deck(self, row: int, column: int) -> Deck:
         # Find the corresponding deck in the list
@@ -79,7 +80,7 @@ class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
         self.ships = ships
         for one_ship in self.ships:
-            Ship(one_ship[0], one_ship[1], False)
+            Ship(one_ship[0], one_ship[1])
 
     def fire(self, location: tuple) -> str:
         # This function should check whether the location
@@ -87,7 +88,7 @@ class Battleship:
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
         for ship in self.ships:
-            ship_instance = Ship.get_ship(self, ship)
+            ship_instance = Ship.get_ship(ship)
             if ship_instance.fire(location[0], location[1]):
                 if ship_instance.is_drowned:
                     return "Sunk!"
@@ -163,9 +164,6 @@ class Seafield():
                 return
 
     def verification_passed(self, nose: tuple, tail: tuple) -> bool:
-        # within sea_field
-        # not too close to another ship
-
         if not (0 <= nose[0] <= RANK - 1):
             return False
         if not (0 <= nose[1] <= RANK - 1):
@@ -198,14 +196,10 @@ class Seafield():
 
         tail_x = nose_x
         tail_y = nose_y
-        # if choose_direction == "n":
-        #     tail_x -= kind_of_ship - 1
         if choose_direction == "s":
             tail_x += kind_of_ship - 1
         elif choose_direction == "e":
             tail_y += kind_of_ship - 1
-        # elif choose_direction == "w":
-        #     tail_y -= kind_of_ship - 1
         return (tail_x, tail_y,)
 
     def print_seafield(self) -> None:
