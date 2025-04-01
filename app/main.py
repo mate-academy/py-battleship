@@ -26,12 +26,8 @@ class Ship:
     def fire(self, row: int, column: int) -> None:
         current_deck = self.get_deck(row, column)
         current_deck.is_alive = False
-        for deck in self.decks:
-            if deck.is_alive is True:
-                self.is_drowned = False
-                return
-            else:
-                self.is_drowned = True
+        if all(not deck.is_alive for deck in self.decks):
+            self.is_drowned = True
 
 
 class Battleship:
@@ -89,16 +85,15 @@ class Battleship:
             (0, 1), (1, -1), (1, 0), (1, 1)
         ]
 
-        occupied_cells = set()
+        cells = set()
         for ship in set(self.field.values()):
             for deck in ship.decks:
-                occupied_cells.add((deck.row, deck.column))
+                cells.add((deck.row, deck.column))
                 row, col = deck.row, deck.column
 
                 for drow, dcol in neighbors:
                     neighbor = (row + drow, col + dcol)
-                    decks = [(deck.row, deck.column) for deck in ship.decks]
-                    if neighbor in occupied_cells and neighbor not in decks:
+
+                    if neighbor in cells and self.field[neighbor] is not ship:
                         raise ValueError(f"Ships are too close! "
                                          f"Error at {neighbor}")
-                occupied_cells.add((row, col))
