@@ -14,7 +14,6 @@ class Ship:
         self.is_drowned = is_drowned
         self.decks = []
 
-        # columns
         if self.start[0] != self.end[0]:
             row = self.start[0]
             col = self.start[1]
@@ -23,7 +22,6 @@ class Ship:
                 row += 1
                 self.decks.append(Deck(row, col))
 
-        # rows
         else:
             row = self.start[0]
             col = self.start[1]
