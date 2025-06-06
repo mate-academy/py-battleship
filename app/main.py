@@ -20,9 +20,9 @@ class Ship:
                              max(start_col, end_col) + 1):
                 self.decks.append(Deck(start_row, col))
         elif start_col == end_col:
-            for col in range(min(start_row, end_row),
+            for row in range(min(start_row, end_row),
                              max(start_row, end_row) + 1):
-                self.decks.append(Deck(start_row, col))
+                self.decks.append(Deck(row, start_col))
 
     def get_deck(self, row: int, column : int) -> Deck | None:
         for deck in self.decks:
