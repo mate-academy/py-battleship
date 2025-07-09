@@ -23,23 +23,29 @@ class Battleship:
             start = min(ship_coordinates)
             end = max(ship_coordinates)
 
-            if (
-                    start in self._mark_forbidden_coordinates
-                    or end in self._mark_forbidden_coordinates
-            ):
+            if not (start[0] == end[0] or start[1] == end[1]):
                 print(
-                    f"The coordinates {(start, end)} "
-                    f"are occupied or too close to the ship."
+                    f"Invalid ship coordinates "
+                    f"(not straight): {start} -> {end}"
                 )
                 continue
 
             ship = Ship(start, end)
 
-            if len(ship.decks) > 0:
-                self._field.update(
-                    {(deck.row, deck.column): ship for deck in ship.decks}
+            if any(
+                    (deck.row, deck.column) in self._mark_forbidden_coordinates
+                    for deck in ship.decks
+            ):
+                print(
+                    f"The coordinates {start} → {end} are "
+                    f"occupied or too close to another ship."
                 )
-                self._forbidden_coordinates_(start, end, ship)
+                continue
+
+            self._field.update(
+                {(deck.row, deck.column): ship for deck in ship.decks}
+            )
+            self._forbidden_coordinates_(start, end, ship)
 
     def fire(self, location: tuple[int, int]) -> str:
         if not (0 <= location[0] <= 9 and 0 <= location[1] <= 9):
