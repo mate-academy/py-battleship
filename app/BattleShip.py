@@ -6,13 +6,14 @@ class Battleship:
             self,
             ships: list[tuple[tuple[int, int], tuple[int, int]]]
     ) -> None:
-        self._forbidden_coordinates: set[tuple[int, int]] = set()
+        self._mark_forbidden_coordinates: set[tuple[int, int]] = set()
         self._field: dict[tuple[int, int], Ship] = {}
         self._field_ships(ships)
         try:
             self._validate_field(self._field)
         except ValueError as e:
             print(e)
+            raise
 
     def _field_ships(
             self,
@@ -23,8 +24,8 @@ class Battleship:
             end = max(ship_coordinates)
 
             if (
-                    start in self._forbidden_coordinates
-                    and end in self._forbidden_coordinates
+                    start in self._mark_forbidden_coordinates
+                    or end in self._mark_forbidden_coordinates
             ):
                 print(
                     f"The coordinates {(start, end)} "
@@ -42,7 +43,7 @@ class Battleship:
 
     def fire(self, location: tuple[int, int]) -> str:
         if not (0 <= location[0] <= 9 and 0 <= location[1] <= 9):
-            print(f"The location {location} does not exist.")
+            return f"The location {location} does not exist."
         elif location not in self._field:
             return "Miss!"
         else:
@@ -88,13 +89,13 @@ class Battleship:
                 if is_horizontal:
                     row_ = row
                     for _ in range(weight):
-                        self._forbidden_coordinates.add((row_, col))
+                        self._mark_forbidden_coordinates.add((row_, col))
                         row_ += 1
                     col += 1
                 else:
                     col_ = col
                     for _ in range(weight):
-                        self._forbidden_coordinates.add((row, col_))
+                        self._mark_forbidden_coordinates.add((row, col_))
                         col_ += 1
                     row += 1
             else:
@@ -129,8 +130,8 @@ class Battleship:
         three_deck_ships = []
         four_deck_ships = []
 
-        for ship in field.values():
-            length_ship = (list(field.values()).count(ship))
+        for ship in set(field.values()):
+            length_ship = len(ship.decks)
             ship_coordinate = (
                 (ship.decks[0].row, ship.decks[0].column),
                 (ship.decks[len(ship.decks) - 1].row,

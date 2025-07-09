@@ -53,22 +53,25 @@ class Ship:
         return start[0] == end[0] and start[1] != end[1]
 
     def _creation_deck(
-            self,
-            start: tuple[int, int],
+            self, start:
+            tuple[int, int],
             end: tuple[int, int]
     ) -> None:
-        deck_x = abs(start[0] - end[0])
-        deck_y = abs(start[1] - end[1])
+        if start[0] == end[0]:
+            row = start[0]
+            for col in range(min(start[1], end[1]), max(start[1], end[1]) + 1):
+                self._decks.append(Deck(row, col))
 
-        is_straight = deck_x == 0 or deck_y == 0
-        length = max(deck_y, deck_x) + 1
+        elif start[1] == end[1]:
+            col = start[1]
+            for row in range(min(start[0], end[0]), max(start[0], end[0]) + 1):
+                self._decks.append(Deck(row, col))
 
-        if 1 <= length <= 4 and is_straight:
-            for coordinate_x in range(start[0], end[0] + 1):
-                for coordinate_y in range(start[1], end[1] + 1):
-                    self._decks.append(Deck(coordinate_x, coordinate_y))
         else:
-            print(f"Invalid ship: {(start, end)}")
+            print(
+                f"Invalid ship coordinates: {start} -> {end}. "
+                f"Ships must be placed horizontally or vertically."
+            )
 
     def get_deck(self, row: int, column: int) -> Deck:
         return next(
