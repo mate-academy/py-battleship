@@ -1,34 +1,171 @@
+from math import dist
+from collections import Counter
+
+
 class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
+    def __init__(
+        self,
+        row: int,
+        column: int,
+        is_alive: bool = True
+    ) -> None:
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
+
+    def __repr__(self) -> str:
+        return f"Deck({self.row}, {self.column})"
+
+    def __str__(self) -> str:
+        return self.__repr__()
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    MAX_SHIP_LENGTH: int = 4
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    def __init__(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        is_drowned: bool = False
+    ) -> None:
+        self.length = int(dist(start, end)) + 1
+        if self.length > self.MAX_SHIP_LENGTH:
+            raise ValueError(
+                "Max length for ship "
+                f"it {self.MAX_SHIP_LENGTH}, not {self.length}"
+            )
+        if not self.length:
+            raise ValueError("Length of ship can`t be zero")
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+        self.decks: list[Deck] = []
+        self._create_decks(start, end)
+        self.is_drowned = is_drowned
+        self._alive_decks = self.length
+
+    def _create_decks(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int]
+    ) -> None:
+        # there it is necessary to avoid ZeroDivisionError
+        distance = self.length - 1 if self.length != 1 else 1
+        vector = (  # direction vector (unit vector)
+            (end[0] - start[0]) // distance,
+            (end[1] - start[1]) // distance
+        )
+        self.decks = [
+            Deck(
+                start[0] + (vector[0] * i),
+                start[1] + (vector[1] * i)
+            ) for i in range(0, self.length)
+        ]
+
+    def get_deck(self, row: int, column: int) -> Deck:
+        for deck in self.decks:
+            if row == deck.row and column == deck.column:
+                return deck
+        raise ValueError(f"Deck ({row}, {column}) is not present in this ship")
+
+    def fire(self, row: int, column: int) -> bool:
+        """returns True if the ship sank after this shot"""
+        deck = self.get_deck(row, column)
+        if not deck.is_alive:
+            raise ValueError(f"Deck ({row}, {column}) is already death")
+
+        deck.is_alive = False
+        self._alive_decks -= 1
+        if not self._alive_decks:
+            self.is_drowned = True
+        return self.is_drowned
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    SHIPS_COUNT = 10
+    DEFAULT_SIZES = [(1, 4), (2, 3), (3, 2), (4, 1)]
+    DIRECTIONS = (
+        (0, 1), (0, -1), (1, 0), (-1, 0),
+        (1, 1), (-1, 1), (1, -1), (-1, -1)
+    )
+    MAX_ROWS = 10
+    MAX_COLUMNS = 10
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def __init__(self, ships: list[tuple]) -> None:
+        self.field: dict[tuple, Ship] = {}
+        self._create_fields(ships)
+
+    def _is_valid_coord(self, row: int, column: int) -> bool:
+        return (
+            (0 <= row < self.MAX_ROWS)
+            and (0 <= column < self.MAX_COLUMNS)
+        )
+
+    def _create_fields(self, ships: list[tuple]) -> None:
+        for ship_info in ships:
+            ship = Ship(*ship_info)
+            for deck in ship.decks:
+                coords = deck.row, deck.column
+                if coords in self.field:
+                    raise ValueError(
+                        f"This cell ({coords[0]}, {coords[1]}) is "
+                        "already occupied"
+                    )
+                self.field[coords] = ship
+        self._validate_field(ships)
+
+    def _validate_field(self, ships: list[tuple]) -> None:
+        # the total number of the ships should be SHIP_COUNT
+        if len(ships) != self.SHIPS_COUNT:
+            raise ValueError(
+                "The number of ships must "
+                "be exactly {self.SHIPS_COUNT}"
+            )
+
+        # ships shouldn't be located in the neighboring cells
+        # (even if cells are neighbors by diagonal)
+        for coords, ship in self.field.items():
+            for direction in self.DIRECTIONS:
+                new_coords = (
+                    coords[0] + direction[0],
+                    coords[1] + direction[1]
+                )
+                if not self._is_valid_coord(*new_coords):
+                    continue
+                if (
+                    new_coords in self.field
+                    and self.field[new_coords] != ship
+                ):
+                    raise ValueError("Is not valid place for ship")
+
+        # validation of the correct number of ships of all sizes
+        freq = Counter(self.field[start].length for start, _ in ships)
+        if self.DEFAULT_SIZES != sorted(tuple(freq.items())):
+            raise ValueError("Wrong ships count")
+
+    def fire(self, location: tuple) -> str:
+        if ship := self.field.get(location):
+            if ship.fire(*location):
+                return "Sunk!"
+            return "Hit!"
+        return "Miss!"
+
+    def __repr__(self) -> str:
+        lines = []
+        for row in range(self.MAX_ROWS):
+            line = []
+            for column in range(self.MAX_COLUMNS):
+                location = row, column
+                if ship := self.field.get(location):
+                    if ship.is_drowned:
+                        line.append("x")
+                    elif ship.get_deck(*location).is_alive:
+                        line.append("□")
+                    else:
+                        line.append("*")
+                else:
+                    line.append("~")
+            lines.append(line)
+        return "\n".join("   ".join(line) for line in lines)
+
+    def __str__(self) -> str:
+        return self.__repr__()
