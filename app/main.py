@@ -130,8 +130,8 @@ class Battleship:
 
         if (
             ship_sizes[1] != 4
-            and ship_sizes[2] != 3
-            and ship_sizes[3] != 2
-            and ship_sizes[4] != 1
+            or ship_sizes[2] != 3
+            or ship_sizes[3] != 2
+            or ship_sizes[4] != 1
         ):
             raise ValueError("Wrong number of ships by sizes.")
