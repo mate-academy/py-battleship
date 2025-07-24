@@ -35,8 +35,6 @@ class Ship:
                 "Max length for ship "
                 f"it {self.MAX_SHIP_LENGTH}, not {self.length}"
             )
-        if not self.length:
-            raise ValueError("Length of ship can`t be zero")
 
         self.decks: list[Deck] = []
         self._create_decks(start, end)
@@ -91,8 +89,7 @@ class Battleship:
     MAX_COLUMNS = 10
 
     def __init__(self, ships: list[tuple]) -> None:
-        self.field: dict[tuple, Ship] = {}
-        self._create_fields(ships)
+        self.field = ships
 
     def _is_valid_coord(self, row: int, column: int) -> bool:
         return (
@@ -100,18 +97,27 @@ class Battleship:
             and (0 <= column < self.MAX_COLUMNS)
         )
 
+    @property
+    def field(self) -> dict[tuple, Ship]:
+        return self._field
+
+    @field.setter
+    def field(self, ships: list[tuple]) -> None:
+        self._field: dict[tuple, Ship] = {}
+        self._create_fields(ships)
+        self._validate_field(ships)
+
     def _create_fields(self, ships: list[tuple]) -> None:
         for ship_info in ships:
             ship = Ship(*ship_info)
             for deck in ship.decks:
                 coords = deck.row, deck.column
-                if coords in self.field:
+                if coords in self._field:
                     raise ValueError(
                         f"This cell ({coords[0]}, {coords[1]}) is "
                         "already occupied"
                     )
-                self.field[coords] = ship
-        self._validate_field(ships)
+                self._field[coords] = ship
 
     def _validate_field(self, ships: list[tuple]) -> None:
         # the total number of the ships should be SHIP_COUNT
@@ -123,7 +129,7 @@ class Battleship:
 
         # ships shouldn't be located in the neighboring cells
         # (even if cells are neighbors by diagonal)
-        for coords, ship in self.field.items():
+        for coords, ship in self._field.items():
             for direction in self.DIRECTIONS:
                 new_coords = (
                     coords[0] + direction[0],
@@ -132,18 +138,18 @@ class Battleship:
                 if not self._is_valid_coord(*new_coords):
                     continue
                 if (
-                    new_coords in self.field
-                    and self.field[new_coords] != ship
+                    new_coords in self._field
+                    and self._field[new_coords] != ship
                 ):
                     raise ValueError("Is not valid place for ship")
 
         # validation of the correct number of ships of all sizes
-        freq = Counter(self.field[start].length for start, _ in ships)
-        if self.DEFAULT_SIZES != sorted(tuple(freq.items())):
+        freq = Counter(self._field[start].length for start, _ in ships)
+        if self.DEFAULT_SIZES != sorted(list(freq.items())):
             raise ValueError("Wrong ships count")
 
     def fire(self, location: tuple) -> str:
-        if ship := self.field.get(location):
+        if ship := self._field.get(location):
             if ship.fire(*location):
                 return "Sunk!"
             return "Hit!"
@@ -155,7 +161,7 @@ class Battleship:
             line = []
             for column in range(self.MAX_COLUMNS):
                 location = row, column
-                if ship := self.field.get(location):
+                if ship := self._field.get(location):
                     if ship.is_drowned:
                         line.append("x")
                     elif ship.get_deck(*location).is_alive:
