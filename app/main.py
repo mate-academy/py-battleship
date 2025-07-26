@@ -16,9 +16,12 @@ class Ship:
             if start[0] == end[0]:
                 for i in range(start[1], end[1] + 1):
                     self.decks.append(Deck((start[0], i)))
-            else:
+            elif start[1] == end[1]:
                 for i in range(start[0], end[0] + 1):
                     self.decks.append(Deck((i, start[1])))
+            else:
+                raise ValueError("Ship must be either horizontal "
+                                 "or vertical, not diagonal!")
         else:
             self.decks = [Deck(start)]
         self.is_drowned = is_drowned
