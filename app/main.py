@@ -23,10 +23,10 @@ class Ship:
     def _create_decks(self) -> list[Deck]:
         (r1, c1), (r2, c2) = self.start, self.end
         decks = []
-        if r1 == r2:  # horizontal ship
+        if r1 == r2:
             for col in range(min(c1, c2), max(c1, c2) + 1):
                 decks.append(Deck(r1, col))
-        elif c1 == c2:  # vertical ship
+        elif c1 == c2:
             for row in range(min(r1, r2), max(r1, r2) + 1):
                 decks.append(Deck(row, c1))
         else:
@@ -60,6 +60,10 @@ class Battleship:
         self._validate_field()
 
     def fire(self, location: tuple) -> str:
+        row, col = location
+        if not (0 <= row < 10 and 0 <= col < 10):
+            return "Miss!"
+
         if location not in self.field:
             return "Miss!"
         ship = self.field[location]
@@ -80,19 +84,27 @@ class Battleship:
 
     def _validate_field(self) -> None:
         from collections import Counter
+
         sizes = [len(ship.decks) for ship in self.ships]
         counter = Counter(sizes)
-        if counter[1] != 4 or counter[2] != 3:
-            if counter[3] != 2 or counter[4] != 1:
-                raise ValueError("Incorrect fleet composition")
+
         if len(self.ships) != 10:
             raise ValueError("There must be exactly 10 ships")
+        if counter[1] != 4:
+            raise ValueError("There must be exactly 4 single-deck ships")
+        if counter[2] != 3:
+            raise ValueError("There must be exactly 3 double-deck ships")
+        if counter[3] != 2:
+            raise ValueError("There must be exactly 2 three-deck ships")
+        if counter[4] != 1:
+            raise ValueError("There must be exactly 1 four-deck ship")
+
         occupied = set(self.field.keys())
         for rr, cc in occupied:
             for dr in [-1, 0, 1]:
                 for dc in [-1, 0, 1]:
-                    if dr == dc == 0:
+                    if dr == 0 and dc == 0:
                         continue
                     nr, nc = rr + dr, cc + dc
                     if (nr, nc) in occupied and (nr, nc) not in self.field:
-                        raise ValueError("Ships too close!")
+                        raise ValueError("Ships are too close")
