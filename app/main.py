@@ -1,84 +1,99 @@
-from typing import Tuple, List, Optional
+from typing import List, Tuple, Dict
 
 
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(self, row: int, column: int) -> None:
         self.row = row
         self.column = column
-        self.is_alive = is_alive
+        self.is_alive = True
 
 
 class Ship:
-    def __init__(
-        self,
-        start: Tuple[int, int],
-        end: Tuple[int, int],
-        is_drowned: bool = False
-    ) -> None:
-        self.decks: List[Deck] = []
-        self.is_drowned = is_drowned
+    def __init__(self, decks: List[Deck]) -> None:
+        self.decks = decks
 
-        start_row, start_col = start
-        end_row, end_col = end
-
-        if start_row == end_row:
-            for col in range(min(start_col, end_col),
-                             max(start_col, end_col) + 1):
-                self.decks.append(Deck(start_row, col))
-        elif start_col == end_col:
-            for row in range(min(start_row, end_row),
-                             max(start_row, end_row) + 1):
-                self.decks.append(Deck(row, start_col))
-        else:
-            raise ValueError("Ship must be horizontal or vertical")
-
-    def get_deck(self, row: int, column: int) -> Optional[Deck]:
+    def get_deck(self, row: int, col: int) -> Deck | None:
         for deck in self.decks:
-            if deck.row == row and deck.column == column:
+            if deck.row == row and deck.column == col:
                 return deck
         return None
 
-    def fire(self, row: int, column: int) -> None:
-        deck = self.get_deck(row, column)
-        if deck and deck.is_alive:
-            deck.is_alive = False
-            if all(not d.is_alive for d in self.decks):
-                self.is_drowned = True
+    @property
+    def is_drowned(self) -> bool:
+        return all(not deck.is_alive for deck in self.decks)
 
 
 class Battleship:
     def __init__(
-            self,
-            ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
+        self,
+        ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]
     ) -> None:
-        self.field: dict[Tuple[int, int], Ship] = {}
         self.ships: List[Ship] = []
+        self.field: Dict[Tuple[int, int], Ship] = {}
 
         for start, end in ships:
-            ship = Ship(start, end)
+            decks = []
+            if start[0] == end[0]:  # horizontal
+                for col in range(start[1], end[1] + 1):
+                    decks.append(Deck(start[0], col))
+            else:  # vertical
+                for row in range(start[0], end[0] + 1):
+                    decks.append(Deck(row, start[1]))
+            ship = Ship(decks)
             self.ships.append(ship)
-            for deck in ship.decks:
+            for deck in decks:
                 self.field[(deck.row, deck.column)] = ship
 
-    def fire(self, location: Tuple[int, int]) -> str:
-        if location not in self.field:
+        self._validate_field()
+
+    def _validate_field(self) -> None:
+        if len(self.ships) != 10:
+            raise ValueError("Must be exactly 10 ships")
+
+        lengths = [len(ship.decks) for ship in self.ships]
+        expected = {1: 4, 2: 3, 3: 2, 4: 1}
+        actual = {length: lengths.count(length) for length in expected}
+
+        if actual != expected:
+            raise ValueError(f"Invalid ship distribution: {actual}")
+
+        occupied = set()
+        for ship in self.ships:
+            for deck in ship.decks:
+                for dr in [-1, 0, 1]:
+                    for dc in [-1, 0, 1]:
+                        neighbor = (deck.row + dr, deck.column + dc)
+                        if (neighbor in occupied
+                                and neighbor not in [(d.row, d.column)
+                                                     for d in ship.decks]):
+                            raise ValueError(f"Ships too close at {deck.row}, "
+                                             f"{deck.column}")
+                occupied.add((deck.row, deck.column))
+
+    def fire(self, target: Tuple[int, int]) -> str:
+        ship = self.field.get(target)
+        if not ship:
             return "Miss!"
 
-        ship = self.field[location]
-        ship.fire(*location)
+        deck = ship.get_deck(*target)
+        if deck and deck.is_alive:
+            deck.is_alive = False
+            return "Sunk!" if ship.is_drowned else "Hit!"
 
-        if ship.is_drowned:
-            return "Sunk!"
-        return "Hit!"
+        return "Miss!"
 
     def print_field(self) -> None:
-        grid: List[List[str]] = [["." for _ in range(10)] for _ in range(10)]
+        grid: List[List[str]] = [["~" for _ in range(10)] for _ in range(10)]
+
         for (row, col), ship in self.field.items():
             deck = ship.get_deck(row, col)
-            if deck and deck.is_alive:
-                grid[row][col] = "O"
-            else:
-                grid[row][col] = "X"
+            if deck:
+                if deck.is_alive:
+                    grid[row][col] = "□"
+                elif not ship.is_drowned:
+                    grid[row][col] = "*"
+                else:
+                    grid[row][col] = "x"
 
         for row in grid:
             print(" ".join(row))
