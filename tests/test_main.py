@@ -1,7 +1,7 @@
 from app.main import Battleship
 
 
-def test_battleship():
+def test_battleship() -> None:
     battle_ship = Battleship(
         ships=[
             ((2, 0), (2, 3)),
