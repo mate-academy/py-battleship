@@ -57,6 +57,7 @@ class Battleship:
         for ship in self.ships:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
+        self._validate_field()
 
     def fire(self, location: tuple) -> str:
         if location not in self.field:
@@ -76,3 +77,22 @@ class Battleship:
                     board[deck.row][deck.column] = "*"
         for row in board:
             print(" ".join(row))
+
+    def _validate_field(self) -> None:
+        from collections import Counter
+        sizes = [len(ship.decks) for ship in self.ships]
+        counter = Counter(sizes)
+        if counter[1] != 4 or counter[2] != 3:
+            if counter[3] != 2 or counter[4] != 1:
+                raise ValueError("Incorrect fleet composition")
+        if len(self.ships) != 10:
+            raise ValueError("There must be exactly 10 ships")
+        occupied = set(self.field.keys())
+        for rr, cc in occupied:
+            for dr in [-1, 0, 1]:
+                for dc in [-1, 0, 1]:
+                    if dr == dc == 0:
+                        continue
+                    nr, nc = rr + dr, cc + dc
+                    if (nr, nc) in occupied and (nr, nc) not in self.field:
+                        raise ValueError("Ships too close!")
