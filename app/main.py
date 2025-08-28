@@ -50,6 +50,7 @@ class Battleship:
         self._validate_field(ships)
         self.ships_to_field(ships)
         self.check_ship_types()
+        self.check_adjustments()
         self.set_battlefield()
         self.deploy_ships()
 
@@ -138,7 +139,7 @@ class Battleship:
                 occurence = 0
                 decks += 1
 
-    def check_anjustments(self) -> None:
+    def check_adjustments(self) -> None:
         # Checks if no ships are located next to each other
         occupied = []
         for ship in self.deployed_ships:
