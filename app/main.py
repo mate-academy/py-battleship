@@ -9,12 +9,7 @@ class Deck:
 
 
 class Ship:
-    def __init__(
-            self,
-            start: tuple,
-            end: tuple,
-            is_drowned: bool = False
-    ) -> None:
+    def __init__(self, start: tuple, end: tuple, is_drowned: bool = False) -> None:
         self.is_drowned = is_drowned
         self.decks = self.create_decks(start, end)
 
@@ -24,14 +19,10 @@ class Ship:
         end_row, end_col = end
         decks = []
         if start_row == end_row:
-            for col in range(
-                    min(start_col, end_col), max(start_col, end_col) + 1
-            ):
+            for col in range(min(start_col, end_col), max(start_col, end_col) + 1):
                 decks.append(Deck(start_row, col))
         elif start_col == end_col:
-            for row in range(
-                    min(start_row, end_row), max(start_row, end_row) + 1
-            ):
+            for row in range(min(start_row, end_row), max(start_row, end_row) + 1):
                 decks.append(Deck(row, start_col))
         else:
             raise ValueError("Ship must be placed vertically or horizontally")
@@ -96,9 +87,16 @@ class Battleship:
         total_decks = sum(len(ship.decks) for ship in self.ships)
         if len(self.field) != total_decks:
             raise ValueError("Ships overlap on the field.")
-        neighbors = [(-1, -1), (-1, 0), (-1, 1),
-                     (0, -1),           (0, 1),
-                     (1, -1),  (1, 0),  (1, 1)]
+        neighbors = [
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, -1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        ]
         for ship in self.ships:
             for deck in ship.decks:
                 r, c = deck.row, deck.column
@@ -106,4 +104,6 @@ class Battleship:
                     nr, nc = r + dr, c + dc
                     other = self.field.get((nr, nc))
                     if other is not None and other is not ship:
-                        raise ValueError("Ships must not be adjacent (even diagonally).")
+                        raise ValueError(
+                            "Ships must not be adjacent (even diagonally)."
+                        )
