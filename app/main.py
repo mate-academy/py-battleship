@@ -9,7 +9,12 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple, is_drowned: bool = False) -> None:
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
         self.is_drowned = is_drowned
         self.decks = self.create_decks(start, end)
 
@@ -19,10 +24,14 @@ class Ship:
         end_row, end_col = end
         decks = []
         if start_row == end_row:
-            for col in range(min(start_col, end_col), max(start_col, end_col) + 1):
+            for col in range(
+                    min(start_col, end_col), max(start_col, end_col) + 1
+            ):
                 decks.append(Deck(start_row, col))
         elif start_col == end_col:
-            for row in range(min(start_row, end_row), max(start_row, end_row) + 1):
+            for row in range(
+                    min(start_row, end_row), max(start_row, end_row) + 1
+            ):
                 decks.append(Deck(row, start_col))
         else:
             raise ValueError("Ship must be placed vertically or horizontally")
