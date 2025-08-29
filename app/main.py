@@ -1,3 +1,6 @@
+from collections import Counter
+
+
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
@@ -44,10 +47,8 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck is None:
             return False
-
         if not deck.is_alive:
             return False
-
         deck.is_alive = False
         if all(not d.is_alive for d in self.decks):
             self.is_drowned = True
@@ -63,6 +64,7 @@ class Battleship:
             self.ships.append(ship)
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
+        self._validate_field()
 
     def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
@@ -72,10 +74,36 @@ class Battleship:
         deck = ship.get_deck(row, col)
         if deck is None or not deck.is_alive:
             return "Miss!"
-
         ship.fire(row, col)
-
         if ship.is_drowned:
             return "Sunk!"
-        else:
-            return "Hit!"
+        return "Hit!"
+
+    def _validate_field(self) -> None:
+        if len(self.ships) != 10:
+            raise ValueError("The total number of ships must be 10.")
+        sizes = Counter(len(ship.decks) for ship in self.ships)
+        required = {1: 4, 2: 3, 3: 2, 4: 1}
+        for size, req_count in required.items():
+            if sizes.get(size, 0) != req_count:
+                raise ValueError(
+                    "Invalid ship distribution: expected "
+                    "4×1, 3×2, 2×3, 1×4 deck ships."
+                )
+        unexpected = [s for s in sizes if s not in required]
+        if unexpected:
+            raise ValueError(f"Unexpected ship sizes present: {unexpected}")
+        total_decks = sum(len(ship.decks) for ship in self.ships)
+        if len(self.field) != total_decks:
+            raise ValueError("Ships overlap on the field.")
+        neighbors = [(-1, -1), (-1, 0), (-1, 1),
+                     (0, -1),           (0, 1),
+                     (1, -1),  (1, 0),  (1, 1)]
+        for ship in self.ships:
+            for deck in ship.decks:
+                r, c = deck.row, deck.column
+                for dr, dc in neighbors:
+                    nr, nc = r + dr, c + dc
+                    other = self.field.get((nr, nc))
+                    if other is not None and other is not ship:
+                        raise ValueError("Ships must not be adjacent (even diagonally).")
