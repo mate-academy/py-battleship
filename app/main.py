@@ -47,12 +47,14 @@ class Ship:
 class Battleship:
     def __init__(self, ships: list[Ship]) -> None:
         self.field = {}
+        ships_created = []
         for ship_like in ships:
             if isinstance(ship_like, Ship):
                 ship = ship_like
             else:
                 start, end = ship_like
                 ship = Ship(start, end)
+            ships_created.append(ship)
             (row1, column1) = ship.start
             (row2, column2) = ship.end
             if row1 == row2:
@@ -62,11 +64,12 @@ class Battleship:
             elif column1 == column2:
                 for row in range(min(row1, row2), max(row1, row2) + 1):
                     self.field[(row, column1)] = ship
+        self._validate_field(ships_created)
 
     def _validate_field(self, ships: list[Ship]) -> None:
         if len(ships) != 10:
             raise ValueError("The length of the ships must be equal to 10.")
-        ship_lengths = {4: 0, 3: 0, 1: 0}
+        ship_lengths = {4: 0, 3: 0, 2: 0, 1: 0}
         for ship in ships:
             (row1, column1) = ship.start
             (row2, column2) = ship.end
@@ -82,7 +85,7 @@ class Battleship:
             raise ValueError("There should be 4 single-deck ships.")
         neighbor_offsets = [
             (-1, -1), (-1, 0), (-1, 1),
-            (0, -1), (-1, 0),
+            (0, -1), (0, 1),
             (1, -1), (1, 0), (1, 1),
         ]
         for (row, column), ship in self.field.items():
