@@ -13,6 +13,9 @@ class Ship:
         self.end = end
         (row1, column1) = start
         (row2, column2) = end
+        if not all(0 <= number <= 9 for number in (row1, column1,
+                                                   row2, column2)):
+            raise ValueError("Coordinates must be from 1 to 9.")
         if row1 == row2:
             for column in range(min(column1, column2),
                                 max(column1, column2) + 1):
@@ -40,8 +43,7 @@ class Ship:
         if all(deck.is_alive is False for deck in self.decks):
             self.is_drowned = True
             return "Sunk!"
-        else:
-            return "Hit!"
+        return "Hit!"
 
 
 class Battleship:
@@ -92,19 +94,20 @@ class Battleship:
             for delta_row, delta_column in neighbor_offsets:
                 neighboor_row = row + delta_row
                 neighboor_column = column + delta_column
-            neighbor_ship = self.field.get((neighboor_row, neighboor_column))
-            if neighbor_ship is not None and neighbor_ship != ship:
-                raise ValueError(
-                    f"Ships can't be adjacent (even diagonally): "
-                    f"{(row, column)} touches "
-                    f"{(neighboor_row, neighboor_column)}"
-                )
+                neighbor_ship = self.field.get((neighboor_row,
+                                                neighboor_column))
+                if neighbor_ship is not None and neighbor_ship != ship:
+                    raise ValueError(
+                        f"Ships can't be adjacent (even diagonally): "
+                        f"{(row, column)} touches "
+                        f"{(neighboor_row, neighboor_column)}"
+                    )
 
-    def fire(self, location: tuple) -> str:
-        if location not in self.field:
+    def fire(self, ceil: tuple) -> str:
+        if ceil not in self.field:
             return "Miss!"
-        ship = self.field[location]
-        return ship.fire(*location)
+        ship = self.field[ceil]
+        return ship.fire(*ceil)
 
     def print_field(self) -> None:
         for row in range(10):
