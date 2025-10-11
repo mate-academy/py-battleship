@@ -10,29 +10,39 @@ class Deck:
 
 class Ship:
     def __init__(
-            self,
-            start: Tuple[int, int],
-            end: Tuple[int, int],
-            is_drowned: bool = False,
+        self,
+        start: Tuple[int, int],
+        end: Tuple[int, int],
+        is_drowned: bool = False,
     ) -> None:
-        self.start = start
-        self.end = end
         self.is_drowned = is_drowned
         self.decks: List[Deck] = []
 
         start_row, start_column = start
         end_row, end_column = end
 
+        self._validate_bounds(start_row, start_column)
+        self._validate_bounds(end_row, end_column)
+
         if start_row == end_row:
             step = 1 if end_column >= start_column else -1
             for column in range(start_column, end_column + step, step):
+                self._validate_bounds(start_row, column)
                 self.decks.append(Deck(start_row, column))
         elif start_column == end_column:
             step = 1 if end_row >= start_row else -1
             for row in range(start_row, end_row + step, step):
+                self._validate_bounds(row, start_column)
                 self.decks.append(Deck(row, start_column))
         else:
             raise ValueError("Ships must be horizontal or vertical")
+
+    @staticmethod
+    def _validate_bounds(row: int, column: int) -> None:
+        if not (0 <= row <= 9 and 0 <= column <= 9):
+            raise ValueError(
+                f"Coordinates ({row}, {column}) out of 10x10 field bounds"
+            )
 
     def get_deck(self, row: int, column: int) -> Optional[Deck]:
         for deck in self.decks:
@@ -52,7 +62,7 @@ class Ship:
 
 class Battleship:
     def __init__(
-            self, ships: Iterable[Tuple[Tuple[int, int], Tuple[int, int]]]
+        self, ships: Iterable[Tuple[Tuple[int, int], Tuple[int, int]]]
     ) -> None:
         self.ships: List[Ship] = []
         self.field: Dict[Tuple[int, int], Ship] = {}
@@ -67,11 +77,17 @@ class Battleship:
                 self.field[coordinates] = ship
 
     def fire(self, location: Tuple[int, int]) -> str:
+        row, column = location
+
+        if not (0 <= row <= 9 and 0 <= column <= 9):
+            raise ValueError(
+                f"Shot coordinates ({row}, {column}) out of 10x10 field bounds"
+            )
+
         ship = self.field.get(location)
         if ship is None:
             return "Miss!"
 
-        row, column = location
         hit = ship.fire(row, column)
         if not hit:
             return "Miss!"
