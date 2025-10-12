@@ -50,12 +50,14 @@ class Battleship:
             self.ships.append(ship)
 
             for deck in ship.decks:
+                if (deck.row, deck.column) in self.field:
+                    raise ValueError("Ships shouldn't overlap")
                 self.field[(deck.row, deck.column)] = ship
 
         self._validate_field()
 
     def _validate_field(self) -> None:
-        if len(self.ships) > 10:
+        if len(self.ships) != 10:
             raise ValueError("The total number of ships should be 10")
 
         count_single_deck = 0
