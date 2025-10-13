@@ -14,6 +14,8 @@ class Ship:
         self.decks = []
 
         # Create decks and save them to a list `self.decks`
+        if start[0] != end[0] and start[1] != end[1]:
+            raise ValueError("The ships must be horizontal or vertical")
         if start[0] == end[0]:  # horizontal ship
             row = start[0]
             for column in range(min(start[1], end[1]),
@@ -46,13 +48,17 @@ class Battleship:
         self.field = {}
 
         for start, end in ships:
-            ship = Ship(start, end)
-            self.ships.append(ship)
+            if ((0 <= start[0] <= 9 and 0 <= start[1] <= 9)
+                    and (0 <= end[0] <= 9 and 0 <= end[1] <= 9)):
+                ship = Ship(start, end)
+                self.ships.append(ship)
 
-            for deck in ship.decks:
-                if (deck.row, deck.column) in self.field:
-                    raise ValueError("Ships shouldn't overlap")
-                self.field[(deck.row, deck.column)] = ship
+                for deck in ship.decks:
+                    if (deck.row, deck.column) in self.field:
+                        raise ValueError("Ships shouldn't overlap")
+                    self.field[(deck.row, deck.column)] = ship
+            else:
+                raise ValueError("The coordinates are invalid")
 
         self._validate_field()
 
@@ -60,30 +66,23 @@ class Battleship:
         if len(self.ships) != 10:
             raise ValueError("The total number of ships should be 10")
 
-        count_single_deck = 0
-        count_double_decks = 0
-        count_three_decks = 0
-        count_four_decks = 0
+        size_dict = {}
         for ship in self.ships:
-            if ship.start == ship.end:
-                count_single_deck += 1
-            if (abs(ship.start[0] - ship.end[0]) == 1
-                    or abs(ship.start[1] - ship.end[1]) == 1):
-                count_double_decks += 1
-            if (abs(ship.start[0] - ship.end[0]) == 2
-                    or abs(ship.start[1] - ship.end[1]) == 2):
-                count_three_decks += 1
-            if (abs(ship.start[0] - ship.end[0]) == 3
-                    or abs(ship.start[1] - ship.end[1]) == 3):
-                count_four_decks += 1
-        if count_single_deck != 4:
+            if ship.decks:
+                size = len(ship.decks)
+                if size not in size_dict:
+                    size_dict[size] = 1
+                else:
+                    size_dict[size] += 1
+
+        if size_dict.get(1, 0) != 4:
             raise ValueError("There should be 4 single-deck ships")
-        if count_double_decks != 3:
+        if size_dict.get(2, 0) != 3:
             raise ValueError("There should be 3 double-decks ships")
-        if count_three_decks != 2:
+        if size_dict.get(3, 0) != 2:
             raise ValueError("There should be 2 three-decks ships")
-        if count_four_decks != 1:
-            raise ValueError("There should be 1 four-decks ship ")
+        if size_dict.get(4, 0) != 1:
+            raise ValueError("There should be 1 four-decks ship")
 
         all_decks = []
         for index_ship, ship in enumerate(self.ships):
