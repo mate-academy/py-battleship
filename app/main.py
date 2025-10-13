@@ -23,7 +23,8 @@ class Ship:
                 self.decks.append(Deck(row, column))
         elif self.start[1] == self.end[1]:  # vertical ship
             column = self.start[1]
-            for row in range(min(self.start[0], self.end[0]), max(self.start[0], self.end[0]) + 1):
+            for row in range(min(self.start[0], self.end[0]),
+                             max(self.start[0], self.end[0]) + 1):
                 self.decks.append(Deck(row, column))
 
     def get_deck(self, row: int, column: int) -> Deck:
