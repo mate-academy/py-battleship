@@ -26,7 +26,7 @@ class Ship:
                 raise ValueError("Ship coordinates must be integer.")
             if v_ < 0 or v_ > 9:
                 raise ValueError(
-                    "Coordinates must be within 0..10 (10x10 grid)."
+                    "Coordinates must be within 0..9 (10x10 grid)."
                 )
 
         if sr != er and sc != ec:
@@ -126,6 +126,13 @@ class Battleship:
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
+        if not (isinstance(location, tuple) and len(location) == 2):
+            raise ValueError("Location must be (r, c).")
+        row, col = location
+        if not (isinstance(row, int) and isinstance(col, int)):
+            raise ValueError("Coordinates must be integer.")
+        if not ((0 <= row <= 9) and (0 <= col <= 9)):
+            raise ValueError("Coordinates must be within 0..9")
         if location not in self.field:
             return "Miss!"
         ship = self.field[location]
