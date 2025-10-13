@@ -14,16 +14,16 @@ class Ship:
         self.decks = []
 
         # Create decks and save them to a list `self.decks`
-        if start[0] != end[0] and start[1] != end[1]:
+        if self.start[0] != self.end[0] and self.start[1] != self.end[1]:
             raise ValueError("The ships must be horizontal or vertical")
-        if start[0] == end[0]:  # horizontal ship
-            row = start[0]
-            for column in range(min(start[1], end[1]),
-                                max(start[1], end[1]) + 1):
+        if self.start[0] == self.end[0]:  # horizontal ship
+            row = self.start[0]
+            for column in range(min(self.start[1], self.end[1]),
+                                max(self.start[1], self.end[1]) + 1):
                 self.decks.append(Deck(row, column))
-        elif start[1] == end[1]:  # vertical ship
-            column = start[1]
-            for row in range(min(start[0], end[0]), max(start[0], end[0]) + 1):
+        elif self.start[1] == self.end[1]:  # vertical ship
+            column = self.start[1]
+            for row in range(min(self.start[0], self.end[0]), max(self.start[0], self.end[0]) + 1):
                 self.decks.append(Deck(row, column))
 
     def get_deck(self, row: int, column: int) -> Deck:
