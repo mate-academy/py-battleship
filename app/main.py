@@ -70,7 +70,7 @@ class Battleship:
             for deck in ship.decks:
                 if ship.is_drowned:
                     printed_field[deck.row][deck.column] = "x"
-                if deck.is_alive:
+                elif deck.is_alive:
                     printed_field[deck.row][deck.column] = u"\u25A1"
                 else:
                     printed_field[deck.row][deck.column] = "*"
@@ -118,5 +118,4 @@ class Battleship:
                 and counter_double_deck_ships == 3
                 and counter_single_deck_ships == 4):
             return True
-        else:
-            return False
+        return False
