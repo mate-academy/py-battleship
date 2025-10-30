@@ -11,7 +11,7 @@ class Battleship:
         """
         Initialize the game field with given ships.
 
-        :param ships: List of tuples representing ships by their end coordinates
+        :param ships: List of ships defined by their end coordinates
         """
         self.size: int = 10
         self.field: List[List[str]] = [
