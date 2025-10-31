@@ -1,5 +1,11 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
+    def __init__(
+            self,
+            row: int,
+            column: int,
+            is_alive: bool = True
+    ) -> None:
+
         self.is_alive = is_alive
         self.row = row
         self.column = column
@@ -7,7 +13,13 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
+
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
@@ -15,7 +27,7 @@ class Ship:
 
         self.decks = [Deck(*coords) for coords in self.find_coords()]
 
-    def find_coords(self):
+    def find_coords(self) -> None:
         coords = []
 
         x1, y1 = self.start
@@ -35,12 +47,11 @@ class Ship:
 
         return coords
 
-
     # def get_deck(self, row, column):
     #     # Find the corresponding deck in the list
     #     pass
 
-    def fire(self, deck, is_drowned=None):
+    def fire(self, deck: Deck, is_drowned: bool = None) -> None:
         deck.is_alive = False
         self.fire_decks += 1
         if is_drowned:
@@ -48,25 +59,29 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list[tuple]):
+    def __init__(self, ships: list[tuple]) -> None:
         self.count = 0
-        self.ships_count = {4: 0, 3: 0, 2: 0, 1: 0}
-        self.ship_limits = {4: 1, 3: 2, 2: 3, 1: 4}
-        self.ships = [Ship(start, end) for start, end in ships if self._validation_field(start, end)]
+        self.ship_check = {4: 0, 3: 0, 2: 0, 1: 0}
+        self.ship_limit = {4: 1, 3: 2, 2: 3, 1: 4}
+        self.ships = [
+            Ship(start, end)
+            for start, end in ships
+            if self._validation_field(start, end)
+        ]
 
-    def _validation_field(self, start, end):
+    def _validation_field(self, start: tuple, end: tuple) -> bool:
         if self.count <= 10:
-            ship_lenght = end[0] - start[0] + 1 if end[1] == start[1] else end[1] - start[1] + 1
+            ship_lenght = end[0] - start[0] + 1 \
+                if end[1] == start[1] else end[1] - start[1] + 1
 
-            if ship_lenght in self.ship_limits:
-                if self.ships_count[ship_lenght] < self.ship_limits[ship_lenght]:
-                    self.ships_count[ship_lenght] += 1
+            if ship_lenght in self.ship_limit:
+                if self.ship_check[ship_lenght] < self.ship_limit[ship_lenght]:
+                    self.ship_check[ship_lenght] += 1
             self.count += 1
             return True
         return False
 
-
-    def fire(self, location: tuple):
+    def fire(self, location: tuple) -> str:
         for ship in self.ships:
             if not ship.is_drowned:
 
