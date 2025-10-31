@@ -1,15 +1,33 @@
+def find_coords(start: tuple, end: tuple) -> None:
+    coords = []
+
+    x1, y1 = start
+    x2, y2 = end
+
+    if y1 == y2:
+        step_x = 1 if x1 < x2 else -1
+
+        for x in range(x1, x2 + step_x, step_x):
+            coords.append((x, y1))
+
+    elif x1 == x2:
+        step_y = 1 if y1 < y2 else -1
+
+        for y in range(y1, y2 + step_y, step_y):
+            coords.append((x1, y))
+
+    return coords
+
+
 class Deck:
     def __init__(
             self,
-            row: int,
-            column: int,
+            coords: tuple,
             is_alive: bool = True
     ) -> None:
 
         self.is_alive = is_alive
-        self.row = row
-        self.column = column
-        self.coords = (row, column)
+        self.coords = coords
 
 
 class Ship:
@@ -25,31 +43,7 @@ class Ship:
         self.is_drowned = is_drowned
         self.fire_decks = 0
 
-        self.decks = [Deck(*coords) for coords in self.find_coords()]
-
-    def find_coords(self) -> None:
-        coords = []
-
-        x1, y1 = self.start
-        x2, y2 = self.end
-
-        if y1 == y2:
-            step_x = 1 if x1 < x2 else -1
-
-            for x in range(x1, x2 + step_x, step_x):
-                coords.append((x, y1))
-
-        elif x1 == x2:
-            step_y = 1 if y1 < y2 else -1
-
-            for y in range(y1, y2 + step_y, step_y):
-                coords.append((x1, y))
-
-        return coords
-
-    # def get_deck(self, row, column):
-    #     # Find the corresponding deck in the list
-    #     pass
+        self.decks = [Deck(coords) for coords in find_coords(self.start, self.end)]
 
     def fire(self, deck: Deck, is_drowned: bool = None) -> None:
         deck.is_alive = False
@@ -61,6 +55,7 @@ class Ship:
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
         self.count = 0
+        self.deadline = []
         self.ship_check = {4: 0, 3: 0, 2: 0, 1: 0}
         self.ship_limit = {4: 1, 3: 2, 2: 3, 1: 4}
         self.ships = [
@@ -71,14 +66,28 @@ class Battleship:
 
     def _validation_field(self, start: tuple, end: tuple) -> bool:
         if self.count <= 10:
-            ship_lenght = end[0] - start[0] + 1 \
-                if end[1] == start[1] else end[1] - start[1] + 1
+            ship_lenght = abs(end[0] - start[0]) + 1 \
+                if end[1] == start[1] else abs(end[1] - start[1]) + 1
 
             if ship_lenght in self.ship_limit:
                 if self.ship_check[ship_lenght] < self.ship_limit[ship_lenght]:
-                    self.ship_check[ship_lenght] += 1
-            self.count += 1
-            return True
+                    if start[0] == end[0]:
+                        if start[0] != 0:
+                            self.deadline.extend(find_coords([start[0] + 1, start[1]], [end[0] + 1, end[1]]))
+                            if start[1] != end[1]:
+                                if start[1] != 0:
+                                    self.deadline.extend(find_coords((start[0] - 1, start[1] - 1), (start[0] + 1, start[1] - 1)))
+                        if start[0] != 9:
+                            self.deadline.extend(find_coords([start[0] - 1, start[1]], [end[0] - 1, end[1]]))
+                    else:
+                        self.deadline.append([end[0] + 1, end[1]])
+
+                    if start not in self.deadline and end not in self.deadline:
+                        self.count += 1
+                        self.ship_check[ship_lenght] += 1
+                        return True
+            # Validator deadline
+
         return False
 
     def fire(self, location: tuple) -> str:
