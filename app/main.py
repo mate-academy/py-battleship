@@ -11,9 +11,8 @@ class Ship:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
-        self.fire = 0
+        self.fire_decks = 0
 
-        # self.coords = self.find_coords()
         self.decks = [Deck(*coords) for coords in self.find_coords()]
 
     def find_coords(self):
@@ -41,10 +40,11 @@ class Ship:
     #     # Find the corresponding deck in the list
     #     pass
 
-    # def fire(self, row, column):
-    #     # Change the `is_alive` status of the deck
-    #     # And update the `is_drowned` value if it's needed
-    #     pass
+    def fire(self, deck, is_drowned=None):
+        deck.is_alive = False
+        self.fire_decks += 1
+        if is_drowned:
+            self.is_drowned = True
 
 
 class Battleship:
@@ -53,7 +53,6 @@ class Battleship:
         self.ships_count = {4: 0, 3: 0, 2: 0, 1: 0}
         self.ship_limits = {4: 1, 3: 2, 2: 3, 1: 4}
         self.ships = [Ship(start, end) for start, end in ships if self._validation_field(start, end)]
-        # print([ship for ship in self.ships])
 
     def _validation_field(self, start, end):
         if self.count <= 10:
@@ -70,36 +69,14 @@ class Battleship:
     def fire(self, location: tuple):
         for ship in self.ships:
             if not ship.is_drowned:
+
                 for deck in ship.decks:
                     if location == deck.coords and deck.is_alive:
-                        deck.is_alive = False
-                        ship.fire += 1
-                        if ship.fire == len(ship.decks):
-                            ship.is_drowned = True
+
+                        if ship.fire_decks == len(ship.decks) - 1:
+                            ship.fire(deck, is_drowned=True)
                             return "Sunk!"
+
+                        ship.fire(deck)
                         return "Hit!"
         return "Miss!"
-
-# battle_ship = Battleship(
-#     ships=[
-#         ((0, 0), (0, 3)),
-#         ((0, 5), (0, 6)),
-#         ((0, 8), (0, 9)),
-#         ((2, 0), (4, 0)),
-#         ((2, 4), (2, 6)),
-#         ((2, 8), (2, 9)),
-#         ((9, 9), (9, 9)),
-#         ((7, 7), (7, 7)),
-#         ((7, 9), (7, 9)),
-#         ((9, 7), (9, 7)),
-#     ]
-# )
-#
-# print(battle_ship.fire((0, 0)))
-# print(battle_ship.fire((0, 1)))
-# print(battle_ship.fire((0, 2)))
-# print(battle_ship.fire((0, 3)))
-#
-# print(battle_ship.fire((0, 0)))
-#
-
