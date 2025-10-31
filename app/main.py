@@ -1,34 +1,105 @@
 class Deck:
     def __init__(self, row, column, is_alive=True):
-        pass
+        self.is_alive = is_alive
+        self.row = row
+        self.column = column
+        self.coords = (row, column)
 
 
 class Ship:
     def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+        self.start = start
+        self.end = end
+        self.is_drowned = is_drowned
+        self.fire = 0
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+        # self.coords = self.find_coords()
+        self.decks = [Deck(*coords) for coords in self.find_coords()]
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    def find_coords(self):
+        coords = []
+
+        x1, y1 = self.start
+        x2, y2 = self.end
+
+        if y1 == y2:
+            step_x = 1 if x1 < x2 else -1
+
+            for x in range(x1, x2 + step_x, step_x):
+                coords.append((x, y1))
+
+        elif x1 == x2:
+            step_y = 1 if y1 < y2 else -1
+
+            for y in range(y1, y2 + step_y, step_y):
+                coords.append((x1, y))
+
+        return coords
+
+
+    # def get_deck(self, row, column):
+    #     # Find the corresponding deck in the list
+    #     pass
+
+    # def fire(self, row, column):
+    #     # Change the `is_alive` status of the deck
+    #     # And update the `is_drowned` value if it's needed
+    #     pass
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: list[tuple]):
+        self.count = 0
+        self.ships_count = {4: 0, 3: 0, 2: 0, 1: 0}
+        self.ship_limits = {4: 1, 3: 2, 2: 3, 1: 4}
+        self.ships = [Ship(start, end) for start, end in ships if self._validation_field(start, end)]
+        # print([ship for ship in self.ships])
+
+    def _validation_field(self, start, end):
+        if self.count <= 10:
+            ship_lenght = end[0] - start[0] + 1 if end[1] == start[1] else end[1] - start[1] + 1
+
+            if ship_lenght in self.ship_limits:
+                if self.ships_count[ship_lenght] < self.ship_limits[ship_lenght]:
+                    self.ships_count[ship_lenght] += 1
+            self.count += 1
+            return True
+        return False
+
 
     def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+        for ship in self.ships:
+            if not ship.is_drowned:
+                for deck in ship.decks:
+                    if location == deck.coords and deck.is_alive:
+                        deck.is_alive = False
+                        ship.fire += 1
+                        if ship.fire == len(ship.decks):
+                            ship.is_drowned = True
+                            return "Sunk!"
+                        return "Hit!"
+        return "Miss!"
+
+# battle_ship = Battleship(
+#     ships=[
+#         ((0, 0), (0, 3)),
+#         ((0, 5), (0, 6)),
+#         ((0, 8), (0, 9)),
+#         ((2, 0), (4, 0)),
+#         ((2, 4), (2, 6)),
+#         ((2, 8), (2, 9)),
+#         ((9, 9), (9, 9)),
+#         ((7, 7), (7, 7)),
+#         ((7, 9), (7, 9)),
+#         ((9, 7), (9, 7)),
+#     ]
+# )
+#
+# print(battle_ship.fire((0, 0)))
+# print(battle_ship.fire((0, 1)))
+# print(battle_ship.fire((0, 2)))
+# print(battle_ship.fire((0, 3)))
+#
+# print(battle_ship.fire((0, 0)))
+#
+
