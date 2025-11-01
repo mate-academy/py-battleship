@@ -79,27 +79,27 @@ class Battleship:
         row, column = location
         if not self.field.get((row, column)):
             return "Miss!"
+
+        ship = self.field[(row, column)]
+
+        deck = ship.get_deck(row, column)
+
+        if not deck:
+            return "Miss!"
+
+        if not deck.is_alive:
+            return "Hit!"
+
+        deck.is_alive = False
+
+        if all(deck.is_alive is False for deck in ship.decks):
+            ship.is_drowned = True
+            for deck in ship.decks:
+                self.array[deck.row][deck.column] = "x"
+            return "Sunk!"
         else:
-            ship = self.field[(row, column)]
-
-            deck = ship.get_deck(row, column)
-
-            if not deck:
-                return "Miss"
-
-            if not deck.is_alive:
-                return "Already hit!"
-
-            deck.is_alive = False
-
-            if all(deck.is_alive is False for deck in ship.decks):
-                ship.is_drowned = True
-                for deck in ship.decks:
-                    self.array[deck.row][deck.column] = "x"
-                return "Sunk!"
-            else:
-                self.array[row][column] = "*"
-                return "Hit!"
+            self.array[row][column] = "*"
+            return "Hit!"
 
     def print_field(self) -> None:
 
