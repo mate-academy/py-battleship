@@ -9,11 +9,9 @@ class Ship:
     def __init__(self,
                  start: tuple,
                  end: tuple,
-                 is_drowned: bool = False
                  ) -> None:
         self.start = start
         self.end = end
-        self.is_drowned = is_drowned
 
         row_1, column_1 = self.start
         row_2, column_2 = self.end
@@ -42,21 +40,6 @@ class Ship:
             if deck.row == row and deck.column == column:
                 return deck
         return None
-
-    def fire(self, row: int, column: int) -> None:
-        hit = False
-        for deck in self.decks:
-            if deck.row == row and deck.column == column:
-                deck.is_alive = False
-                if all(not deck.is_alive for deck in self.decks):
-                    self.is_drowned = True
-                    hit = True
-                    print("Sunk!")
-                else:
-                    hit = True
-                    print("Hit!")
-        if hit is False:
-            print("Miss!")
 
 
 class Battleship:
@@ -93,13 +76,11 @@ class Battleship:
         deck.is_alive = False
 
         if all(deck.is_alive is False for deck in ship.decks):
-            ship.is_drowned = True
             for deck in ship.decks:
                 self.array[deck.row][deck.column] = "x"
             return "Sunk!"
-        else:
-            self.array[row][column] = "*"
-            return "Hit!"
+        self.array[row][column] = "*"
+        return "Hit!"
 
     def print_field(self) -> None:
 
