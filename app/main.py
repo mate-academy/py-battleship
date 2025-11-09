@@ -85,4 +85,3 @@ class Battleship:
                             if self.field[(near_row, near_col)] != ship:
                                 return False
         return True
-
