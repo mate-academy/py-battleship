@@ -23,7 +23,6 @@ class Ship:
         end: Tuple[int, int],
     ) -> None:
         self.decks: List[Deck] = self._generate_decks(start, end)
-        self.is_drowned: bool = False
 
     def _generate_decks(
         self,
@@ -52,13 +51,14 @@ class Ship:
 
     def fire(self, row: int, column: int) -> str:
         deck = self.get_deck(row, column)
-        if deck is None or not deck.is_alive:
+        if deck is None:
             return "Miss!"
-        deck.is_alive = False
-        if all(not d.is_alive for d in self.decks):
-            self.is_drowned = True
-            return "Sunk!"
-        return "Hit!"
+        if deck.is_alive:
+            deck.is_alive = False
+            if all(not d.is_alive for d in self.decks):
+                return "Sunk!"
+            return "Hit!"
+        return "Hit!"  # Repeated shot on already hit deck
 
 
 class Battleship:
@@ -67,7 +67,6 @@ class Battleship:
         ships: List[Tuple[Tuple[int, int], Tuple[int, int]]],
     ) -> None:
         self.field: dict[Tuple[int, int], Ship] = {}
-        self.ships: List[Ship] = []
         self._place_ships(ships)
 
     def _place_ships(
@@ -76,7 +75,6 @@ class Battleship:
     ) -> None:
         for start, end in ships:
             ship = Ship(start, end)
-            self.ships.append(ship)
             for deck in ship.decks:
                 coord = deck.coordinates()
                 if coord in self.field:
