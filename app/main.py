@@ -2,7 +2,12 @@ from typing import List, Tuple, Optional
 
 
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(
+        self,
+        row: int,
+        column: int,
+        is_alive: bool = True,
+    ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -12,17 +17,31 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: Tuple[int, int], end: Tuple[int, int]) -> None:
+    def __init__(
+        self,
+        start: Tuple[int, int],
+        end: Tuple[int, int],
+    ) -> None:
         self.decks: List[Deck] = self._generate_decks(start, end)
         self.is_drowned: bool = False
 
-    def _generate_decks(self, start: Tuple[int, int], end: Tuple[int, int]) -> List[Deck]:
+    def _generate_decks(
+        self,
+        start: Tuple[int, int],
+        end: Tuple[int, int],
+    ) -> List[Deck]:
         r1, c1 = start
         r2, c2 = end
         if r1 == r2:
-            return [Deck(r1, c) for c in range(min(c1, c2), max(c1, c2) + 1)]
+            return [
+                Deck(r1, c)
+                for c in range(min(c1, c2), max(c1, c2) + 1)
+            ]
         if c1 == c2:
-            return [Deck(r, c1) for r in range(min(r1, r2), max(r1, r2) + 1)]
+            return [
+                Deck(r, c1)
+                for r in range(min(r1, r2), max(r1, r2) + 1)
+            ]
         raise ValueError("Ships must be placed horizontally or vertically.")
 
     def get_deck(self, row: int, column: int) -> Optional[Deck]:
@@ -43,12 +62,18 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]) -> None:
+    def __init__(
+        self,
+        ships: List[Tuple[Tuple[int, int], Tuple[int, int]]],
+    ) -> None:
         self.field: dict[Tuple[int, int], Ship] = {}
         self.ships: List[Ship] = []
         self._place_ships(ships)
 
-    def _place_ships(self, ships: List[Tuple[Tuple[int, int], Tuple[int, int]]]) -> None:
+    def _place_ships(
+        self,
+        ships: List[Tuple[Tuple[int, int], Tuple[int, int]]],
+    ) -> None:
         for start, end in ships:
             ship = Ship(start, end)
             self.ships.append(ship)
