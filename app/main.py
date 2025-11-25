@@ -53,10 +53,11 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
-        self.ships = ships
         self.field = {}
 
-        for ship in self.ships:
+        for ship in ships:
+            if ship[0][0] > ship[1][0] or ship[0][1] > ship[1][1]:
+                ship = (ship[1], ship[0])
             self.field[ship] = Ship(ship[0], ship[1])
 
     def fire(self, location: tuple) -> str:
@@ -69,27 +70,26 @@ class Battleship:
                     return "Hit!"
         return "Miss!"
 
-
-def print_field(battle_ship: Battleship) -> None:
-    matrix = []
-    for _ in range(10):
-        new_line = []
+    def print_field(self) -> None:
+        matrix = []
         for _ in range(10):
-            new_line.append("~")
-        matrix.append(new_line)
+            new_line = []
+            for _ in range(10):
+                new_line.append("~")
+            matrix.append(new_line)
 
-    for ship in battle_ship.field.values():
-        for deck in ship.decks:
-            if not ship.is_drowned:
-                if not deck.is_alive:
-                    matrix[deck.row][deck.column] = "*"
-                    continue
-                matrix[deck.row][deck.column] = "□"
-            else:
-                matrix[deck.row][deck.column] = "x"
+        for ship in self.field.values():
+            for deck in ship.decks:
+                if not ship.is_drowned:
+                    if not deck.is_alive:
+                        matrix[deck.row][deck.column] = "*"
+                        continue
+                    matrix[deck.row][deck.column] = "□"
+                else:
+                    matrix[deck.row][deck.column] = "x"
 
-    for line in matrix:
-        lines = ""
-        for column in line:
-            lines += f" {column} "
-        print(lines)
+        for line in matrix:
+            lines = ""
+            for column in line:
+                lines += f" {column} "
+            print(lines)
