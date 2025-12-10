@@ -1,11 +1,13 @@
 class Deck:
     def __init__(self, row, column, is_alive=True):
         pass
+        pass
 
 
 class Ship:
     def __init__(self, start, end, is_drowned=False):
         # Create decks and save them to a list `self.decks`
+        pass
         pass
 
     def get_deck(self, row, column):
