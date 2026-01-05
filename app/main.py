@@ -77,4 +77,4 @@ class Battleship:
                     field += "~"
             field += "\n"
 
-        return field
+        print(field)
