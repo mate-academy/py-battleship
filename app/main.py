@@ -12,25 +12,23 @@ class Ship:
             end: tuple,
             is_drowned: bool = False
     ) -> None:
-        self.start = start
-        self.end = end
         self.is_drowned = is_drowned
         self.decks = []
 
-        if self.start == self.end:
-            self.decks.append(Deck(self.start[0], self.start[1], True))
-        elif self.start[0] == self.end[0]:
+        if start == end:
+            self.decks.append(Deck(start[0], start[1], True))
+        elif start[0] == end[0]:
             for num in range(
-                    min(self.start[1], self.end[1]),
-                    max(self.start[1], self.end[1]) + 1
+                    min(start[1], end[1]),
+                    max(start[1], end[1]) + 1
             ):
-                self.decks.append(Deck(self.start[0], num, True))
-        elif self.start[1] == self.end[1]:
+                self.decks.append(Deck(start[0], num, True))
+        elif start[1] == end[1]:
             for num in range(
-                    min(self.start[0], self.end[0]),
-                    max(self.start[0], self.end[0]) + 1
+                    min(start[0], end[0]),
+                    max(start[0], end[0]) + 1
             ):
-                self.decks.append(Deck(num, self.start[1], True))
+                self.decks.append(Deck(num, start[1], True))
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
@@ -42,14 +40,13 @@ class Ship:
         deck = self.get_deck(row, column)
         if deck is None:
             return "Miss!"
-        elif deck.is_alive:
-            deck.is_alive = False
-            if any(deck.is_alive for deck in self.decks):
-                return "Hit!"
-            else:
-                self.is_drowned = True
-                return "Sunk!"
-        return "Hit!"
+        if not deck.is_alive:
+            return "Miss!"
+        deck.is_alive = False
+        if any(deck.is_alive for deck in self.decks):
+            return "Hit!"
+        self.is_drowned = True
+        return "Sunk!"
 
 
 class Battleship:
@@ -63,7 +60,7 @@ class Battleship:
                 self.field[(deck.row, deck.column)] = ship
         self._validate_field()
 
-    def fire(self, location: tuple) -> str | tuple:
+    def fire(self, location: tuple) -> str:
         row, column = location
         if location not in self.field:
             return "Miss!"
