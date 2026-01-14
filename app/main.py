@@ -1,34 +1,61 @@
-class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
-
-
-class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
-
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
-
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+from app.ship import Ship
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: list[tuple]) -> None:
+        self.ships = self.create_ships(ships)
+        self.field = self.create_field()
+        self._validate_field()
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    @staticmethod
+    def create_ships(ships: list[tuple]) -> list[Ship]:
+        class_ships = []
+        for start, end in ships:
+            class_ships.append(Ship(start, end))
+        return class_ships
+
+    def create_field(self) -> dict:
+        field = {}
+        for ship in self.ships:
+            for deck in ship.decks:
+                field[(deck.row, deck.column)] = ship
+        return field
+
+    def fire(self, location: tuple) -> str:
+        if location in self.field:
+            ship = self.field[location]
+            is_drowned = ship.fire(location[0], location[1])
+            if is_drowned:
+                return "Sunk!"
+            return "Hit!"
+        return "Miss!"
+
+    # creating a game field
+    def print_field(self) -> None:
+        for row in range(10):
+            for col in range(10):
+                if (row, col) in self.field:
+                    ship = self.field[(row, col)]
+                    deck = ship.get_deck(row, col)
+                    if not deck.is_alive and ship.is_drowned:
+                        print("x   ", end=" ")
+                    elif not deck.is_alive:
+                        print("*   ", end=" ")
+                    else:
+                        print(u"\u25A1   ", end=" ")
+
+    # partly-validation
+    def _validate_field(self) -> None:
+        if len(self.ships) != 10:
+            raise ValueError("Must be 10 whips on a field")
+
+        ship_lengths = [len(ship.decks) for ship in self.ships]
+
+        if ship_lengths.count(1) != 4:
+            raise ValueError("Must be 4 single-deck ships")
+        if ship_lengths.count(2) != 3:
+            raise ValueError("Must be 3 double-deck ships")
+        if ship_lengths.count(3) != 2:
+            raise ValueError("Must be 2 triple-deck ships")
+        if ship_lengths.count(4) != 1:
+            raise ValueError("Must be 1 fourth-deck ship")
