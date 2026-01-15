@@ -6,7 +6,7 @@ before starting.
 Let's implement a class that provides an interface to create and modify the field for Battleship game.
 It should have the following public methods:
 - `__init__(self, ships)`, to create a field with given ships;
-- `fire(self, ceil)`, to simulate a shot to cell.
+- `fire(self, cell)`, to simulate a shot to cell.
 
 Consider a field as a matrix 10x10.
 ```
