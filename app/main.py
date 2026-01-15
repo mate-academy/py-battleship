@@ -27,8 +27,6 @@ class Ship:
             self, start: tuple, end: tuple,
             is_drowned: bool = False) -> None:
         # Create decks and save them to a list `self.decks`
-        self.start = start
-        self.end = end
         self.is_drowned = is_drowned
         self.decks = []
         r1, c1 = start
@@ -58,13 +56,13 @@ class Ship:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
         deck = self.get_deck(row, column)
-        if deck and deck.is_alive:
-            deck.is_alive = False
-            self.check_status()
-            if self.is_drowned:
-                return "Sunk!"
-            else:
-                return "Hit!"
+        if deck:
+            if deck.is_alive:
+                deck.is_alive = False
+                self.check_status()
+                if self.is_drowned:
+                    return "Sunk!"
+            return "Hit!"
         return "Miss!"
 
 
@@ -90,11 +88,10 @@ class Battleship:
         if location in self.field:
             ship = self.field[location]
             return ship.fire(*location)
-        else:
-            return "Miss!"
+        return "Miss!"
 
     def print_field(self) -> str:
-        battlefield = [["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"] * 10]
+        battlefield = [["~"] * 10 for _ in range(10)]
         for deck_row, deck_column in self.field.keys():
             battlefield[deck_row][deck_column] = u"\u25A1"
 
