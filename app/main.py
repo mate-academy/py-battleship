@@ -1,34 +1,45 @@
-class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
-
-
-class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
-
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
-
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+from app.ship import Ship
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: list[tuple]) -> None:
+        self.ships = [Ship(ship_tuple[0], ship_tuple[1])
+                      for ship_tuple in ships]
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def _validate_field(self) -> None:
+        assert len(self.ships) == 10
+
+        sizes = {1: 0, 2: 0, 3: 0, 4: 0}
+        for ship in self.ships:
+            sizes[ship.get_length()] += 1
+
+        assert sizes == {1: 4, 2: 3, 3: 2, 4: 1}
+
+        for ship in self.ships:
+            for ship_other in self.ships:
+                if ship is not ship_other:
+                    assert ship != ship_other
+
+    def fire(self, location: tuple) -> str:
+        for ship in self.ships:
+            if ship.get_deck(location[0], location[1]) is not None:
+                return ship.fire(location[0], location[1])
+        return "Miss!"
+
+    def check_ship(self, row: int, column: int) -> str:
+        for ship in self.ships:
+            if ship.get_deck(row, column) is not None:
+                if ship.is_drowned:
+                    return "x"
+                else:
+                    if ship.get_deck(row, column).is_alive:
+                        return u"\u25A1"
+                    return "*"
+        return "~"
+
+    def print_field(self) -> None:
+        for x_cord in range(10):
+            line = ""
+            for y_cord in range(10):
+                line += self.check_ship(x_cord, y_cord) + " "
+            print(line)
