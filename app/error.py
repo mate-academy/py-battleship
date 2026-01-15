@@ -1,0 +1,2 @@
+class DeckError(Exception):
+    pass
