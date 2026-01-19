@@ -27,13 +27,12 @@ class Ship:
             end: tuple) -> None:
         end_x, end_y = end
         start_x, start_y = start
-        x_diagonal = abs(end_x - start_x)
-        if x_diagonal:
-            for deck in range(start_x, end_x + 1):
-                self.decks.append(Deck(deck, start_y))
-        else:
-            for deck in range(start_y, end_y + 1):
-                self.decks.append(Deck(start_x, deck))
+        x_range = range(min(start_x, end_x), max(start_x, end_x) + 1)
+        y_range = range(min(start_y, end_y), max(start_y, end_y) + 1)
+
+        for row in x_range:
+            for col in y_range:
+                self.decks.append(Deck(row, col))
 
     def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
