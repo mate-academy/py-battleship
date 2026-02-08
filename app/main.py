@@ -24,11 +24,31 @@ class Battleship:
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
         # which is located in it
-        pass
+        self.battle_field = [[0 for _ in range(11)] for _ in range(11)]
+        for ship in ships:
+            self.battle_field[ship[0][0]][ship[0][1]] = 1
+            if ship[0][0] == ship[1][0]:
+                for i in range(ship[0][1], ship[1][1] + 1):
+                    self.battle_field[ship[0][0]][i] = 1
+            else:
+                for i in range(ship[0][0], ship[1][0] + 1):
+                    self.battle_field[i][ship[0][1]] = 1
+
 
     def fire(self, location: tuple):
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        pass
+        if self.battle_field[location[0]][location[1]] == 1:
+            self.battle_field[location[0]][location[1]] = -1
+            if self.battle_field[location[0]][location[1] + 1] != 1 \
+                    and self.battle_field[location[0]][location[1] - 1] != 1 \
+                    and self.battle_field[location[0] + 1][location[1]] != 1 \
+                    and self.battle_field[location[0] - 1][location[1]] != 1:
+                return "Sunk!"
+            else:
+                return "Hit!"
+
+        else:
+            return "Miss!"
