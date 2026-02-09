@@ -42,7 +42,7 @@ class Battleship:
         # which is located in it
         self.field = {}
         for ship in ships:
-            if ship[0][0] < 10 and ship[0][1] < 10 and ship[1][0] > 0 and ship[1][1] > 0:
+            if ship[0][0] in range(0,10) and ship[0][1] in range(0,10) and ship[1][0] in range(0, 10) and ship[1][1] in range(0, 10):
                 tmp_ship_object = Ship(ship[0],ship[1])
                 if ship[0][0] == ship[1][0]:
                     for value in range(min(ship[0][1], ship[1][1]), max(ship[0][1] + 1, ship[1][1] + 1)):
@@ -60,7 +60,5 @@ class Battleship:
             self.field[location].fire(location[0], location[1])
             if self.field[location].is_drowned is False:
                 return "Hit!"
-            else:
-                return "Sunk!"
-        else:
-            return "Miss!"
+            return "Sunk!"
+        return "Miss!"
