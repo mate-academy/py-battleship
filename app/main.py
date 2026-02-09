@@ -11,10 +11,10 @@ class Ship:
         self.decks = []
         self.is_drowned = is_drowned
         if start[0] == end[0]:
-            for row in range(start[1], end[1] + 1):
+            for row in range(min(start[1], end[1]), max(start[1] + 1, end[1] + 1)):
                 self.decks.append(Deck(start[0], row))
         else:
-            for column in range(start[0], end[0] + 1):
+            for column in range(min(start[0], end[0]), max(start[0] + 1, end[0] + 1)):
                 self.decks.append(Deck(column, start[1]))
 
 
@@ -42,13 +42,14 @@ class Battleship:
         # which is located in it
         self.field = {}
         for ship in ships:
-            tmp_ship_object = Ship(ship[0],ship[1])
-            if ship[0][0] == ship[1][0]:
-                for value in range(ship[0][1], ship[1][1] + 1):
-                    self.field[(ship[0][0], value)] = tmp_ship_object
-            else:
-                for value in range(ship[0][0], ship[1][0] + 1):
-                    self.field[(value, ship[0][1])] = tmp_ship_object
+            if ship[0][0] < 10 and ship[0][1] < 10 and ship[1][0] > 0 and ship[1][1] > 0:
+                tmp_ship_object = Ship(ship[0],ship[1])
+                if ship[0][0] == ship[1][0]:
+                    for value in range(min(ship[0][1], ship[1][1]), max(ship[0][1] + 1, ship[1][1] + 1)):
+                        self.field[(ship[0][0], value)] = tmp_ship_object
+                else:
+                    for value in range(min(ship[0][0], ship[1][0]), max(ship[0][0] + 1, ship[1][0] + 1)):
+                        self.field[(value, ship[0][1])] = tmp_ship_object
 
     def fire(self, location: tuple):
         # This function should check whether the location
