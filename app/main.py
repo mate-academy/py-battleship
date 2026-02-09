@@ -1,21 +1,37 @@
 class Deck:
     def __init__(self, row, column, is_alive=True):
-        pass
+        self.row = row
+        self.column =column
+        self.is_alive = is_alive
 
 
 class Ship:
     def __init__(self, start, end, is_drowned=False):
         # Create decks and save them to a list `self.decks`
-        pass
+        self.decks = []
+        self.is_drowned = is_drowned
+        if start[0] == end[0]:
+            for row in range(start[1], end[1] + 1):
+                self.decks.append(Deck(start[0], row))
+        else:
+            for column in range(start[0], end[0] + 1):
+                self.decks.append(Deck(column, start[1]))
+
 
     def get_deck(self, row, column):
         # Find the corresponding deck in the list
-        pass
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
 
     def fire(self, row, column):
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
-        pass
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                deck.is_alive = False
+        if  all([not deck.is_alive for deck in self.decks]):
+            self.is_drowned = True
 
 
 class Battleship:
@@ -24,31 +40,26 @@ class Battleship:
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
         # which is located in it
-        self.battle_field = [[0 for _ in range(11)] for _ in range(11)]
+        self.field = {}
         for ship in ships:
-            self.battle_field[ship[0][0]][ship[0][1]] = 1
+            tmp_ship_object = Ship(ship[0],ship[1])
             if ship[0][0] == ship[1][0]:
-                for i in range(ship[0][1], ship[1][1] + 1):
-                    self.battle_field[ship[0][0]][i] = 1
+                for value in range(ship[0][1], ship[1][1] + 1):
+                    self.field[(ship[0][0], value)] = tmp_ship_object
             else:
-                for i in range(ship[0][0], ship[1][0] + 1):
-                    self.battle_field[i][ship[0][1]] = 1
-
+                for value in range(ship[0][0], ship[1][0] + 1):
+                    self.field[(value, ship[0][1])] = tmp_ship_object
 
     def fire(self, location: tuple):
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        if self.battle_field[location[0]][location[1]] == 1:
-            self.battle_field[location[0]][location[1]] = -1
-            if self.battle_field[location[0]][location[1] + 1] != 1 \
-                    and self.battle_field[location[0]][location[1] - 1] != 1 \
-                    and self.battle_field[location[0] + 1][location[1]] != 1 \
-                    and self.battle_field[location[0] - 1][location[1]] != 1:
-                return "Sunk!"
-            else:
+        if location in self.field:
+            self.field[location].fire(location[0], location[1])
+            if self.field[location].is_drowned is False:
                 return "Hit!"
-
+            else:
+                return "Sunk!"
         else:
             return "Miss!"
