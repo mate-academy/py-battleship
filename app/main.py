@@ -26,10 +26,15 @@ class Battleship:
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
         # which is located in it
-        for point in ships:
-            # self.field[point[0]] = "lol"
-            # self.field[point[1]] = "kek"
-            print(self.field[0][2])
+        for (x1, y1), (x2, y2) in self.ships:
+
+            if x1 == x2:
+                for y in range(min(y1, y2), max(y1, y2) + 1):
+                    field[x1][y] = u"\u25A1"
+
+            else:
+                for x in range(min(x1, x2), max(x1, x2) + 1):
+                    field[x][y1] = u"\u25A1"
 
 
 
@@ -48,9 +53,18 @@ class Battleship:
 
 field = [["~"] * 10 for _ in range(10)]
 
-ships = [
-    ((0, 0), (0, 3))
-]
+ships=[
+        ((0, 0), (0, 3)),
+        ((0, 5), (0, 6)),
+        ((0, 8), (0, 9)),
+        ((2, 0), (4, 0)),
+        ((2, 4), (2, 6)),
+        ((2, 8), (2, 9)),
+        ((9, 9), (9, 9)),
+        ((7, 7), (7, 7)),
+        ((7, 9), (7, 9)),
+        ((9, 7), (9, 7)),
+    ]
 
 battle_ship = Battleship(ships, field)
 
