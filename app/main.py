@@ -19,12 +19,17 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships):
+    def __init__(self, ships, field):
+        self.ships = ships
+        self.field = field
         # Create a dict `self.field`.
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
         # which is located in it
-        pass
+        for point in ships:
+            ship_start = field[point]
+
+
 
     def fire(self, location: tuple):
         # This function should check whether the location
@@ -32,3 +37,29 @@ class Battleship:
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
         pass
+
+    def print_field(self):
+        for row in self.field:
+            print(" ".join(row))
+
+
+field = [
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+    ["~", "~", "~", "~", "~", "~", "~", "~", "~", "~"],
+]
+
+ships = [
+    ((0, 0), (0, 3))
+]
+
+battle_ship = Battleship(ships, field)
+
+battle_ship.print_field()
