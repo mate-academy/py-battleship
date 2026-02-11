@@ -1,13 +1,40 @@
+from app.deck import Deck
+
+
 class Ship:
     def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+        self.start = start
+        self.end = end
+        self.is_drowned = is_drowned
+        self.decks = []
+
+        x1, y1 = start
+        x2, y2 = end
+
+        if x1 == x2:
+            for y in range(min(y1, y2), max(y1, y2) + 1):
+                self.decks.append(Deck(x1, y))
+        else:
+            for x in range(min(x1, x2), max(x1, x2) + 1):
+                self.decks.append(Deck(x, y1))
 
     def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
+        return None
 
     def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+        deck = self.get_deck(row, column)
+
+        if not deck:
+            return False
+
+        if not deck.is_alive:
+            return False
+
+        deck.is_alive = False
+
+        self.is_drowned = all(not d.is_alive for d in self.decks)
+
+        return True

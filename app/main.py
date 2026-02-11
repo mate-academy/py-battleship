@@ -3,7 +3,6 @@ from app.ship import Ship
 from app.deck import Deck
 
 
-field = [["~"] * 10 for _ in range(10)]
 
 ships=[
         ((0, 0), (0, 3)),
@@ -18,6 +17,6 @@ ships=[
         ((9, 7), (9, 7)),
     ]
 
-battle_ship = Battleship(ships, field)
+battle_ship = Battleship(ships)
 
 battle_ship.print_field()
