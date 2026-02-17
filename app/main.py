@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Dict, Iterable, List, Optional, Set, Tuple
+from typing import Dict, Iterable, List, Set, Tuple
 
 BOARD_SIZE: int = 10
 
@@ -153,7 +153,10 @@ class Battleship:
                     raise ValueError("Ships are adjacent or overlapping")
 
     def _validate_coordinate(self, row_index: int, column_index: int) -> None:
-        if not (0 <= row_index < BOARD_SIZE and 0 <= column_index < BOARD_SIZE):
+       if not (
+    0 <= row_index < BOARD_SIZE
+    and 0 <= column_index < BOARD_SIZE
+    ):
             raise ValueError("Coordinates out of range")
 
     def _mark_sunk(self, ship_cells: Set[Coordinate]) -> None:
