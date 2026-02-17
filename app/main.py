@@ -1,34 +1,159 @@
-class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
+from __future__ import annotations
+
+from collections import Counter
+from typing import Dict, Iterable, List, Optional, Set, Tuple
+
+BOARD_SIZE: int = 10
+
+Coordinate = Tuple[int, int]
+ShipEnds = Tuple[Coordinate, Coordinate]
 
 
-class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+def _coords_between(
+    start_point: Coordinate,
+    end_point: Coordinate,
+) -> List[Coordinate]:
+    """Return all coordinates between two endpoints (inclusive)."""
+    (row_start, col_start), (row_end, col_end) = start_point, end_point
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    if row_start == row_end:
+        column_from, column_to = sorted((col_start, col_end))
+        return [
+            (row_start, column)
+            for column in range(column_from, column_to + 1)
+        ]
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    if col_start == col_end:
+        row_from, row_to = sorted((row_start, row_end))
+        return [
+            (row, col_start)
+            for row in range(row_from, row_to + 1)
+        ]
+
+    raise ValueError("Ship must be horizontal or vertical")
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: Iterable[ShipEnds]) -> None:
+        self.field: List[List[Optional[str]]] = [
+            [None for _ in range(BOARD_SIZE)]
+            for _ in range(BOARD_SIZE)
+        ]
+        self.ships_info: Dict[int, Dict[str, Set[Coordinate]]] = {}
+        self.coord_to_ship: Dict[Coordinate, int] = {}
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+        for ship_id, ship_ends in enumerate(ships):
+            self._add_ship(ship_id, ship_ends)
+
+    def fire(self, cell: Coordinate) -> str:
+        row_index, column_index = cell
+
+        if not (
+            0 <= row_index < BOARD_SIZE
+            and 0 <= column_index < BOARD_SIZE
+        ):
+            raise ValueError("Coordinates out of range")
+
+        ship_id = self.coord_to_ship.get((row_index, column_index))
+        if ship_id is None:
+            return "Miss!"
+
+        ship_info = self.ships_info[ship_id]
+        if (row_index, column_index) not in ship_info["alive"]:
+            return "Miss!"
+
+        ship_info["alive"].remove((row_index, column_index))
+
+        if not ship_info["alive"]:
+            return "Sunk!"
+
+        return "Hit!"
+
+    def _add_ship(self, ship_id: int, ends: ShipEnds) -> None:
+        (row_start, col_start), (row_end, col_end) = ends
+        ship_cells = _coords_between(
+            (row_start, col_start),
+            (row_end, col_end),
+        )
+
+        all_cells = set(ship_cells)
+        self.ships_info[ship_id] = {
+            "all": all_cells,
+            "alive": set(all_cells),
+        }
+
+        for row_index, column_index in ship_cells:
+            self.coord_to_ship[(row_index, column_index)] = ship_id
+            self.field[row_index][column_index] = "□"
+
+    def validate_field(self) -> None:
+        ship_lengths = [
+            len(info["all"])
+            for info in self.ships_info.values()
+        ]
+
+        if len(ship_lengths) != 10:
+            raise ValueError("There must be exactly 10 ships")
+
+        ship_count = Counter(ship_lengths)
+        expected_config = {1: 4, 2: 3, 3: 2, 4: 1}
+
+        for length, required_count in expected_config.items():
+            actual_count = ship_count.get(length, 0)
+            if actual_count != required_count:
+                raise ValueError(
+                    f"Expected {required_count} ships of length {length}, "
+                    f"found {actual_count}",
+                )
+
+        for ship_id, ship_info in self.ships_info.items():
+            for row_index, column_index in ship_info["all"]:
+                for delta_row in (-1, 0, 1):
+                    for delta_col in (-1, 0, 1):
+                        if delta_row == 0 and delta_col == 0:
+                            continue
+
+                        neighbour_row = row_index + delta_row
+                        neighbour_col = column_index + delta_col
+
+                        if not (
+                            0 <= neighbour_row < BOARD_SIZE
+                            and 0 <= neighbour_col < BOARD_SIZE
+                        ):
+                            continue
+
+                        other_ship = self.coord_to_ship.get(
+                            (neighbour_row, neighbour_col),
+                        )
+                        if (
+                            other_ship is not None
+                            and other_ship != ship_id
+                        ):
+                            raise ValueError(
+                                "Ships are adjacent or overlapping",
+                            )
+
+    def render_field(self) -> List[str]:
+        display: List[List[str]] = [
+            ["~" for _ in range(BOARD_SIZE)]
+            for _ in range(BOARD_SIZE)
+        ]
+
+        for ship_info in self.ships_info.values():
+            for row_index, column_index in ship_info["all"]:
+                display[row_index][column_index] = (
+                    "□"
+                    if (row_index, column_index)
+                    in ship_info["alive"]
+                    else "*"
+                )
+
+            if not ship_info["alive"]:
+                for row_index, column_index in ship_info["all"]:
+                    display[row_index][column_index] = "x"
+
+        return ["\t".join(row) for row in display]
+
+    def print_field(self) -> None:
+        for line in self.render_field():
+            print(line)
