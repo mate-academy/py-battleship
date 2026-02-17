@@ -8,6 +8,11 @@ BOARD_SIZE: int = 10
 Coordinate = Tuple[int, int]
 ShipEnds = Tuple[Coordinate, Coordinate]
 
+WATER_CELL: str = "~"
+SHIP_CELL: str = "□"
+HIT_CELL: str = "*"
+SUNK_CELL: str = "x"
+
 
 def _coords_between(
     start_point: Coordinate,
@@ -19,15 +24,15 @@ def _coords_between(
     if row_start == row_end:
         column_from, column_to = sorted((col_start, col_end))
         return [
-            (row_start, column)
-            for column in range(column_from, column_to + 1)
+            (row_start, column_index)
+            for column_index in range(column_from, column_to + 1)
         ]
 
     if col_start == col_end:
         row_from, row_to = sorted((row_start, row_end))
         return [
-            (row, col_start)
-            for row in range(row_from, row_to + 1)
+            (row_index, col_start)
+            for row_index in range(row_from, row_to + 1)
         ]
 
     raise ValueError("Ship must be horizontal or vertical")
@@ -35,8 +40,8 @@ def _coords_between(
 
 class Battleship:
     def __init__(self, ships: Iterable[ShipEnds]) -> None:
-        self.field: List[List[Optional[str]]] = [
-            [None for _ in range(BOARD_SIZE)]
+        self.field: List[List[str]] = [
+            [WATER_CELL for _ in range(BOARD_SIZE)]
             for _ in range(BOARD_SIZE)
         ]
         self.ships_info: Dict[int, Dict[str, Set[Coordinate]]] = {}
@@ -45,14 +50,11 @@ class Battleship:
         for ship_id, ship_ends in enumerate(ships):
             self._add_ship(ship_id, ship_ends)
 
+        self._validate_field()
+
     def fire(self, cell: Coordinate) -> str:
         row_index, column_index = cell
-
-        if not (
-            0 <= row_index < BOARD_SIZE
-            and 0 <= column_index < BOARD_SIZE
-        ):
-            raise ValueError("Coordinates out of range")
+        self._validate_coordinate(row_index, column_index)
 
         ship_id = self.coord_to_ship.get((row_index, column_index))
         if ship_id is None:
@@ -63,8 +65,10 @@ class Battleship:
             return "Miss!"
 
         ship_info["alive"].remove((row_index, column_index))
+        self.field[row_index][column_index] = HIT_CELL
 
         if not ship_info["alive"]:
+            self._mark_sunk(ship_info["all"])
             return "Sunk!"
 
         return "Hit!"
@@ -83,10 +87,15 @@ class Battleship:
         }
 
         for row_index, column_index in ship_cells:
-            self.coord_to_ship[(row_index, column_index)] = ship_id
-            self.field[row_index][column_index] = "□"
+            self._validate_coordinate(row_index, column_index)
 
-    def validate_field(self) -> None:
+            if (row_index, column_index) in self.coord_to_ship:
+                raise ValueError("Ships are overlapping")
+
+            self.coord_to_ship[(row_index, column_index)] = ship_id
+            self.field[row_index][column_index] = SHIP_CELL
+
+    def _validate_field(self) -> None:
         ship_lengths = [
             len(info["all"])
             for info in self.ships_info.values()
@@ -108,51 +117,51 @@ class Battleship:
 
         for ship_id, ship_info in self.ships_info.items():
             for row_index, column_index in ship_info["all"]:
-                for delta_row in (-1, 0, 1):
-                    for delta_col in (-1, 0, 1):
-                        if delta_row == 0 and delta_col == 0:
-                            continue
-
-                        neighbour_row = row_index + delta_row
-                        neighbour_col = column_index + delta_col
-
-                        if not (
-                            0 <= neighbour_row < BOARD_SIZE
-                            and 0 <= neighbour_col < BOARD_SIZE
-                        ):
-                            continue
-
-                        other_ship = self.coord_to_ship.get(
-                            (neighbour_row, neighbour_col),
-                        )
-                        if (
-                            other_ship is not None
-                            and other_ship != ship_id
-                        ):
-                            raise ValueError(
-                                "Ships are adjacent or overlapping",
-                            )
-
-    def render_field(self) -> List[str]:
-        display: List[List[str]] = [
-            ["~" for _ in range(BOARD_SIZE)]
-            for _ in range(BOARD_SIZE)
-        ]
-
-        for ship_info in self.ships_info.values():
-            for row_index, column_index in ship_info["all"]:
-                display[row_index][column_index] = (
-                    "□"
-                    if (row_index, column_index)
-                    in ship_info["alive"]
-                    else "*"
+                self._validate_no_adjacent_ships(
+                    ship_id=ship_id,
+                    row_index=row_index,
+                    column_index=column_index,
                 )
 
-            if not ship_info["alive"]:
-                for row_index, column_index in ship_info["all"]:
-                    display[row_index][column_index] = "x"
+    def _validate_no_adjacent_ships(
+        self,
+        ship_id: int,
+        row_index: int,
+        column_index: int,
+    ) -> None:
+        for delta_row in (-1, 0, 1):
+            for delta_col in (-1, 0, 1):
+                if delta_row == 0 and delta_col == 0:
+                    continue
 
-        return ["\t".join(row) for row in display]
+                neighbour_row = row_index + delta_row
+                neighbour_col = column_index + delta_col
+
+                if not (
+                    0 <= neighbour_row < BOARD_SIZE
+                    and 0 <= neighbour_col < BOARD_SIZE
+                ):
+                    continue
+
+                other_ship = self.coord_to_ship.get(
+                    (neighbour_row, neighbour_col),
+                )
+                if other_ship is None:
+                    continue
+
+                if other_ship != ship_id:
+                    raise ValueError("Ships are adjacent or overlapping")
+
+    def _validate_coordinate(self, row_index: int, column_index: int) -> None:
+        if not (0 <= row_index < BOARD_SIZE and 0 <= column_index < BOARD_SIZE):
+            raise ValueError("Coordinates out of range")
+
+    def _mark_sunk(self, ship_cells: Set[Coordinate]) -> None:
+        for row_index, column_index in ship_cells:
+            self.field[row_index][column_index] = SUNK_CELL
+
+    def render_field(self) -> List[str]:
+        return ["\t".join(row) for row in self.field]
 
     def print_field(self) -> None:
         for line in self.render_field():
