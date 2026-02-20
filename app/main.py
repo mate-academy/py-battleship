@@ -28,13 +28,13 @@ class Ship:
                     max(self.start_y, self.end_y) + 1):
                 self.decks.append(Deck(self.start_x, y_coord))
 
-        elif self.start_y < self.end_y:
+        elif self.start_y == self.end_y:
             for x_coord in range(
                     min(self.start_x, self.end_x),
                     max(self.start_x, self.end_x) + 1):
                 self.decks.append(Deck(x_coord, self.start_y))
         else:
-            return
+            raise ValueError
 
     def get_deck(
             self,
@@ -75,6 +75,39 @@ class Battleship:
             for deck in ship.decks:
                 coord = (deck.row, deck.column)
                 self.field[coord] = ship
+
+    def print_field(self) -> None:
+        for row in range(10):
+            for colum in range(10):
+                ship = self.field.get((row, colum))
+                if ship:
+                    deck = ship.get_deck(row, colum)
+                    if ship.is_drowned:
+                        print("x", end=" ")
+                    elif not deck.is_alive:
+                        print("*", end=" ")
+                    else:
+                        print("□", end=" ")
+                else:
+                    print("~", end=" ")
+            print()
+
+    def _validate_field(self) -> None:
+        lengths = [len(s.decks) for s in self.ships]
+        if (lengths.count(4) != 1 or lengths.count(3) != 2
+                or lengths.count(2) != 3 or lengths.count(1) != 4):
+            raise ValueError
+        for ship in self.ships:
+            for deck in ship.decks:
+                for dr in range(-1, 2):
+                    for dc in range(-1, 2):
+                        if dr == 0 and dc == 0:
+                            continue
+                        neighbor_coord = (deck.row + dr, deck.column + dc)
+                        neighbor_ship = self.field.get(neighbor_coord)
+
+                        if neighbor_ship and neighbor_ship is not ship:
+                            raise ValueError
 
     def fire(
             self,
