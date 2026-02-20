@@ -17,22 +17,22 @@ class Ship:
             end: int,
             is_drowned: bool = False
     ) -> None:
-        self.start_x, self.start_y = start
-        self.end_x, self.end_y = end
+        start_x, start_y = start
+        end_x, end_y = end
         self.is_drowned = is_drowned
         self.decks = []
 
-        if self.start_x == self.end_x:
+        if start_x == end_x:
             for y_coord in range(
-                    min(self.start_y, self.end_y),
-                    max(self.start_y, self.end_y) + 1):
-                self.decks.append(Deck(self.start_x, y_coord))
+                    min(start_y, end_y),
+                    max(start_y, end_y) + 1):
+                self.decks.append(Deck(start_x, y_coord))
 
-        elif self.start_y == self.end_y:
+        elif start_y == end_y:
             for x_coord in range(
-                    min(self.start_x, self.end_x),
-                    max(self.start_x, self.end_x) + 1):
-                self.decks.append(Deck(x_coord, self.start_y))
+                    min(start_x, end_x),
+                    max(start_x, end_x) + 1):
+                self.decks.append(Deck(x_coord, start_y))
         else:
             raise ValueError
 
@@ -75,6 +75,8 @@ class Battleship:
             for deck in ship.decks:
                 coord = (deck.row, deck.column)
                 self.field[coord] = ship
+
+        self._validate_field()
 
     def print_field(self) -> None:
         for row in range(10):
