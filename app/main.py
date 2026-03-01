@@ -12,14 +12,19 @@ class Ship:
                       for row in range(start[0], end[0] + 1)]
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> None:
-        # Find the corresponding deck in the list
-        pass
+    def get_deck(self, row: int, column: int) -> Deck | None:
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
+        return None
 
     def fire(self, row: int, column: int) -> None:
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+        deck = self.get_deck(row, column)
+        deck.is_alive = False
+        self.is_drowned = True
+        for deck in self.decks:
+            if deck.is_alive:
+                self.is_drowned = False
 
 
 class Battleship:
@@ -27,36 +32,29 @@ class Battleship:
         self.field = {ship: Ship(ship[0], ship[1]) for ship in ships}
 
     def print_field(self) -> None:
-        list_decks = []
+        list_decks = {}
         for ship in self.field.values():
             for deck in ship.decks:
-                list_decks.append((deck.row, deck.column))
+                list_decks[(deck.row, deck.column)] = deck.is_alive
         for row in range(10):
             for column in range(10):
-                if (row, column) in list_decks:
-                    print(u"\u25A1    ", end="")
+                if (row, column) in list_decks.keys():
+                    if list_decks[(row, column)] is True:
+                        print(u"\u25A1    ", end="")
+                    else:
+                        print("x    ", end="")
                 else:
                     print("~    ", end="")
-
             print("\n")
 
     def fire(self, location: tuple) -> str:
-        bom = False
         for ship in self.field.values():
             if not ship.is_drowned:
-                list_decks = []
-                counter = 0
-                for deck in ship.decks:
-                    list_decks.append(deck)
-                    if deck.is_alive:
-                        counter += 1
-                    if (deck.row, deck.column) == location:
-                        bom = True
-                        deck.is_alive = False
-                        counter -= 1
-                if bom:
-                    if counter == 0:
+                deck = ship.get_deck(location[0], location[1])
+                if deck is not None:
+                    ship.fire(deck.row, deck.column)
+                    if ship.is_drowned:
                         return "Sunk!"
-                    if counter > 0:
+                    else:
                         return "Hit!"
         return "Miss!"
