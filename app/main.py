@@ -1,34 +1,91 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    def __init__(self, start: int, end: int, is_drowned: bool = False) -> None:
+        self.decks = [Deck(row, column)
+                      for column in range(start[1], end[1] + 1)
+                      for row in range(start[0], end[0] + 1)]
+        self.is_drowned = is_drowned
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    def get_deck(self, row: int, column: int) -> Deck | None:
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
+        return None
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    def fire(self, row: int, column: int) -> None:
+        deck = self.get_deck(row, column)
+        deck.is_alive = False
+        self.is_drowned = True
+        for deck in self.decks:
+            if deck.is_alive:
+                self.is_drowned = False
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: list) -> None:
+        self.field = {ship: Ship(ship[0], ship[1]) for ship in ships}
+        self._validate_field()
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+    def _validate_field(self) -> None:
+        all_ships = []
+        for ship in self.field.values():
+            ship_one = []
+            for deck in ship.decks:
+                ship_one.append([deck.row, deck.column])
+            all_ships.append(ship_one)
+        if len(all_ships) != 10:
+            raise ValueError("Ship must be 10")
+        need_ships = [0, 0, 0, 0]
+        for ship in all_ships:
+            print(ship)
+            if len(ship) == 1:
+                need_ships[0] += 1
+                continue
+            if len(ship) == 2:
+                need_ships[1] += 1
+                continue
+            if len(ship) == 3:
+                need_ships[2] += 1
+                continue
+            if len(ship) == 4:
+                need_ships[3] += 1
+                continue
+        if need_ships != [4, 3, 2, 1]:
+            raise ValueError("No correct ships")
+
+    def print_field(self) -> None:
+        list_decks = {}
+        for ship in self.field.values():
+            for deck in ship.decks:
+                list_decks[(deck.row, deck.column)] =\
+                    [deck.is_alive, ship.is_drowned]
+        for row in range(10):
+            for column in range(10):
+                if (row, column) in list_decks.keys():
+                    if list_decks[(row, column)][0] is True:
+                        print(u"\u25A1    ", end="")
+                    else:
+                        if list_decks[(row, column)][1] is True:
+                            print("x    ", end="")
+                        else:
+                            print("*    ", end="")
+                else:
+                    print("~    ", end="")
+            print("\n")
+
+    def fire(self, location: tuple) -> str:
+        for ship in self.field.values():
+            if not ship.is_drowned:
+                deck = ship.get_deck(location[0], location[1])
+                if deck is not None:
+                    ship.fire(deck.row, deck.column)
+                    if ship.is_drowned:
+                        return "Sunk!"
+                    return "Hit!"
+        return "Miss!"
