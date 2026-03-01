@@ -30,19 +30,51 @@ class Ship:
 class Battleship:
     def __init__(self, ships: list) -> None:
         self.field = {ship: Ship(ship[0], ship[1]) for ship in ships}
+        self._validate_field()
+
+    def _validate_field(self) -> None:
+        all_ships = []
+        for ship in self.field.values():
+            ship_one = []
+            for deck in ship.decks:
+                ship_one.append([deck.row, deck.column])
+            all_ships.append(ship_one)
+        if len(all_ships) != 10:
+            raise ValueError("Ship must be 10")
+        need_ships = [0, 0, 0, 0]
+        for ship in all_ships:
+            print(ship)
+            if len(ship) == 1:
+                need_ships[0] += 1
+                continue
+            if len(ship) == 2:
+                need_ships[1] += 1
+                continue
+            if len(ship) == 3:
+                need_ships[2] += 1
+                continue
+            if len(ship) == 4:
+                need_ships[3] += 1
+                continue
+        if need_ships != [4, 3, 2, 1]:
+            raise ValueError("No correct ships")
 
     def print_field(self) -> None:
         list_decks = {}
         for ship in self.field.values():
             for deck in ship.decks:
-                list_decks[(deck.row, deck.column)] = deck.is_alive
+                list_decks[(deck.row, deck.column)] =\
+                    [deck.is_alive, ship.is_drowned]
         for row in range(10):
             for column in range(10):
                 if (row, column) in list_decks.keys():
-                    if list_decks[(row, column)] is True:
+                    if list_decks[(row, column)][0] is True:
                         print(u"\u25A1    ", end="")
                     else:
-                        print("x    ", end="")
+                        if list_decks[(row, column)][1] is True:
+                            print("x    ", end="")
+                        else:
+                            print("*    ", end="")
                 else:
                     print("~    ", end="")
             print("\n")
@@ -55,6 +87,5 @@ class Battleship:
                     ship.fire(deck.row, deck.column)
                     if ship.is_drowned:
                         return "Sunk!"
-                    else:
-                        return "Hit!"
+                    return "Hit!"
         return "Miss!"
