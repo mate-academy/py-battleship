@@ -1,12 +1,12 @@
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True):
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start: list, end: list, is_drowned: bool = False):
+    def __init__(self, start: list, end: list, is_drowned: bool = False) -> None:
         self.is_drowned = is_drowned
 
         decks = []
@@ -47,7 +47,7 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships):
+    def __init__(self, ships: Ship) -> None:
         self.ships = [Ship(start, end) for start, end in ships]
 
     def fire(self, location: tuple) -> str:
