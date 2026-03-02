@@ -7,8 +7,6 @@ class Deck:
 
 class Ship:
     def __init__(self, start, end, is_drowned=False):
-        self.start = start
-        self.end = end
         self.is_drowned = is_drowned
 
         decks = []
@@ -48,7 +46,6 @@ class Ship:
                 self.is_drowned = False
 
 
-
 class Battleship:
     def __init__(self, ships):
         self.ships = [Ship(start, end) for start, end in ships]
@@ -61,7 +58,5 @@ class Battleship:
                 ship.fire(location[0], location[1])
                 if ship.is_drowned:
                     return "Sunk!"
-                else:
-                    return "Hit!"
+                return "Hit!"
         return "Miss!"
-
