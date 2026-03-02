@@ -6,7 +6,8 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: list, end: list, is_drowned: bool = False) -> None:
+    def __init__(self, start: list, end: list,
+                 is_drowned: bool = False) -> None:
         self.is_drowned = is_drowned
 
         decks = []
