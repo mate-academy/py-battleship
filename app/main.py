@@ -25,7 +25,7 @@ class Ship:
 
         raise ValueError
 
-    def get_deck(self, row: int, column: int) -> None:
+    def get_deck(self, row: int, column: int) -> None | Deck:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -49,16 +49,13 @@ class Ship:
 class Battleship:
     def __init__(self, ships: list) -> None:
         self.field = {}
-        self.ships = []
 
         for start, end in ships:
             ship = Ship(start, end)
-            self.ships.append(ship)
-
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
-    def fire(self, location: tuple) -> Ship:
+    def fire(self, location: tuple) -> str | Ship:
         row, col = location
 
         if (row, col) not in self.field:
