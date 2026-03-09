@@ -6,10 +6,9 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: int, end: int, is_drowned: bool = False) -> None:
+    def __init__(self, start: int, end: int) -> None:
         self.start = start
         self.end = end
-        self.is_drowned = is_drowned
         self.decks = self._create_decks()
 
     def _create_decks(self) -> list | str:
@@ -19,13 +18,13 @@ class Ship:
             start, end = sorted([c1, c2])
             return [Deck(r1, c) for c in range(start, end + 1)]
 
-        if c1 == c2:
+        elif c1 == c2:
             start, end = sorted([r1, r2])
             return [Deck(r, c1) for r in range(start, end + 1)]
 
         raise ValueError
 
-    def get_deck(self, row: int, column: int) -> None | Deck:
+    def get_deck(self, row: int, column: int) -> list[Deck]:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -55,7 +54,7 @@ class Battleship:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
-    def fire(self, location: tuple) -> str | Ship:
+    def fire(self, location: tuple) -> str:
         row, col = location
 
         if (row, col) not in self.field:
