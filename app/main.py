@@ -64,5 +64,5 @@ class Battleship:
                 return "Sunk!"
             else:
                 return "Hit!"
-        else:
-            return "Miss!"
+
+        return "Miss!"
