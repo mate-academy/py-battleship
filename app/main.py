@@ -46,7 +46,6 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
-        self.ships = ships
         self.field = {}
         ships_list = []
 
