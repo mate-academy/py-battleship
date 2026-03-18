@@ -1,7 +1,5 @@
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
-        self.row = row
-        self.column = column
         self.is_alive = is_alive
 
 
@@ -21,11 +19,6 @@ class Ship:
                 coordinates[(i, start[1])] = Deck(i, start[1])
         self.coordinates = coordinates
         self.is_drowned = is_drowned
-        print(self.coordinates)
-
-    def get_deck(self, row: int, column: int) -> None:
-        # Find the corresponding deck in the list
-        pass
 
     def fire(self, row: int, column: int) -> None:
         self.coordinates[(row, column)].is_alive = False
@@ -41,6 +34,7 @@ class Battleship:
             ship_dict[i] = Ship(ships[i][0], ships[i][1])
             for coordinates in ship_dict[i].coordinates:
                 field_dict[coordinates] = ship_dict[i]
+        self._validate_field(ships, ship_dict)
         self.field = field_dict
 
     def fire(self, location: tuple) -> str:
@@ -48,7 +42,50 @@ class Battleship:
             self.field[location].fire(location[0], location[1])
             if self.field[location].is_drowned:
                 return "Sunk!"
-            else:
-                return "Hit!"
-        else:
-            return "Miss!"
+            return "Hit!"
+        return "Miss!"
+
+    def print_field(self) -> None:
+        for i in range(10):
+            for j in range(10):
+                if (i, j) in self.field:
+                    if self.field[(i, j)].coordinates[(i, j)].is_alive:
+                        character = u"\u25A1"
+                    elif self.field[(i, j)].is_drowned:
+                        character = "x"
+                    else:
+                        character = "*"
+                else:
+                    character = "~"
+                print(character, end="   ")
+            print()
+
+    def _validate_field(self, ships: list, ship_dict: dict) -> None:
+        if len(ship_dict) != 10:
+            raise ValueError()
+        count_dict = {}
+        for ship in ship_dict.values():
+            count_dict[len(ship.coordinates)] = (
+                count_dict.get(len(ship.coordinates), 0) + 1
+            )
+        print(count_dict)
+        if any(
+                [count_dict.get(1, 0) != 4,
+                 count_dict.get(2, 0) != 3,
+                 count_dict.get(3, 0) != 2,
+                 count_dict.get(4, 0) != 1]
+        ):
+            raise ValueError()
+        for i in range(len(ships)):
+            for j in range(i + 1, len(ships)):
+                distance_x = min(
+                    abs(ships[i][0][1] - ships[j][1][1]),
+                    abs(ships[i][1][1] - ships[j][0][1])
+                )
+                distance_y = min(
+                    abs(ships[i][0][0] - ships[j][1][0]),
+                    abs(ships[i][1][0] - ships[j][0][0])
+                )
+                print(distance_x, distance_y)
+                if not any([distance_x >= 2, distance_y >= 2]):
+                    raise ValueError()
