@@ -46,12 +46,16 @@ class Battleship:
         return "Miss!"
 
     def print_field(self) -> None:
-        for i in range(10):
-            for j in range(10):
-                if (i, j) in self.field:
-                    if self.field[(i, j)].coordinates[(i, j)].is_alive:
+        for row in range(10):
+            for column in range(10):
+                if (row, column) in self.field:
+                    if (
+                        self.field[(row, column)]
+                        .coordinates[(row, column)]
+                        .is_alive
+                    ):
                         character = u"\u25A1"
-                    elif self.field[(i, j)].is_drowned:
+                    elif self.field[(row, column)].is_drowned:
                         character = "x"
                     else:
                         character = "*"
@@ -76,15 +80,15 @@ class Battleship:
                  count_dict.get(4, 0) != 1]
         ):
             raise ValueError()
-        for i in range(len(ships)):
-            for j in range(i + 1, len(ships)):
+        for item_i in range(len(ships)):
+            for item_j in range(item_i + 1, len(ships)):
                 distance_x = min(
-                    abs(ships[i][0][1] - ships[j][1][1]),
-                    abs(ships[i][1][1] - ships[j][0][1])
+                    abs(ships[item_i][0][1] - ships[item_j][1][1]),
+                    abs(ships[item_i][1][1] - ships[item_j][0][1])
                 )
                 distance_y = min(
-                    abs(ships[i][0][0] - ships[j][1][0]),
-                    abs(ships[i][1][0] - ships[j][0][0])
+                    abs(ships[item_i][0][0] - ships[item_j][1][0]),
+                    abs(ships[item_i][1][0] - ships[item_j][0][0])
                 )
                 print(distance_x, distance_y)
                 if not any([distance_x >= 2, distance_y >= 2]):
