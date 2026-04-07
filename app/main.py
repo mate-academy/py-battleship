@@ -82,11 +82,17 @@ class Battleship:
             return "Miss!"
 
         row, column = location
+
+        if ship.is_drowned:
+            return "Sunk!"
+
         deck = ship.get_deck(row, column)
+
         if deck is not None and not deck.is_alive:
             return "Hit!"
 
         ship.fire(row, column)
+
         if ship.is_drowned:
             return "Sunk!"
         return "Hit!"
