@@ -8,8 +8,6 @@ class Deck:
 class Ship:
     def __init__(self, start: list, end: list,
                  is_drowned: bool = False) -> None:
-        self.start = start
-        self.end = end
         self.is_drowned = is_drowned
         self.decks = []
 
@@ -39,6 +37,23 @@ class Ship:
                 self.is_drowned = True
             return True
         return False
+
+    def print_field(self) -> None:
+        for row in range(10):
+            row_str = ""
+            for column in range(10):
+                if (row, column) in self.field:
+                    ship = self.field[(row, column)]
+                    deck = ship.get_deck(row, column)
+                    if ship.is_drowned:
+                        row_str += "x "
+                    elif not deck.is_alive:
+                        row_str += "* "
+                    else:
+                        row_str += "□ "
+                else:
+                    row_str += "~ "
+            print(row_str)
 
 
 class Battleship:
