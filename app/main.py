@@ -12,10 +12,11 @@ class Ship:
     def __init__(self, start: tuple, end: tuple, is_drowned: bool = False):
         self.start = start
         self.end = end
+        self.is_drowned = is_drowned
         if self.start[0] == self.end[0]:
             self.deck = [Deck(self.start[0], length) for length in range(self.start[1], self.end[1] + 1)]
         else:
-            self.deck = [Deck(length, self.start[1]) for length in range(self.start[0], self.end[1] + 1)]
+            self.deck = [Deck(length, self.start[1]) for length in range(self.start[0], self.end[0] + 1)]
 
         self.count_alive = len(self.deck)
 
@@ -28,6 +29,7 @@ class Ship:
             self.deck[shot_place].is_alive = False
             self.count_alive -= 1
         if not self.count_alive:
+            self.is_drowned = True
             return "Sunk!"
         return "Hit!"
 
@@ -35,6 +37,7 @@ class Ship:
 class Battleship:
     def __init__(self, ships: list[tuple]):
         self.field = {}
+        self.missed = set()
         for ship in ships:
             start, end = ship[0], ship[1]
             if start[0] > end[0] or start[1] > end[1]:
@@ -53,6 +56,7 @@ class Battleship:
         if location in self.field:
             return self.field[location].fire(location[0], location[1])
         else:
+            self.missed.add(location)
             return "Miss!"
 
 
@@ -60,9 +64,19 @@ class Battleship:
         for row in range(10):
             for column in range(10):
                 if (row, column) in self.field:
-                    print(u"\t\u25A1", end="")
+                    if not self.field[(row, column)].is_drowned:
+                        ship = self.field[(row, column)]
+                        if ship.deck[ship.get_deck(row, column)].is_alive:
+                            print(u"\t\u25A1", end="")
+                        else:
+                            print("\t*", end="")
+                    else:
+                        print("\tX", end="")
                 else:
-                    print("\t~", end="")
+                    if (row, column) in self.missed:
+                        print("\tO", end="")
+                    else:
+                        print("\t~", end="")
             print()
 
 
@@ -87,3 +101,10 @@ print(battle_ship.fire((0, 3)))
 print(battle_ship.fire((0, 2)))
 print(battle_ship.fire((0, 1)))
 print(battle_ship.fire((0, 0)))
+print(battle_ship.fire((9, 9)))
+print(battle_ship.fire((4, 0)))
+print(battle_ship.fire((9, 0)))
+print(battle_ship.fire((7, 7)))
+print(battle_ship.fire((6, 6)))
+
+battle_ship.print_field()
