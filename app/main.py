@@ -51,6 +51,24 @@ class Battleship:
             else:
                 self.field.update({(start[0], point): ship_instance for point in range(start[1], end[1] + 1)})
 
+        self._validate_field()
+
+    def _validate_field(self):
+        set_of_ships = set(self.field.values())
+        dict_of_ship_deck = {1: 0, 2: 0, 3: 0, 4: 0}
+        if len(set_of_ships) != 10:
+            raise ValueError("There should be exactly 10 ships!")
+
+        for ship in set_of_ships:
+            if ship.count_alive in dict_of_ship_deck:
+                dict_of_ship_deck[ship.count_alive] += 1
+
+        if dict_of_ship_deck[1] != 4 or dict_of_ship_deck[2] != 3 or dict_of_ship_deck[3] != 2 or dict_of_ship_deck[4] != 1:
+            raise ValueError("There should be 4 single-deck ships, 3 double-deck ships, 2 three-deck ships, 1 four-deck ship")
+
+        print(dict_of_ship_deck)
+
+
 
     def fire(self, location: tuple):
         if location in self.field:
