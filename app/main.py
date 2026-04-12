@@ -43,49 +43,56 @@ class Ship:
 
 class Battleship:
     def __init__(self, ships: list) -> None:
+        self.ships_list = [Ship(start, end) for start, end in ships]
         self.field = {}
-        self.ships_list = []
-
-        for start, end in ships:
-            new_ship = Ship(start, end)
-            self.ships_list.append(new_ship)
-            for deck in new_ship.decks:
-                # Перевірка на вихід за межі поля 10x10
-                if not (0 <= deck.row < 10 and 0 <= deck.column < 10):
-                    raise ValueError("Deck is out of field bounds!")
-                # Перевірка на накладання кораблів
-                if (deck.row, deck.column) in self.field:
-                    raise ValueError("Ships overlap at the same coordinate!")
-                self.field[(deck.row, deck.column)] = new_ship
-
+        # Викликаємо валідацію ПЕРЕД фінальним заповненням словника field
         self._validate_field()
+        # Заповнюємо робоче поле лише для перевіреного флоту
+        for ship in self.ships_list:
+            for deck in ship.decks:
+                self.field[(deck.row, deck.column)] = ship
 
     def _validate_field(self) -> None:
         # Перевірка загальної кількості кораблів
         if len(self.ships_list) != 10:
             raise ValueError("Total number of ships must be 10!")
 
-        # Перевірка складу флоту за кількістю палуб
+        # Перевірка складу флоту
         lengths = [len(ship.decks) for ship in self.ships_list]
         composition = {1: 4, 2: 3, 3: 2, 4: 1}
         for size, count in composition.items():
             if lengths.count(size) != count:
                 raise ValueError(f"Invalid count for {size}-deck ships!")
 
-        # Перевірка наявності сусідів (включаючи діагоналі)
-        for row in range(10):
-            for col in range(10):
-                if (row, col) in self.field:
-                    current_ship = self.field[(row, col)]
-                    # Перевірка 8 сусідніх клітинок
-                    for neighbor_row in range(row - 1, row + 2):
-                        for neighbor_col in range(col - 1, col + 2):
-                            neighbor_pos = (neighbor_row, neighbor_col)
-                            if (0 <= neighbor_row < 10
-                                    and 0 <= neighbor_col < 10
-                                    and neighbor_pos in self.field):
-                                if self.field[neighbor_pos] != current_ship:
-                                    raise ValueError("Neighboring ships!")
+        # Перевірка меж (0..9) та накладання (overlap)
+        seen_coords = set()
+        temp_map = {}
+        for ship in self.ships_list:
+            for deck in ship.decks:
+                # Перевірка меж (Checklist #37)
+                if not (0 <= deck.row <= 9 and 0 <= deck.column <= 9):
+                    raise ValueError("Deck is out of field bounds!")
+
+                # Перевірка накладання (Checklist #38)
+                coords = (deck.row, deck.column)
+                if coords in seen_coords:
+                    raise ValueError("Ships overlap at the same coordinate!")
+
+                seen_coords.add(coords)
+                temp_map[coords] = ship
+
+        # Перевірка сусідства (включаючи діагоналі)
+        for row_idx, col_idx in seen_coords:
+            current_ship = temp_map[(row_idx, col_idx)]
+            for neighbor_row in range(row_idx - 1, row_idx + 2):
+                for neighbor_col in range(col_idx - 1, col_idx + 2):
+                    neighbor_pos = (neighbor_row, neighbor_col)
+
+                    if (0 <= neighbor_row <= 9
+                            and 0 <= neighbor_col <= 9
+                            and neighbor_pos in temp_map):
+                        if temp_map[neighbor_pos] != current_ship:
+                            raise ValueError("Neighboring ships!")
 
     def fire(self, location: tuple) -> str:
         if location not in self.field:
