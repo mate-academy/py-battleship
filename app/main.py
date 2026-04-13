@@ -1,5 +1,7 @@
 class Deck:
     def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+        if row < 0 or column < 0 or row > 9 or column > 9:
+            raise ValueError("Deck row and column must be between 0 and 9!")
         self.row = row
         self.column = column
         self.is_alive = is_alive
