@@ -47,9 +47,17 @@ class Battleship:
                 raise ValueError("Ships can be placed only straight in row or column")
             ship_instance = Ship(start, end)
             if start[1] == end[1]:
-                self.field.update({(point, start[1]) : ship_instance for point in range(start[0], end[0] + 1)})
+                # self.field.update({(point, start[1]) : ship_instance for point in range(start[0], end[0] + 1)})
+                for point in range(start[0], end[0] + 1):
+                    if (point, start[1]) in self.field:
+                        raise ValueError("Ship can not be placed on the same spot where there is an existing ship!")
+                    self.field[(point, start[1])] = ship_instance
             else:
-                self.field.update({(start[0], point): ship_instance for point in range(start[1], end[1] + 1)})
+                # self.field.update({(start[0], point): ship_instance for point in range(start[1], end[1] + 1)})
+                for point in range(start[1], end[1] + 1):
+                    if (start[0], point) in self.field:
+                        raise ValueError("Ship can not be placed on the same spot where there is an existing ship!")
+                    self.field[(start[0], point)] = ship_instance
 
         self._validate_field()
 
@@ -66,8 +74,14 @@ class Battleship:
         if dict_of_ship_deck[1] != 4 or dict_of_ship_deck[2] != 3 or dict_of_ship_deck[3] != 2 or dict_of_ship_deck[4] != 1:
             raise ValueError("There should be 4 single-deck ships, 3 double-deck ships, 2 three-deck ships, 1 four-deck ship")
 
-        print(dict_of_ship_deck)
+        for (r, c), ship in self.field.items():
+            for row in range(-1,2):
+                for column in range(-1,2):
+                    if row ==0 and column == 0:
+                        continue
 
+                    if (r + row, c + column) in self.field and self.field[(r + row, c + column)] != ship:
+                        raise ValueError("Ship can not be placed to close to each other!")
 
 
     def fire(self, location: tuple):
