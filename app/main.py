@@ -1,34 +1,93 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    def __init__(self, start: tuple, end: tuple,
+                 is_drowned: bool = False) -> None:
+        self.is_drowned = is_drowned
+        self.decks = []
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+        r_start, c_start = start
+        r_end, c_end = end
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+        row_step = 1 if r_end > r_start else -1 if r_end < r_start else 0
+        col_step = 1 if c_end > c_start else -1 if c_end < c_start else 0
+        self.length = max(abs(r_end - r_start), abs(c_end - c_start)) + 1
+
+        for i in range(self.length):
+            row = r_start + i * row_step
+            column = c_start + i * col_step
+            self.decks.append(Deck(row, column))
+
+    def get_deck(self, row: int, column: int) -> None:
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
+        return None
+
+    def fire(self, row: int, column: int) -> bool:
+        deck = self.get_deck(row, column)
+        if deck:
+            deck.is_alive = False
+            if all(not d.is_alive for d in self.decks):
+                self.is_drowned = True
+            return True
+        return False
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(self, ships: list) -> None:
+        self.ships = [Ship(s[0], s[1]) for s in ships]
+        self.field = {}
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+        for ship in self.ships:
+            for deck in ship.decks:
+                self.field[(deck.row, deck.column)] = ship
+
+        self._validate_field()
+
+    def _validate_field(self) -> None:
+        lengths = sorted([ship.length for ship in self.ships])
+        if lengths != [1, 1, 1, 1, 2, 2, 2, 3, 3, 4]:
+            raise ValueError
+        occupied_coords = list(self.field.keys())
+        for i, (row, column) in enumerate(occupied_coords):
+            for dr in [-1, 0, 1]:
+                for dc in [-1, 0, 1]:
+                    if dr == 0 and dc == 0:
+                        continue
+                    neighbor = (row + dr, column + dc)
+                    if (neighbor in self.field
+                            and self.field[neighbor]
+                            != self.field[(row, column)]):
+                        raise ValueError
+
+    def fire(self, location: tuple) -> str:
+        if location in self.field:
+            ship = self.field[location]
+            ship.fire(location[0], location[1])
+            if ship.is_drowned:
+                return "Sunk!"
+            return "Hit!"
+        return "Miss!"
+
+    def print_field(self) -> None:
+        for row in range(10):
+            row_str = ""
+            for column in range(10):
+                if (row, column) in self.field:
+                    ship = self.field[(row, column)]
+                    deck = ship.get_deck(row, column)
+                    if ship.is_drowned:
+                        row_str += "x "
+                    elif not deck.is_alive:
+                        row_str += "* "
+                    else:
+                        row_str += "□ "
+                else:
+                    row_str += "~ "
+            print(row_str)
