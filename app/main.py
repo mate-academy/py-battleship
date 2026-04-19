@@ -12,22 +12,22 @@ class Ship:
                  is_drowned: bool = False) -> None:
         self.start = start
         self.end = end
-        self.decks = []
+        self.decks = {}
         self.is_drowned = is_drowned
         self.create_deckds()
 
     def get_deck(self, row: int, column: int) -> Deck | None:
-        for deck in self.decks:
-            if row == deck.row and column == deck.column:
-                return deck
+        deck = (row, column)
+        if deck in self.decks:
+            return self.decks[(row, column)]
 
     def create_deckds(self) -> None:
         if self.start[0] == self.end[0]:
             for row in range(self.start[1], self.end[1] + 1):
-                self.decks.append(Deck(self.start[0], row))
+                self.decks[(self.start[0], row)] = (Deck(self.start[0], row))
         elif self.start[1] == self.end[1]:
             for column in range(self.start[0], self.end[0] + 1):
-                self.decks.append(Deck(column, self.end[1]))
+                self.decks[(column, self.end[1])] = (Deck(column, self.end[1]))
 
     def fire(self, row: int, column: int) -> str:
         current_deck = self.get_deck(row, column)
@@ -38,11 +38,11 @@ class Ship:
         if current_deck.is_alive is True:
             current_deck.is_alive = False
         result = 0
-        for deck in self.decks:
+        for deck in self.decks.values():
             if deck.is_alive:
                 result += 1
         if result == 0:
-            self.is_drowned = False
+            self.is_drowned = True
             return "Sunk!"
         return "Hit!"
 
