@@ -76,6 +76,9 @@ class Battleship:
                 return value
         return "Miss!"
 
+    # print_field and _validate_field are EXTRA tasks
+    # I don't have time for these task
+
     def _make_battle_area(self) -> None:
         for ship in self.field.values():
             for deck in ship.decks:
