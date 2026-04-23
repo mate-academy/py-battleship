@@ -57,6 +57,8 @@ class Battleship:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
+        self._validate_field()
+
     def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
             return "Miss!"
@@ -93,3 +95,43 @@ class Battleship:
 
             print("\t".join(row_symbols))
         print()
+
+    def _validate_field(self) -> None:
+        unique_ships = list(set(self.field.values()))
+
+        if len(unique_ships) != 10:
+            raise ValueError(
+                f"Expected exactly 10 ships, found {len(unique_ships)}."
+            )
+
+        ship_counts = {1: 0, 2: 0, 3: 0, 4: 0}
+        for ship in unique_ships:
+            size = len(ship.decks)
+            if size not in ship_counts:
+                raise ValueError(
+                    f"Invalid ship size: {size}. Must be 1-4 decks."
+                )
+            ship_counts[size] += 1
+
+        expected_counts = {1: 4, 2: 3, 3: 2, 4: 1}
+        if ship_counts != expected_counts:
+            raise ValueError(
+                f"Invalid fleet. Expected {expected_counts}, "
+                f"got {ship_counts}."
+            )
+
+        for (row, col), current_ship in self.field.items():
+            for d_row in (-1, 0, 1):
+                for d_col in (-1, 0, 1):
+                    if d_row == 0 and d_col == 0:
+                        continue
+
+                    neighbor_loc = (row + d_row, col + d_col)
+
+                    if neighbor_loc in self.field:
+                        neighbor_ship = self.field[neighbor_loc]
+                        if neighbor_ship is not current_ship:
+                            raise ValueError(
+                                "Ships cannot touch! Conflict near "
+                                f"({row}, {col}) and {neighbor_loc}."
+                            )
