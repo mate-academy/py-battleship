@@ -76,12 +76,6 @@ class Battleship:
                 return value
         return "Miss!"
 
-    def print_field(self) -> None:
-        self._make_battle_area()
-        print("Battleship:")
-        for row in self.area:
-            print(*row)
-
     def _make_battle_area(self) -> None:
         for ship in self.field.values():
             for deck in ship.decks:
