@@ -81,5 +81,94 @@ class Battleship:
             return "Hit!"
         return "Miss!"
 
+    def print_field(self) -> None:
+        field_visualised = []
+        for row in range(10):
+            for column in range(10):
+                ship = self.field.get((row, column))
+                if ship:
+                    if ship.is_drowned:
+                        field_visualised.append("x")
+                    elif not ship.get_deck(row, column).is_alive:
+                        field_visualised.append("*")
+                    else:
+                        field_visualised.append(u"\u25A1")
+                else:
+                    field_visualised.append("~")
+
+        for i in range(0, 100, 10):
+            print("   ".join(field_visualised[i:i + 10]))
+
+    def _validate_field(self) -> None:
+        ships_count = len(self.ships)
+        if ships_count != 10:
+            raise ValueError
+        expected = {
+            "single-deck": 4,
+            "double-deck": 3,
+            "three-deck": 2,
+            "four-deck": 1
+        }
+        actual = {
+            "single-deck": 0,
+            "double-deck": 0,
+            "three-deck": 0,
+            "four-deck": 0
+        }
+
+        for ship in self.ships:
+            ship_length = len(ship.decks)
+            if ship_length == 4:
+                actual["four-deck"] += 1
+            elif ship_length == 3:
+                actual["three-deck"] += 1
+            elif ship_length == 2:
+                actual["double-deck"] += 1
+            elif ship_length == 1:
+                actual["single-deck"] += 1
+        if expected != actual:
+            raise ValueError
+
+        occupied_cells = {}
+        for ship_idx, ship in enumerate(self.ships):
+            for row, col in ship.decks.keys():
+                print(row, col)
+                for dr in [-1, 0, 1]:
+                    for dc in [-1, 0, 1]:
+                        neighbor = (row + dr, col + dc)
+                        if neighbor in occupied_cells:
+                            if neighbor == (row, col):
+                                continue
+                            if occupied_cells[neighbor] != ship_idx:
+                                raise ValueError("Ships are touching!")
+                occupied_cells[(row, col)] = ship_idx
+
     def __repr__(self) -> str:
         return f"Battleship({self.ships})"
+
+
+battle_ship = Battleship(
+    ships=[
+        ((0, 0), (0, 3)),
+        ((2, 0), (2, 2)),
+        ((4, 0), (4, 2)),
+        ((6, 0), (6, 1)),
+        ((8, 0), (8, 1)),
+        ((0, 5), (0, 6)),
+        ((2, 5), (2, 5)),
+        ((4, 5), (4, 5)),
+        ((6, 5), (6, 5)),
+        ((8, 5), (8, 5)),
+    ]
+)
+
+
+print(
+    battle_ship.fire((0, 4)),  # Miss!
+    battle_ship.fire((0, 3)),  # Hit!
+    battle_ship.fire((0, 2)),  # Hit!
+    battle_ship.fire((0, 1)),  # Hit!
+    battle_ship.fire((0, 0)),  # Sunk!
+)
+print(battle_ship.print_field())
+print(battle_ship._validate_field())
