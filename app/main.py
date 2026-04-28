@@ -7,8 +7,14 @@ class Deck:
     def __repr__(self) -> str:
         return f"Deck({self.row}, {self.column}, {self.is_alive})"
 
+
 class Ship:
-    def __init__(self, start: tuple, end: tuple, is_drowned=False) -> None:
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
         self.start = start
         self.end = end
         self.is_drowned = is_drowned
@@ -18,16 +24,25 @@ class Ship:
     def initialize_decks(self) -> None:
         self.decks = {}
         if self.start == self.end:
-            self.decks[self.start] = Deck(row=self.start[0], column=self.start[1])
+            self.decks[self.start] = Deck(
+                row=self.start[0], column=self.start[1]
+            )
 
         elif self.start[0] == self.end[0]:
-            for current_el in (range(self.start[1], self.end[1] + 1)):
-                self.decks[(self.start[0], current_el)] = Deck(row=self.start[0], column=current_el)
+            start_col = min(self.start[1], self.end[1])
+            end_col = max(self.start[1], self.end[1])
+            for current_el in range(start_col, end_col + 1):
+                self.decks[(self.start[0], current_el)] = Deck(
+                    row=self.start[0], column=current_el
+                )
 
         elif self.start[1] == self.end[1]:
-            for  current_el in range(self.start[0], self.end[0] + 1):
-                self.decks[(current_el, self.end[0])] = Deck(row=current_el, column=self.end[0])
-
+            start_row = min(self.start[0], self.end[0])
+            end_row = max(self.start[0], self.end[0])
+            for current_el in range(start_row, end_row + 1):
+                self.decks[(current_el, self.end[0])] = Deck(
+                    row=current_el, column=self.end[0]
+                )
 
     def get_deck(self, row: int, column: int) -> Deck:
         return self.decks[(row, column)]
@@ -44,8 +59,9 @@ class Ship:
     def __repr__(self) -> str:
         return f"Ship({self.start}, {self.end}, {self.is_drowned})"
 
+
 class Battleship:
-    def __init__(self, ships:list) -> None:
+    def __init__(self, ships: list) -> None:
         self.ships = [(Ship(start=ship[0], end=ship[1])) for ship in ships]
         self.field = {}
         self.initialize_field()
@@ -55,14 +71,13 @@ class Battleship:
             for r_ship_deck, c_ship_deck in ship.decks.keys():
                 self.field[(r_ship_deck, c_ship_deck)] = ship
 
-
     def fire(self, location: tuple) -> str:
-        r, c = location
-        if (r, c) in self.field:
-            ship = self.field[r, c]
-            ship.fire(r, c)
+        row, column = location
+        if (row, column) in self.field:
+            ship = self.field[row, column]
+            ship.fire(row, column)
             if ship.is_drowned:
-               return "Sunk!"
+                return "Sunk!"
             return "Hit!"
         return "Miss!"
 
