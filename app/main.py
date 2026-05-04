@@ -57,7 +57,10 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: list[tuple[int, int]]) -> None:
+    def __init__(
+            self,
+            ships: list[tuple[tuple[int, int], tuple[int, int]]]
+    ) -> None:
         # Create a dict `self.field`.
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
