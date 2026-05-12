@@ -81,6 +81,8 @@ class Battleship:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = deck
 
+        self._validate_field()
+
     def _get_simbol(self, row: int, column: int) -> str:
         simbol = self.field.get((row, column), "~")
         if simbol != "~":
@@ -105,45 +107,45 @@ class Battleship:
                 row_str += self._get_simbol(row, column) + "   "
             print(row_str)
 
-#
-# ships=[
-#             Ship((2, 0), (2, 3)),
-#             Ship((4, 5), (4, 6)),
-#             Ship((3, 8), (3, 9)),
-#             Ship((6, 0), (8, 0)),
-#             Ship((6, 4), (6, 6)),
-#             Ship((6, 8), (6, 9)),
-#             Ship((9, 9), (9, 9)),
-#             Ship((9, 5), (9, 5)),
-#             Ship((9, 3), (9, 3)),
-#             Ship((9, 7), (9, 7)),
-#         ]
-#
-# bs = Battleship(ships)
-# bs.print_field()
-# print(bs.field)
-#
-# battle_ship = Battleship(
-#             ships=[
-#                 ((2, 0), (2, 3)),
-#                 ((4, 5), (4, 6)),
-#                 ((3, 8), (3, 9)),
-#                 ((6, 0), (8, 0)),
-#                 ((6, 4), (6, 6)),
-#                 ((6, 8), (6, 9)),
-#                 ((9, 9), (9, 9)),
-#                 ((9, 5), (9, 5)),
-#                 ((9, 3), (9, 3)),
-#                 ((9, 7), (9, 7)),
-#             ]
-#         )
-#
-# battle_ship.print_field()
-#
-# print(battle_ship.fire((0, 0)))
-# print(battle_ship.fire((4, 5)))
-# print(battle_ship.fire((0, 0)))
-# battle_ship.print_field()
-# print(battle_ship.fire((4, 6)))
-#
-# battle_ship.print_field()
+    def _validate_field(self) -> bool:
+        ships = {cell.ship for cell in self.field.values()}
+
+        if len(ships) != 10:
+            print(f"There should be 10 ships, but now there are {len(ships)}")
+            return False
+
+        ships_count = {}
+        for ship in ships:
+            size = len(ship.decks)
+            ships_count[size] = ships_count.get(size, 0) + 1
+
+        str_dict = {1: "single", 2: "double", 3: "three", 4: "four"}
+        for index in range(1, 5):
+            if ships_count[index] != 5 - index:
+                print(f"Wrong number of {str_dict[index]}-deck ships. "
+                      f"Should be {5 - index}.")
+                return False
+
+        for ship in ships:
+            start_row, start_column = ship.start
+            end_row, end_column = ship.end
+            start_row -= 1 if start_row > 0 else 0
+            start_column -= 1 if start_column > 0 else 0
+            end_row += 1 if end_row < 9 else 0
+            end_column += 1 if end_column < 9 else 0
+
+            for index_row in range(start_row, end_row + 1):
+                for index_column in range(start_column, end_column + 1):
+                    own_ship = False
+                    for deck in ship.decks:
+                        if (index_row == deck.row
+                                and index_column == deck.column):
+                            own_ship = True
+                            break
+                    if not own_ship:
+                        if self._get_simbol(index_row, index_column) != "~":
+                            print(f"Placement error near point "
+                                  f"{index_row} : {index_column}")
+                            return False
+
+        return True
