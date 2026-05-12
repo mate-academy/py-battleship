@@ -1,14 +1,21 @@
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(
+            self,
+            row: int,
+            column: int,
+            ship: Ship,
+            is_alive: bool = True
+    ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
+        self.ship = ship
 
 
 class Ship:
     def __init__(self,
-                 start: list[int],
-                 end: list[int],
+                 start: tuple[int, int],
+                 end: tuple[int, int],
                  is_drowned: bool = False
                  ) -> None:
         # Create decks and save them to a list `self.decks`
@@ -25,7 +32,7 @@ class Ship:
                 or not (0 <= end[0] < 10)
                 or not (0 <= end[1] < 10)):
             raise ValueError("This ship is not a spaceship. "
-                             "It can be positioned on the map")
+                             "It can be positioned on the map 10 x 10")
 
         if start[0] > end[0] or start[1] > end[1]:
             start, end = end, start
@@ -37,7 +44,7 @@ class Ship:
             coord_y = start[1 - index]
             if index:
                 coord_x, coord_y = coord_y, coord_x
-            self.decks.append(Deck(coord_x, coord_y))
+            self.decks.append(Deck(coord_x, coord_y, self))
         if len(self.decks) > 4:
             raise ValueError("the ship can have at most 4 decks")
         self.start = (start[0], start[1])
@@ -50,36 +57,46 @@ class Ship:
                 return deck
         return None
 
-    def fire(self, row: int, column: int) -> None:
+    def fire(self, row: int, column: int) -> str:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
-        pass
+        deck = self.get_deck(row, column)
+        deck.is_alive = False
+        if any(deck.is_alive for deck in self.decks):
+            return "Hit!"
+        self.is_drowned = True
+        return "Sunk!"
 
 
 class Battleship:
-    def __init__(self, ships: list[Ship]) -> None:
+    def __init__(self, ships: list[tuple]) -> None:
         # Create a dict `self.field`.
         # Its keys are tuples - the coordinates of the non-empty cells,
         # A value for each cell is a reference to the ship
         # which is located in it
 
         self.field = {}
-        for ship in ships:
+        for coord in ships:
+            ship = Ship(coord[0], coord[1])
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = deck
 
     def _get_simbol(self, row: int, column: int) -> str:
         simbol = self.field.get((row, column), "~")
         if simbol != "~":
-            return u"\u25A1" if simbol.is_alive else "x"
+            return u"\u25A1" if simbol.is_alive else \
+                "x" if simbol.ship.is_drowned else "*"
         return simbol
 
-    def fire(self, location: tuple) -> None:
+    def fire(self, location: tuple) -> str:
         # This function should check whether the location
         # is a key in the `self.field`
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
-        pass
+        deck = self.field.get(location, None)
+        if deck is None:
+            return "Miss!"
+        return deck.ship.fire(*location)
 
     def print_field(self) -> None:
         for row in range(10):
@@ -89,13 +106,44 @@ class Battleship:
             print(row_str)
 
 #
-# ship1 = Ship([8, 3], [5, 3])
-# ship2 = Ship([1, 3], [1, 5])
-# ships = [ship1, ship2]
-# for deck in ship2.decks:
-#     print(deck.row, deck.column)
+# ships=[
+#             Ship((2, 0), (2, 3)),
+#             Ship((4, 5), (4, 6)),
+#             Ship((3, 8), (3, 9)),
+#             Ship((6, 0), (8, 0)),
+#             Ship((6, 4), (6, 6)),
+#             Ship((6, 8), (6, 9)),
+#             Ship((9, 9), (9, 9)),
+#             Ship((9, 5), (9, 5)),
+#             Ship((9, 3), (9, 3)),
+#             Ship((9, 7), (9, 7)),
+#         ]
 #
 # bs = Battleship(ships)
 # bs.print_field()
 # print(bs.field)
 #
+# battle_ship = Battleship(
+#             ships=[
+#                 ((2, 0), (2, 3)),
+#                 ((4, 5), (4, 6)),
+#                 ((3, 8), (3, 9)),
+#                 ((6, 0), (8, 0)),
+#                 ((6, 4), (6, 6)),
+#                 ((6, 8), (6, 9)),
+#                 ((9, 9), (9, 9)),
+#                 ((9, 5), (9, 5)),
+#                 ((9, 3), (9, 3)),
+#                 ((9, 7), (9, 7)),
+#             ]
+#         )
+#
+# battle_ship.print_field()
+#
+# print(battle_ship.fire((0, 0)))
+# print(battle_ship.fire((4, 5)))
+# print(battle_ship.fire((0, 0)))
+# battle_ship.print_field()
+# print(battle_ship.fire((4, 6)))
+#
+# battle_ship.print_field()
