@@ -57,6 +57,7 @@ class Battleship:
             new_ship = Ship(start, end)
             for deck in new_ship.decks:
                 self.field[(deck.row, deck.column)] = new_ship
+        self._validate_field()
 
     def fire(self, location: Tuple[int, int]) -> str:
         if location not in self.field:
@@ -98,5 +99,5 @@ class Battleship:
                         if (neighbor != (deck.row, deck.column)
                                 and neighbor in self.field
                                 and self.field[neighbor] is not ship):
-                            return False
+                            raise ValueError("Ships cannot be adjacent to each other.")
         return True
