@@ -99,5 +99,7 @@ class Battleship:
                         if (neighbor != (deck.row, deck.column)
                                 and neighbor in self.field
                                 and self.field[neighbor] is not ship):
-                            raise ValueError("Ships cannot be adjacent to each other.")
+                            raise ValueError(
+                                "Ships cannot be adjacent to each other."
+                            )
         return True
