@@ -84,12 +84,16 @@ class Battleship:
     def _validate_field(self) -> bool:
         unique_ships = list(set(self.field.values()))
         if len(unique_ships) != 10:
-            return False
+            raise ValueError(
+                "Ships cannot be adjacent to each other."
+            )
 
         lengths = [len(ship.decks) for ship in unique_ships]
         for size in range(1, 5):
             if lengths.count(size) != (5 - size):
-                return False
+                raise ValueError(
+                    "Ships cannot be adjacent to each other."
+                )
 
         for ship in unique_ships:
             for deck in ship.decks:
