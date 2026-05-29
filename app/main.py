@@ -70,19 +70,19 @@ class Battleship:
         for ship in list_ships:
             if len(ship.decks) == 1:
                 ships[1] += 1
-            if len(ship.decks) == 2:
+            elif len(ship.decks) == 2:
                 ships[2] += 1
-            if len(ship.decks) == 3:
+            elif len(ship.decks) == 3:
                 ships[3] += 1
-            if len(ship.decks) == 4:
+            elif len(ship.decks) == 4:
                 ships[4] += 1
         if ships[1] != 4:
             print("Single ships must be 4!!!")
-        if ships[2] != 3:
+        elif ships[2] != 3:
             print("Double ships must be 3!!!")
-        if ships[3] != 2:
+        elif ships[3] != 2:
             print("Triple ships must be 2!!!")
-        if ships[4] != 1:
+        elif ships[4] != 1:
             print("Quater ships must be 1!!!")
 
         for (row, column), shep in self.field.items():
