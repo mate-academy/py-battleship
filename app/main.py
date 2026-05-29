@@ -1,5 +1,10 @@
 class Deck:
-    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+    def __init__(
+            self,
+            row: int,
+            column: int,
+            is_alive: bool = True
+    ) -> None:
         self.row = row
         self.column = column
         self.is_alive = is_alive
@@ -11,7 +16,12 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start: tuple, end: tuple, is_drowned: bool = False) -> None:
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
         # Create decks and save them to a list `self.decks`
         self.decks = []
         for row in range(start[0], end[0] + 1):
@@ -25,7 +35,7 @@ class Ship:
                 return deck
 
     def check_drown(self) -> bool:
-        return all(deck.is_alive == False for deck in self.decks)
+        return all(deck.is_alive is False for deck in self.decks)
 
     def fire(self, row: int, column: int) -> str:
         # Change the `is_alive` status of the deck
@@ -33,8 +43,8 @@ class Ship:
         deck = self.get_deck(row, column)
         deck.is_alive = False
         if self.check_drown():
-            return f"Sunk!\n"
-        return f"Hit!\n"
+            return "Sunk!"
+        return "Hit!"
 
 
 class Battleship:
@@ -88,7 +98,9 @@ class Battleship:
                 (row + 1, column + 1),
             ]
             for deck in neighbors:
-                if deck in self.field and self.field[deck] != self.field[check_deck]:
+                if deck in self.field and (
+                    self.field[deck] != self.field[check_deck]
+                ):
                     print("Ships can't be near each other")
 
     def fire(self, location: tuple) -> str:
@@ -97,7 +109,7 @@ class Battleship:
         # If it is, then it should check if this cell is the last alive
         # in the ship or not.
         if location not in self.field:
-            return f"Miss!\n"
+            return "Miss!"
 
         ship = self.field[location]
         return ship.fire(*location)
@@ -108,7 +120,7 @@ class Battleship:
             deck = ship.get_deck(row, column)
             if ship.check_drown():
                 clean_field[row][column] = "x"
-            elif deck.is_alive == False:
+            elif deck.is_alive is False:
                 clean_field[row][column] = "*"
             else:
                 clean_field[row][column] = "□"
