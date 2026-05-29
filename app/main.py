@@ -29,7 +29,7 @@ class Ship:
                 self.decks.append(Deck(row, column))
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> float:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -41,10 +41,11 @@ class Ship:
         # Change the `is_alive` status of the deck
         # And update the `is_drowned` value if it's needed
         deck = self.get_deck(row, column)
-        deck.is_alive = False
-        if self.check_drown():
-            return "Sunk!"
-        return "Hit!"
+        if deck:
+            deck.is_alive = False
+            if self.check_drown():
+                return "Sunk!"
+            return "Hit!"
 
 
 class Battleship:
@@ -78,11 +79,11 @@ class Battleship:
                 ships[4] += 1
         if ships[1] != 4:
             print("Single ships must be 4!!!")
-        elif ships[2] != 3:
+        if ships[2] != 3:
             print("Double ships must be 3!!!")
-        elif ships[3] != 2:
+        if ships[3] != 2:
             print("Triple ships must be 2!!!")
-        elif ships[4] != 1:
+        if ships[4] != 1:
             print("Quater ships must be 1!!!")
 
         for (row, column), shep in self.field.items():
