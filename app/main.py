@@ -20,7 +20,7 @@ class Ship:
             for row in range(start[0], end[0] + 1):
                 self.decks.append(Deck(row, start[1]))
 
-    def get_deck(self, row: int, column: int) -> None:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
@@ -40,7 +40,7 @@ class Battleship:
                 self.field[(deck.row, deck.column)] = the_ship
         self._validate_field()
 
-    def fire(self, location: tuple) -> None:
+    def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field[location]
             ship.fire(location[0], location[1])
