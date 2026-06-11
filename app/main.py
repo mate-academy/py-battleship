@@ -32,7 +32,7 @@ class Ship:
                 if ship_position == "horizontal":
                     self.decks.append(Deck(start[0], start[1] + i))
                 else:
-                    self.decks.append(Deck(start[0] + 1, start[1]))
+                    self.decks.append(Deck(start[0] + i, start[1]))
             self.decks.append(Deck(end[0], end[1]))
 
     def get_deck(self, row: int, column: int) -> Deck | None:
