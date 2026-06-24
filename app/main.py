@@ -11,11 +11,9 @@ class Deck:
 class Ship:
     def __init__(self,
                  start: tuple[int, int],
-                 end: tuple[int, int],
-                 is_drowned: bool = False) -> None:
+                 end: tuple[int, int]) -> None:
         self.start = start
         self.end = end
-        self.is_drowned = is_drowned
         self.decks: List[Deck] = []
         self._create_decks()
 
@@ -41,9 +39,8 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships: List[tuple], is_drowned: bool = False) -> None:
+    def __init__(self, ships: List[tuple]) -> None:
         self.ships = ships
-        self.is_drowned = is_drowned
         self.field = {}
         for ship_data in ships:
             ship = Ship(ship_data[0], ship_data[1])
