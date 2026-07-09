@@ -12,8 +12,6 @@ class Ship:
         end: tuple[int, int],
         is_drowned: bool = False
     ) -> None:
-        self.start = start
-        self.end = end
         self.is_drowned = is_drowned
         self.decks: list[Deck] = []
 
@@ -69,6 +67,8 @@ class Battleship:
 
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
+
+        self._validate_field()
 
     def fire(self, location: tuple[int, int]) -> str:
         if location not in self.field:
