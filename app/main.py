@@ -68,8 +68,7 @@ class Battleship:
         # in the ship or not.
         if location in self.field:
             return self.field[location].fire(location[0], location[1])
-        else:
-            return "Miss!"
+        return "Miss!"
 
     def print_field(self) -> None:
         for row in range(10):
@@ -80,9 +79,9 @@ class Battleship:
                     if deck_on_cell.is_alive:
                         print(u"\u25A1", end=" ")
                     elif ship.is_drowned:
-                        print("*", end=" ")
-                    else:
                         print("x", end=" ")
+                    else:
+                        print("*", end=" ")
                 else:
                     print("~", end=" ")
             print()
