@@ -12,6 +12,9 @@ class Battleship:
                 for row in range(start[0], end[0] + 1):
                     self.ships[(row, start[1])] = ship
 
+        if not self._validate_field():
+                    raise ValueError("Invalid field configuration")
+
     def fire(self, location: tuple) -> str:
         if location not in self.ships:
             return "Miss!"
@@ -34,7 +37,7 @@ class Battleship:
             return "Sunk!"
         return "Hit!"
 
-    def is_sunk(self, ship: tuple) -> int:
+    def is_sunk(self, ship: tuple) -> bool:
         start, end = ship
         if start[0] == end[0]:
             size = abs(end[1] - start[1]) + 1
