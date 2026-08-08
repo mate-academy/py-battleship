@@ -69,6 +69,9 @@ class Battleship:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
+        if not self._validate_field():
+            raise ValueError("Invalid field")
+
     def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field[location]
