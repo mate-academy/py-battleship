@@ -48,6 +48,37 @@ class Battleship:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
 
+        self._validate_field()
+
+    def _validate_field(self) -> None:
+        unique_ships = list(set(self.field.values()))
+
+        if len(unique_ships) != 10:
+            raise ValueError("Invalid number of ships")
+
+        lengths = [len(ship.decks) for ship in unique_ships]
+
+        if (
+                lengths.count(1) != 4
+                or lengths.count(2) != 3
+                or lengths.count(3) != 2
+                or lengths.count(4) != 1
+        ):
+            raise ValueError("Invalid ship sizes")
+
+        directions = [
+            (-1, -1), (-1, 0), (-1, 1),
+            (0, -1), (0, 1),
+            (1, -1), (1, 0), (1, 1)
+        ]
+
+        for (row, col), ship in self.field.items():
+            for dr, dc in directions:
+                neighbor = (row + dr, col + dc)
+
+                if neighbor in self.field and self.field[neighbor] != ship:
+                    raise ValueError("Ships are touching")
+
     def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field[location]
