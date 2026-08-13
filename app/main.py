@@ -1,21 +1,34 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
+    def __init__(self, row: int, column: int, is_alive=True) -> None:
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
+
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    def __init__(self, start: Deck, end: Deck, is_drowned=False) -> None:
+        self.start = start
+        self.end = end
+        self.is_drowned = is_drowned
+        self.decks = []
+        if start.row == end.row:
+            for column in range(start.column, end.column + 1):
+                self.decks.append(Deck(start.row, column))
+        elif start.column == end.column:
+            for row in range(start.row, end.row + 1):
+                self.decks.append(Deck(row, start.column))
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    def get_deck(self, row: int, column: int) -> Deck:
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
 
     def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                deck.is_alive = False
+
 
 
 class Battleship:
