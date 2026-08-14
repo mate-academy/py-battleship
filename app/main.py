@@ -47,6 +47,7 @@ class Battleship:
         for ship in self.ships:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = ship
+        self._validate_field()
 
     def fire(self, location: tuple) -> str:
         for coords, ship in self.field.items():
