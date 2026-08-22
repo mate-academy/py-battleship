@@ -13,7 +13,7 @@ class Battleship:
                     self.ships[(row, start[1])] = ship
 
         if not self._validate_field():
-                    raise ValueError("Invalid field configuration")
+            raise ValueError("Invalid field configuration")
 
     def fire(self, location: tuple) -> str:
         if location not in self.ships:
@@ -103,8 +103,25 @@ class Battleship:
                 for row in range(start[0], end[0] + 1):
                     all_cells.append((row, col))
 
-        for i, cell1 in enumerate(all_cells):
-            for cell2 in all_cells[i + 1:]:
-                if self._are_neighbors(cell1, cell2):
-                    return False
+        ship_cells = {}
+        for ship in set(self.ships.values()):
+            cells = []
+            start, end = ship
+            if start[0] == end[0]:
+                row = start[0]
+                for col in range(start[1], end[1] + 1):
+                    cells.append((row, col))
+            else:
+                col = start[1]
+                for row in range(start[0], end[0] + 1):
+                    cells.append((row, col))
+            ship_cells[ship] = cells
+
+        ships = list(ship_cells.keys())
+        for i, ship1 in enumerate(ships):
+            for ship2 in ships[i + 1:]:
+                for cell1 in ship_cells[ship1]:
+                    for cell2 in ship_cells[ship2]:
+                        if self._are_neighbors(cell1, cell2):
+                            return False
         return True
