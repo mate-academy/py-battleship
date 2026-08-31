@@ -65,21 +65,32 @@ class Battleship:
         for res in field:
             print("".join(res))
 
-    def _validate(self) -> None:
+    def _validate_field(self) -> None:
         ships = set(self.field.values())
         ships_var = [len(ship.decks) for ship in ships]
         if len(ships) != 10:
-            print(f"There should "
+            raise ValueError(f"There should "
                   f"be 10 ships. Currently: {len(ships)}")
         if ships_var.count(1) != 4:
-            print(f"There should be 4 "
+            raise ValueError(f"There should be 4 "
                   f"single-deck ships. Currently: {ships_var.count(1)}")
         if ships_var.count(2) != 3:
-            print(f"There should be 4 "
+            raise ValueError(f"There should be 3 "
                   f"double-deck ships. Currently: {ships_var.count(2)}")
         if ships_var.count(3) != 2:
-            print(f"There should be 2 "
+            raise ValueError(f"There should be 2 "
                   f"three-deck ships. Currently: {ships_var.count(3)}")
         if ships_var.count(4) != 1:
-            print(f"There should be 1 "
+            raise ValueError(f"There should be 1 "
                   f"four-deck ships. Currently: {ships_var.count(4)}")
+        for i, ship_one in enumerate(ships, start=1):
+            for ship_two in ships[i:]:
+                for deck_one in ship_one.decks:
+                    row_one, col_one = deck_one.coor
+                    for deck_two in ship_two.decks:
+                        row_two, col_two = deck_two.coor
+                        if (abs(row_one - row_two) <= 1
+                                and abs(col_one - col_two) <= 1):
+                            raise ValueError("Ships shouldn't "
+                                             "be located "
+                                             "in the neighboring cells")
