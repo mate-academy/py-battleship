@@ -66,7 +66,7 @@ class Battleship:
             print("".join(res))
 
     def _validate_field(self) -> None:
-        ships = set(self.field.values())
+        ships = list(set(self.field.values()))
         ships_var = [len(ship.decks) for ship in ships]
         if len(ships) != 10:
             raise ValueError(f"There should "
