@@ -38,20 +38,18 @@ class Battleship:
     def __init__(self, ships: list[tuple]) -> None:
         self.field = {}
         for ship in ships:
-            self.field[ship] = Ship(*ship)
+            ship = Ship(*ship)
+            for deck in ship.decks:
+                self.field[deck.coor] = ship
 
     def fire(self, location: tuple) -> str:
-        for ship in self.field:
-            if location[0] == ship[0][0]:
-                if ship[0][1] <= location[1] <= ship[1][1]:
-                    self.field[ship].fire(*location)
-                    if self.field[ship].is_drowned:
-                        return "Sunk!"
-                    return "Hit!"
-            elif location[1] == ship[0][1]:
-                if ship[0][0] <= location[0] <= ship[1][0]:
-                    self.field[ship].fire(*location)
-                    if self.field[ship].is_drowned:
-                        return "Sunk!"
-                    return "Hit!"
-        return "Miss!"
+        ship = self.field.get(location)
+        if ship is None:
+            return "Miss!"
+        ship.fire(*location)
+        if ship.is_drowned:
+            return "Sunk!"
+        return "Hit!"
+
+    def print_field(self) -> None:
+        pass
