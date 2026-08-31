@@ -52,4 +52,34 @@ class Battleship:
         return "Hit!"
 
     def print_field(self) -> None:
-        pass
+        field = [["~"] * 10 for _ in range(10)]
+        for ship in set(self.field.values()):
+            for deck in ship.decks:
+                row, column = deck.coor
+                if ship.is_drowned:
+                    field[row][column] = "x"
+                elif deck.is_alive:
+                    field[row][column] = "□"
+                else:
+                    field[row][column] = "*"
+        for res in field:
+            print("".join(res))
+
+    def _validate(self) -> None:
+        ships = set(self.field.values())
+        ships_var = [len(ship.decks) for ship in ships]
+        if len(ships) != 10:
+            print(f"There should "
+                  f"be 10 ships. Currently: {len(ships)}")
+        if ships_var.count(1) != 4:
+            print(f"There should be 4 "
+                  f"single-deck ships. Currently: {ships_var.count(1)}")
+        if ships_var.count(2) != 3:
+            print(f"There should be 4 "
+                  f"double-deck ships. Currently: {ships_var.count(2)}")
+        if ships_var.count(3) != 2:
+            print(f"There should be 2 "
+                  f"three-deck ships. Currently: {ships_var.count(3)}")
+        if ships_var.count(4) != 1:
+            print(f"There should be 1 "
+                  f"four-deck ships. Currently: {ships_var.count(4)}")
