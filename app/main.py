@@ -1,4 +1,5 @@
-from setuptools import find_packages
+class IncorrectShipPosition(Exception):
+    pass
 
 
 class Deck:
@@ -9,20 +10,24 @@ class Deck:
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        self.decks = [Deck(deck[0], deck[1], True) for deck in get_coordinates((start, end))]
+    def __init__(
+            self,
+            start: tuple,
+            end: tuple,
+            is_drowned: bool = False
+    ) -> None:
+        self.decks = [Deck(deck[0], deck[1], True)
+                      for deck in get_coordinates((start, end))]
         self.is_drowned = is_drowned
 
-
-    def get_deck(self, row, column):
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
         return None
 
-
-    def fire(self, row, column):
+    def fire(self, row: int, column: int) -> None:
         deck = self.get_deck(row, column)
         deck.is_alive = False
 
@@ -31,7 +36,8 @@ class Ship:
 
 
 class Battleship:
-    def __init__(self, ships):
+    def __init__(self, ships: list) -> None:
+        self._validate_field(ships)
         self.field = {
             cell: ship_obj
             for ship in ships
@@ -39,7 +45,7 @@ class Battleship:
             for cell in get_coordinates(ship)
         }
 
-    def fire(self, location: tuple):
+    def fire(self, location: tuple) -> str:
         if location in self.field:
             ship = self.field.get(location)
             ship.fire(*location)
@@ -49,7 +55,7 @@ class Battleship:
 
         return "Miss!"
 
-    def print_field(self):
+    def print_field(self) -> None:
         field = [["~"] * 10 for _ in range(10)]
 
         for row in range(10):
@@ -67,8 +73,32 @@ class Battleship:
         for row in range(10):
             print(" ".join(field[row]))
 
+    def _validate_field(self, ships: list) -> None:
+        ship_count_on_decks = {1: 0, 2: 0, 3: 0, 4: 0}
 
-def get_coordinates(ship):
+        for ship in ships:
+            try:
+                ship_count_on_decks[abs(sum(ship[1]) - sum(ship[0])) + 1] += 1
+            except KeyError:
+                raise IncorrectShipPosition
+
+        if ship_count_on_decks != {1: 4, 2: 3, 3: 2, 4: 1}:
+            raise IncorrectShipPosition
+
+        list_fill_cells = []
+        for ship in ships:
+            cells = get_coordinates(ship)
+
+            if any(cell in list_fill_cells for cell in cells):
+                raise IncorrectShipPosition
+
+            for cell in cells:
+                for dx in (cell[0] - 1, cell[0], cell[0] + 1):
+                    for dy in (cell[1] - 1, cell[1], cell[1] + 1):
+                        list_fill_cells.append((dx, dy))
+
+
+def get_coordinates(ship: list) -> list:
     size = abs(sum(ship[1]) - sum(ship[0])) + 1
 
     iterable_order = "y"
@@ -87,22 +117,3 @@ def get_coordinates(ship):
         coordinates.append(tuple(start_coordinates))
 
     return coordinates
-
-battle_ship = Battleship(
-    ships=[
-        ((0, 0), (0, 3)),
-        ((0, 5), (0, 6)),
-        ((0, 8), (0, 9)),
-        ((2, 0), (4, 0)),
-        ((2, 4), (2, 6)),
-        ((2, 8), (2, 9)),
-        ((9, 9), (9, 9)),
-        ((7, 7), (7, 7)),
-        ((7, 9), (7, 9)),
-        ((9, 7), (9, 7)),
-    ]
-)
-
-battle_ship.print_field()
-# battle_ship.fire((0, 3))
-# battle_ship.print_field()
