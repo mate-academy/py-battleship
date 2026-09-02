@@ -1,3 +1,6 @@
+from setuptools import find_packages
+
+
 class Deck:
     def __init__(self, row: int, column: int , is_alive: bool = True) -> None:
         self.row = row
@@ -46,6 +49,24 @@ class Battleship:
 
         return "Miss!"
 
+    def print_field(self):
+        field = [["~"] * 10 for _ in range(10)]
+
+        for row in range(10):
+            for column in range(10):
+                if (row, column) in self.field:
+                    ship = self.field[(row, column)]
+                    if ship.is_drowned:
+                        field[row][column] = "x"
+                    else:
+                        if ship.get_deck(row, column).is_alive:
+                            field[row][column] = "□"
+                        else:
+                            field[row][column] = "*"
+
+        for row in range(10):
+            print(" ".join(field[row]))
+
 
 def get_coordinates(ship):
     size = abs(sum(ship[1]) - sum(ship[0])) + 1
@@ -66,3 +87,22 @@ def get_coordinates(ship):
         coordinates.append(tuple(start_coordinates))
 
     return coordinates
+
+battle_ship = Battleship(
+    ships=[
+        ((0, 0), (0, 3)),
+        ((0, 5), (0, 6)),
+        ((0, 8), (0, 9)),
+        ((2, 0), (4, 0)),
+        ((2, 4), (2, 6)),
+        ((2, 8), (2, 9)),
+        ((9, 9), (9, 9)),
+        ((7, 7), (7, 7)),
+        ((7, 9), (7, 9)),
+        ((9, 7), (9, 7)),
+    ]
+)
+
+battle_ship.print_field()
+# battle_ship.fire((0, 3))
+# battle_ship.print_field()
