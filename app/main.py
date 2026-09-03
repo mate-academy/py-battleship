@@ -28,7 +28,12 @@ class Ship:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        deck = self.get_deck(row, column)
+        try:
+            deck = self.get_deck(row, column)
+            if deck is None:
+                raise AttributeError("Unknown deck")
+        except AttributeError as f:
+            print(f)
         deck.is_alive = False
         if_all_ship_die = False
         for i in self.decks:
