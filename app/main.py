@@ -28,12 +28,9 @@ class Ship:
                 return deck
 
     def fire(self, row: int, column: int) -> None:
-        try:
-            deck = self.get_deck(row, column)
-            if deck is None:
-                raise AttributeError("Unknown deck")
-        except AttributeError as f:
-            print(f)
+        deck = self.get_deck(row, column)
+        if deck is None:
+            return AttributeError("Unknown deck")
         deck.is_alive = False
         if_all_ship_die = False
         for i in self.decks:
@@ -63,5 +60,4 @@ class Battleship:
         ship.fire(location[0], location[1])
         if ship.is_drowned:
             return "Sunk!"
-        else:
-            return "Hit!"
+        return "Hit!"
