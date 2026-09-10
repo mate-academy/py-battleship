@@ -66,7 +66,69 @@ class Ship:
 class Battleship:
     def __init__(self,
                  ships: list[tuple[tuple[int, int], tuple[int, int]]]) -> None:
+        if not self._validate_field(ships):
+            raise ValueError("Invalid ship list")
+
         self.field = self.map_cells_to_ships(ships)
+
+    def _validate_field(
+            self,
+            location_ships: list[tuple[tuple[int, int], tuple[int, int]]]
+    ) -> bool:
+        return self._count_validation_field(location_ships) \
+            and self._location_validation_field(location_ships)
+
+    @staticmethod
+    def _count_validation_field(
+            location_ships: list[tuple[tuple[int, int], tuple[int, int]]]
+    ) -> bool:
+        valid_counts_ships, counts_ships = {
+            4: 1,
+            3: 2,
+            2: 3,
+            1: 4,
+        }, {}
+
+        if len(location_ships) == 10:
+            for location_ship in location_ships:
+                range_ship = len(
+                    Ship.create_decks_list(location_ship[0], location_ship[1])
+                )
+                if range_ship not in counts_ships:
+                    counts_ships[range_ship] = 1
+                else:
+                    counts_ships[range_ship] += 1
+            return counts_ships == valid_counts_ships
+        return False
+
+    @staticmethod
+    def make_location_around(
+            decks: list[Deck]
+    ) -> set[tuple[int, int]]:
+        locations = set()
+        for deck in decks:
+            for x_loc in range(deck.row - 1, deck.row + 2):
+                for y_loc in range(deck.column - 1, deck.column + 2):
+                    if x_loc in range(0, 10) and y_loc in range(0, 10):
+                        locations.add((x_loc, y_loc))
+        return locations
+
+    @staticmethod
+    def _location_validation_field(
+            location_ships: list[tuple[tuple[int, int], tuple[int, int]]]
+    ) -> bool:
+        neighbors_ship_list = set()
+        for location_ship in location_ships:
+            decks_list = Ship.create_decks_list(
+                location_ship[0],
+                location_ship[1]
+            )
+            for deck in decks_list:
+                if (deck.row, deck.column) in neighbors_ship_list:
+                    return False
+            neighbors = Battleship.make_location_around(decks_list)
+            neighbors_ship_list.update(neighbors)
+        return True
 
     def fire(self,
              location: tuple) -> str:
@@ -80,16 +142,19 @@ class Battleship:
             row = []
             for y_loc in range(10):
 
-                cell_symbol = self.field.get((x_loc, y_loc), "~")
+                ship = self.field.get((x_loc, y_loc), None)
+                cell_symbol = "~"
 
-                if isinstance(cell_symbol, Ship):
-                    cell_symbol = u"\u25A1" \
-                        if cell_symbol.get_deck(x_loc, y_loc).get_is_alive() \
-                        else u"\u25EA"
+                if ship:
+                    if ship.is_drowned:
+                        cell_symbol = "x"
+                    elif ship.get_deck(x_loc, y_loc).get_is_alive():
+                        cell_symbol = u"\u25A1"
+                    else:
+                        cell_symbol = "*"
 
                 row.append(cell_symbol)
             print(" ".join(row))
-            row.clear()
 
     @staticmethod
     def map_cells_to_ships(
