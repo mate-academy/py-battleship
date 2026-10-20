@@ -48,7 +48,6 @@ class Battleship:
             ships: list[tuple[tuple[int, int], tuple[int, int]]]
     ) -> None:
         self.field: dict[tuple[int, int], Ship] = {}
-        self.ships: list[Ship] = []
 
         for ship_coords in ships:
             start, end = ship_coords
@@ -73,5 +72,4 @@ class Battleship:
 
         if ship.is_drowned:
             return "Sunk!"
-        else:
-            return "Hit!"
+        return "Hit!"
