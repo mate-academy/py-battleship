@@ -48,6 +48,7 @@ class Battleship:
             ships: list[tuple[tuple[int, int], tuple[int, int]]]
     ) -> None:
         self.field: dict[tuple[int, int], Ship] = {}
+        self.ships: list[Ship] = []
         
         for ship_coords in ships:
             start, end = ship_coords
@@ -58,7 +59,7 @@ class Battleship:
                 self.field[(deck.row, deck.column)] = ship
 
     def fire(self, location: tuple[int, int]) -> str:
-        if location not in self.field:
+                if location not in self.field:
             return "Miss!"
 
         ship = self.field[location]
@@ -72,5 +73,4 @@ class Battleship:
 
         if ship.is_drowned:
             return "Sunk!"
-
         return "Hit!"
