@@ -59,7 +59,7 @@ class Battleship:
                 self.field[(deck.row, deck.column)] = ship
 
     def fire(self, location: tuple[int, int]) -> str:
-                if location not in self.field:
+        if location not in self.field:
             return "Miss!"
 
         ship = self.field[location]
@@ -72,6 +72,5 @@ class Battleship:
         ship.fire(row_idx, col_idx)
 
         if ship.is_drowned:
-            return "Sunk!"
-            
+            return "Sunk!"      
         return "Hit!"
