@@ -7,7 +7,7 @@ class Deck:
     def __repr__(self) -> str:
         return (f"Deck ({self.row}, {self.column}) {self.is_alive}")
 
-    def __eq__(self, coordinates: (int, int)) -> bool:
+    def __eq__(self, coordinates: tuple[int, int]) -> bool:
         return (
             coordinates[0] == self.row and coordinates[1] == self.column
         )
@@ -16,8 +16,8 @@ class Deck:
 class Ship:
     def __init__(
         self,
-        start: (int, int),
-        end: (int, int),
+        start: tuple[int, int],
+        end: tuple[int, int],
         is_drowned: bool = False
     ) -> None:
         self.decks = [
@@ -27,12 +27,12 @@ class Ship:
         ]
         self.is_drowned = is_drowned
 
-    def get_deck(self, row: int, column: int) -> Deck:
+    def get_deck(self, row: int, column: int) -> Deck | None:
         for deck in self.decks:
             if deck.row == row and deck.column == column:
                 return deck
 
-    def fire(self, row: int, column: int) -> str:
+    def fire(self, row: int, column: int) -> str | None:
         deck = self.get_deck(row, column)
         if deck is None:
             return None
@@ -49,7 +49,7 @@ class Ship:
 class Battleship:
     def __init__(
         self,
-        ships: ((int, int), (int, int))
+        ships: tuple[tuple[int, int], tuple[int, int]]
     ) -> None:
         self.field = {}
         self.ships = [Ship(*ship) for ship in ships]
@@ -68,6 +68,8 @@ class Battleship:
         is_valid.append(self.has_x_ships_with_y_decks(3, 2))
         is_valid.append(self.has_x_ships_with_y_decks(2, 3))
         is_valid.append(self.has_x_ships_with_y_decks(1, 4))
+        is_valid.append(not self.has_neighbor())
+        return all(is_valid)
 
     def has_x_ships_with_y_decks(
         self, ships_quantity: int, decks_quantity: int
@@ -76,52 +78,48 @@ class Battleship:
             len(ship.decks) == decks_quantity for ship in self.ships
         ) == ships_quantity
 
-    def has_neighboor(self) -> bool:
+    @staticmethod
+    def _get_around(row_or_column: int) -> range:
+        return range(
+            max(0, row_or_column - 1),
+            min(9, row_or_column + 1) + 1
+        )
+
+    def has_neighbor(self) -> bool:
         for ship in self.ships:
             start = ship.decks[0]
             end = ship.decks[-1]
-        if len(ship.decks == 1):
-            decks_to_check = [start]
-        else:
-            decks_to_check = [start, end]
-        for deck in decks_to_check:
-            # row[0], column[0]
-            # check row [1] and columns [0, 1]
-            # row[1], columns[0, 1, 2] - start/end [(1,0), (1,2)]
-            # for start(1,0) check row [0 to 2] and column [0 to 1]
-            # for end(1,2) check row [0 to 2] and column [1 to 3]
-            # 1,2 -> 0to2 + 1to3 ->
-            # range: max(0, row-1) to min (9, row+1) +1 [pq é exclusivo]
-            around_rows = range(
-                max(0, deck.row - 1),
-                min(9, deck.row + 1) + 1
-            )
-            around_columns = range(
-                max(0, deck.column - 1),
-                min(9, deck.column + 1) + 1
-            )
-            count = 0
-            for row in around_rows:
-                for column in around_columns:
-                    if self.field[(row, column)] == "□":
-                        count += 1
-            if len(ship.decks) == 1 and count > 0:
-                return True
-            if len(ship.decks) > 1 and count > 1:
-                return True
+            if len(ship.decks) == 1:
+                decks_to_check = [start]
+                expected = 1
+            else:
+                decks_to_check = [start, end]
+                expected = 2
+            for deck in decks_to_check:
+                around_rows = self._get_around(deck.row)
+                around_columns = self._get_around(deck.column)
+                count = 0
+                for row in around_rows:
+                    for column in around_columns:
+                        if self.field[(row, column)] == "□":
+                            count += 1
+                if count > expected:
+                    return True
         return False
 
     def fire(self, location: tuple) -> str:
         result = "Miss!"
         for ship in self.ships:
             if ship.is_drowned:
-                result = "Miss!"
+                continue
             elif (location) in ship.decks:
                 result = ship.fire(location[0], location[1])
                 if result == "Hit!":
                     self.field[location] = "*"
+                    return result
                 elif result == "Sunk!":
                     self.field[location] = "x"
+                    return result
         return result
 
     def print_field(self) -> None:
