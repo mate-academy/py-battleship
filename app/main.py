@@ -64,23 +64,52 @@ class Battleship:
     def _validate_field(self) -> bool:
         is_valid = []
         is_valid.append(len(self.ships) == 10)
-        is_valid.append(has_x_ships_with_y_decks(4, 1))
-        is_valid.append(has_x_ships_with_y_decks(3, 2))
-        is_valid.append(has_x_ships_with_y_decks(2, 3))
-        is_valid.append(has_x_ships_with_y_decks(1, 4))
+        is_valid.append(self.has_x_ships_with_y_decks(4, 1))
+        is_valid.append(self.has_x_ships_with_y_decks(3, 2))
+        is_valid.append(self.has_x_ships_with_y_decks(2, 3))
+        is_valid.append(self.has_x_ships_with_y_decks(1, 4))
 
-    def has_x_ships_with_y_decks(ships_quantity: int, decks_quantity: int) -> bool:
+    def has_x_ships_with_y_decks(
+        self, ships_quantity: int, decks_quantity: int
+    ) -> bool:
         return sum(
             len(ship.decks) == decks_quantity for ship in self.ships
         ) == ships_quantity
-        
-    def has_neighboor() -> bool:
+
+    def has_neighboor(self) -> bool:
         for ship in self.ships:
-            around = (-1, 0, 1)
-            if ship.start[0] == 0:
-                around = (0, 1)
-                
-            
+            start = ship.decks[0]
+            end = ship.decks[-1]
+        if len(ship.decks == 1):
+            decks_to_check = [start]
+        else:
+            decks_to_check = [start, end]
+        for deck in decks_to_check:
+            # row[0], column[0]
+            # check row [1] and columns [0, 1]
+            # row[1], columns[0, 1, 2] - start/end [(1,0), (1,2)]
+            # for start(1,0) check row [0 to 2] and column [0 to 1]
+            # for end(1,2) check row [0 to 2] and column [1 to 3]
+            # 1,2 -> 0to2 + 1to3 ->
+            # range: max(0, row-1) to min (9, row+1) +1 [pq é exclusivo]
+            around_rows = range(
+                max(0, deck.row - 1),
+                min(9, deck.row + 1) + 1
+            )
+            around_columns = range(
+                max(0, deck.column - 1),
+                min(9, deck.column + 1) + 1
+            )
+            count = 0
+            for row in around_rows:
+                for column in around_columns:
+                    if self.field[(row, column)] == "□":
+                        count += 1
+            if len(ship.decks) == 1 and count > 0:
+                return True
+            if len(ship.decks) > 1 and count > 1:
+                return True
+        return False
 
     def fire(self, location: tuple) -> str:
         result = "Miss!"
