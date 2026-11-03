@@ -35,7 +35,7 @@ class Ship:
     def fire(self, row: int, column: int) -> str | None:
         deck = self.get_deck(row, column)
         if deck is None:
-            return None
+            return "Miss!"
         if deck.is_alive:
             deck.is_alive = False
             if any(deck.is_alive for deck in self.decks):
@@ -60,6 +60,9 @@ class Battleship:
         for ship in self.ships:
             for deck in ship.decks:
                 self.field[(deck.row, deck.column)] = "□"
+
+        if self._validate_field():
+            print("BattleShip created with success!")
 
     def _validate_field(self) -> bool:
         is_valid = []
