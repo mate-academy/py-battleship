@@ -1,34 +1,133 @@
 class Deck:
-    def __init__(self, row, column, is_alive=True):
-        pass
+    def __init__(self, row: int, column: int, is_alive: bool = True) -> None:
+        self.row = row
+        self.column = column
+        self.is_alive = is_alive
+
+    def __repr__(self) -> str:
+        return (f"Deck ({self.row}, {self.column}) {self.is_alive}")
+
+    def __eq__(self, coordinates: tuple[int, int]) -> bool:
+        return (
+            coordinates[0] == self.row and coordinates[1] == self.column
+        )
 
 
 class Ship:
-    def __init__(self, start, end, is_drowned=False):
-        # Create decks and save them to a list `self.decks`
-        pass
+    def __init__(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        is_drowned: bool = False
+    ) -> None:
+        self.decks = [
+            Deck(row, column)
+            for row in range(start[0], end[0] + 1)
+            for column in range(start[1], end[1] + 1)
+        ]
+        self.is_drowned = is_drowned
 
-    def get_deck(self, row, column):
-        # Find the corresponding deck in the list
-        pass
+    def get_deck(self, row: int, column: int) -> Deck | None:
+        for deck in self.decks:
+            if deck.row == row and deck.column == column:
+                return deck
 
-    def fire(self, row, column):
-        # Change the `is_alive` status of the deck
-        # And update the `is_drowned` value if it's needed
-        pass
+    def fire(self, row: int, column: int) -> str | None:
+        deck = self.get_deck(row, column)
+        if deck is None:
+            return "Miss!"
+        if deck.is_alive:
+            deck.is_alive = False
+            if any(deck.is_alive for deck in self.decks):
+                return "Hit!"
+            else:
+                self.is_drowned = True
+                return "Sunk!"
+        return "Miss!"
 
 
 class Battleship:
-    def __init__(self, ships):
-        # Create a dict `self.field`.
-        # Its keys are tuples - the coordinates of the non-empty cells,
-        # A value for each cell is a reference to the ship
-        # which is located in it
-        pass
+    def __init__(
+        self,
+        ships: tuple[tuple[int, int], tuple[int, int]]
+    ) -> None:
+        self.field = {}
+        self.ships = [Ship(*ship) for ship in ships]
+        for row in range(10):
+            for column in range(10):
+                self.field[(row, column)] = "~"
 
-    def fire(self, location: tuple):
-        # This function should check whether the location
-        # is a key in the `self.field`
-        # If it is, then it should check if this cell is the last alive
-        # in the ship or not.
-        pass
+        for ship in self.ships:
+            for deck in ship.decks:
+                self.field[(deck.row, deck.column)] = "□"
+
+        if self._validate_field():
+            print("BattleShip created with success!")
+
+    def _validate_field(self) -> bool:
+        is_valid = []
+        is_valid.append(len(self.ships) == 10)
+        is_valid.append(self.has_x_ships_with_y_decks(4, 1))
+        is_valid.append(self.has_x_ships_with_y_decks(3, 2))
+        is_valid.append(self.has_x_ships_with_y_decks(2, 3))
+        is_valid.append(self.has_x_ships_with_y_decks(1, 4))
+        is_valid.append(not self.has_neighbor())
+        return all(is_valid)
+
+    def has_x_ships_with_y_decks(
+        self, ships_quantity: int, decks_quantity: int
+    ) -> bool:
+        return sum(
+            len(ship.decks) == decks_quantity for ship in self.ships
+        ) == ships_quantity
+
+    @staticmethod
+    def _get_around(row_or_column: int) -> range:
+        return range(
+            max(0, row_or_column - 1),
+            min(9, row_or_column + 1) + 1
+        )
+
+    def has_neighbor(self) -> bool:
+        for ship in self.ships:
+            start = ship.decks[0]
+            end = ship.decks[-1]
+            if len(ship.decks) == 1:
+                decks_to_check = [start]
+                expected = 1
+            else:
+                decks_to_check = [start, end]
+                expected = 2
+            for deck in decks_to_check:
+                around_rows = self._get_around(deck.row)
+                around_columns = self._get_around(deck.column)
+                count = 0
+                for row in around_rows:
+                    for column in around_columns:
+                        if self.field[(row, column)] == "□":
+                            count += 1
+                if count > expected:
+                    return True
+        return False
+
+    def fire(self, location: tuple) -> str:
+        result = "Miss!"
+        for ship in self.ships:
+            if ship.is_drowned:
+                continue
+            elif (location) in ship.decks:
+                result = ship.fire(location[0], location[1])
+                if result == "Hit!":
+                    self.field[location] = "*"
+                    return result
+                elif result == "Sunk!":
+                    self.field[location] = "x"
+                    return result
+        return result
+
+    def print_field(self) -> None:
+        for row in range(10):
+            text = ""
+            for column in range(10):
+                text += f" {self.field[(row, column)]}"
+            print(text)
