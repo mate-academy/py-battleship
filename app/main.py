@@ -21,16 +21,12 @@ class Ship:
             end: Coordinate,
             is_drowned: bool = False
     ) -> None:
-        self.start = start
-        self.end = end
         self.is_drowned = is_drowned
         self.decks: list[Deck] = []
 
-        self.start_row = min(start[0], end[0])
-        self.start_column = min(start[1], end[1])
-
-        self.end_row = max(start[0], end[0])
-        self.end_column = max(start[1], end[1])
+        self.start_row, self.start_column, self.end_row, self.end_column = (
+            Battleship.normalize_coordinates(start, end)
+        )
 
         for row in range(self.start_row, self.end_row + 1):
             for column in range(self.start_column, self.end_column + 1):
@@ -59,8 +55,7 @@ class Battleship:
     def __init__(self, ships: ShipsData) -> None:
         self.field: dict[tuple, Ship] = {}
 
-        if not self._validate_field(ships):
-            raise ValueError("Invalid ships configuration")
+        self._validate_field(ships)
 
         for ship_positions in ships:
             self.field[ship_positions] = (
@@ -82,7 +77,7 @@ class Battleship:
 
         return "Miss!"
 
-    def game_board(self) -> None:
+    def print_field(self) -> None:
         board: list[list[str]] = [["~" for _ in range(10)] for _ in range(10)]
 
         for ship in self.field.values():
@@ -100,13 +95,13 @@ class Battleship:
     def _validate_field(self, ships: ShipsData) -> bool:
         if len(ships) != 10:
             raise ValueError("Invalid number of ships. Expected 10 ships.")
-        elif not self._validate_decks_count(ships):
+        if not self._validate_decks_count(ships):
             raise ValueError(
                 "Invalid fleet composition. "
                 "Expected 4 single-deck, 3 double-deck, "
                 "2 triple-deck and 1 four-deck ships."
             )
-        elif not self._validate_ship_neighbors(ships):
+        if not self._validate_ship_neighbors(ships):
             raise ValueError("Ships cannot touch each other, even diagonally.")
 
         return True
@@ -117,10 +112,16 @@ class Battleship:
         expected_ships = {1: 4, 2: 3, 3: 2, 4: 1}
 
         for ship in ships:
-            decks_sum: int = 0
-            for row in range(ship[0][0], ship[1][0] + 1):
-                for column in range(ship[0][1], ship[1][1] + 1):
+            min_row, min_column, max_row, max_column = (
+                Battleship.normalize_coordinates(ship[0], ship[1])
+            )
+
+            decks_sum = 0
+
+            for row in range(min_row, max_row + 1):
+                for column in range(min_column, max_column + 1):
                     decks_sum += 1
+
             decks_ship.append(decks_sum)
 
         if Counter(decks_ship) != expected_ships:
@@ -133,12 +134,14 @@ class Battleship:
         occupied_cells = set()
 
         for ship in ships:
-            (start_row, start_column), (end_row, end_column) = ship
+            min_row, min_column, max_row, max_column = (
+                Battleship.normalize_coordinates(ship[0], ship[1])
+            )
 
             ship_cells = set()
 
-            for row in range(start_row, end_row + 1):
-                for column in range(start_column, end_column + 1):
+            for row in range(min_row, max_row + 1):
+                for column in range(min_column, max_column + 1):
                     ship_cells.add((row, column))
 
             for row, column in ship_cells:
@@ -153,3 +156,16 @@ class Battleship:
             occupied_cells.update(ship_cells)
 
         return True
+
+    @staticmethod
+    def normalize_coordinates(
+            start: Coordinate,
+            end: Coordinate
+    ) -> tuple[int, int, int, int]:
+        min_row = min(start[0], end[0])
+        max_row = max(start[0], end[0])
+
+        min_column = min(start[1], end[1])
+        max_column = max(start[1], end[1])
+
+        return min_row, min_column, max_row, max_column
