@@ -26,10 +26,11 @@ class Ship:
         self.is_drowned = is_drowned
         self.decks: list[Deck] = []
 
-        self.start_row = self.start[0]
-        self.start_column = self.start[1]
-        self.end_row = self.end[0]
-        self.end_column = self.end[1]
+        self.start_row = min(start[0], end[0])
+        self.start_column = min(start[1], end[1])
+
+        self.end_row = max(start[0], end[0])
+        self.end_column = max(start[1], end[1])
 
         for row in range(self.start_row, self.end_row + 1):
             for column in range(self.start_column, self.end_column + 1):
@@ -117,17 +118,9 @@ class Battleship:
 
         for ship in ships:
             decks_sum: int = 0
-
-            min_row = min(ship[0][0], ship[1][0])
-            max_row = max(ship[0][0], ship[1][0])
-
-            min_column = min(ship[0][1], ship[1][1])
-            max_column = max(ship[0][1], ship[1][1])
-
-            for row in range(min_row, max_row + 1):
-                for column in range(min_column, max_column + 1):
+            for row in range(ship[0][0], ship[1][0] + 1):
+                for column in range(ship[0][1], ship[1][1] + 1):
                     decks_sum += 1
-
             decks_ship.append(decks_sum)
 
         if Counter(decks_ship) != expected_ships:
