@@ -72,7 +72,7 @@ class Battleship:
 
         for ship in self.field.values():
             deck = ship.get_deck(row, column)
-            if deck:
+            if deck and deck.is_alive:
                 is_drowned = ship.fire(row, column)
                 if is_drowned:
                     return "Sunk!"
@@ -117,9 +117,17 @@ class Battleship:
 
         for ship in ships:
             decks_sum: int = 0
-            for row in range(ship[0][0], ship[1][0] + 1):
-                for column in range(ship[0][1], ship[1][1] + 1):
+
+            min_row = min(ship[0][0], ship[1][0])
+            max_row = max(ship[0][0], ship[1][0])
+
+            min_column = min(ship[0][1], ship[1][1])
+            max_column = max(ship[0][1], ship[1][1])
+
+            for row in range(min_row, max_row + 1):
+                for column in range(min_column, max_column + 1):
                     decks_sum += 1
+
             decks_ship.append(decks_sum)
 
         if Counter(decks_ship) != expected_ships:
